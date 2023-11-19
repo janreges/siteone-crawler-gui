@@ -1,0 +1,62 @@
+appId: com.electron.siteone-crawler
+productName: 'SiteOne-Crawler'
+directories:
+  buildResources: build
+files:
+  - '!**/.vscode/*'
+  - '!src/*'
+  - '!bin/*'
+  - '!electron.vite.config.{js,ts,mjs,cjs}'
+  - '!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
+  - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
+  - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
+asarUnpack:
+  - resources/**
+win:
+  executableName: SiteOne-Crawler
+  extraResources:
+    - from: 'bin/win-${arch}/'
+      to: 'bin'
+  files:
+    - from: 'bin/win-${arch}/crawler.bat'
+      to: 'crawler.bat'
+nsis:
+  artifactName: ${name}-${version}-setup.${ext}
+  shortcutName: ${productName}
+  uninstallDisplayName: ${productName}
+  createDesktopShortcut: always
+mac:
+  entitlementsInherit: build/entitlements.mac.plist
+#  extendInfo:
+#    - NSCameraUsageDescription: Application requests access to the device's camera.
+#    - NSMicrophoneUsageDescription: Application requests access to the device's microphone.
+#    - NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
+#    - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
+  notarize: false
+  extraResources:
+    - from: 'bin/mac-${arch}/'
+      to: 'bin'
+  files:
+    - from: 'bin/mac-${arch}/crawler'
+      to: 'crawler'
+dmg:
+  artifactName: ${name}-${version}.${ext}
+linux:
+  target:
+    - AppImage
+#    - snap
+#    - deb
+  maintainer: www.siteone.io
+  category: Utility
+  extraResources:
+    - from: 'bin/linux-${arch}/'
+      to: 'bin'
+  files:
+    - from: 'bin/linux-${arch}/crawler'
+      to: 'crawler'
+appImage:
+  artifactName: ${name}-${version}.${ext}
+npmRebuild: false
+publish:
+  provider: generic
+  url: https://crawler.siteone.io/auto-updates

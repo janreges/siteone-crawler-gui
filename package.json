@@ -1,0 +1,49 @@
+{
+  "name": "SiteOne-Crawler",
+  "version": "1.0.4",
+  "description": "The best and easy-to-use multi-functional web crawler, offline exporter and analysis tool you'll love :)",
+  "main": "./out/main/index.js",
+  "author": "jan.reges@siteone.cz",
+  "homepage": "https://crawler.siteone.io/",
+  "scripts": {
+    "format": "prettier --plugin prettier-plugin-svelte --write .",
+    "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
+    "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
+    "svelte-check": "svelte-check --tsconfig ./tsconfig.json",
+    "typecheck": "npm run typecheck:node && npm run svelte-check",
+    "start": "electron-vite preview",
+    "dev": "electron-vite dev",
+    "build": "npm run typecheck && electron-vite build",
+    "postinstall": "electron-builder install-app-deps",
+    "build:win-x64": "npm run build && electron-builder --win --x64 --config",
+    "build:mac-x64": "npm run build && electron-builder --mac --x64 --config",
+    "build:mac-arm64": "npm run build && electron-builder --mac --arm64 --config",
+    "build:linux-x64": "npm run build && electron-builder --linux --x64 --config",
+    "build:linux-arm64": "npm run build && electron-builder --linux --arm64 --config"
+  },
+  "dependencies": {
+    "@electron-toolkit/preload": "^2.0.0",
+    "@electron-toolkit/utils": "^2.0.0",
+    "ansi-to-html": "^0.7.2",
+    "electron-updater": "^6.1.1"
+  },
+  "devDependencies": {
+    "@electron-toolkit/eslint-config-prettier": "^1.0.1",
+    "@electron-toolkit/eslint-config-ts": "^1.0.0",
+    "@electron-toolkit/tsconfig": "^1.0.1",
+    "@sveltejs/vite-plugin-svelte": "^2.4.5",
+    "@types/node": "^18.17.5",
+    "electron": "^25.6.0",
+    "electron-builder": "^24.6.3",
+    "electron-vite": "^1.0.27",
+    "eslint": "^8.47.0",
+    "eslint-plugin-svelte": "^2.32.4",
+    "prettier": "^3.0.2",
+    "prettier-plugin-svelte": "^3.0.3",
+    "svelte": "^4.2.0",
+    "svelte-check": "^3.5.0",
+    "tslib": "^2.6.2",
+    "typescript": "^5.1.6",
+    "vite": "^4.4.9"
+  }
+}
