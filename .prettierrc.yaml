@@ -1,5 +1,5 @@
 singleQuote: true
-semi: false
+semi: true
 printWidth: 100
 trailingComma: none
 plugins:

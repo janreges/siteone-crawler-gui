@@ -12,7 +12,7 @@
     "svelte-check": "svelte-check --tsconfig ./tsconfig.json",
     "typecheck": "npm run typecheck:node && npm run svelte-check",
     "start": "electron-vite preview",
-    "dev": "electron-vite dev",
+    "dev": "cross-env NODE_ENV=development electron-vite dev",
     "build": "npm run typecheck && electron-vite build",
     "postinstall": "electron-builder install-app-deps",
     "build:win-x64": "npm run build && electron-builder --win --x64 --config",
@@ -25,7 +25,8 @@
     "@electron-toolkit/preload": "^2.0.0",
     "@electron-toolkit/utils": "^2.0.0",
     "ansi-to-html": "^0.7.2",
-    "electron-updater": "^6.1.1"
+    "electron-updater": "^6.1.1",
+    "ws": "^8.14.2"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config-prettier": "^1.0.1",
@@ -33,7 +34,8 @@
     "@electron-toolkit/tsconfig": "^1.0.1",
     "@sveltejs/vite-plugin-svelte": "^2.4.5",
     "@types/node": "^18.17.5",
-    "electron": "^25.6.0",
+    "cross-env": "^7.0.3",
+    "electron": "^27.1.0",
     "electron-builder": "^24.6.3",
     "electron-vite": "^1.0.27",
     "eslint": "^8.47.0",

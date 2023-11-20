@@ -95,6 +95,9 @@ class CrawlerFormContent {
   slowestUrlsMinTime?: string = null;
   slowestUrlsMaxTime?: string = null;
 
+  // URL params
+  cliParams: string[] = [];
+
   constructor(init?: Partial<CrawlerFormContent>) {
     Object.assign(this, init);
   }
