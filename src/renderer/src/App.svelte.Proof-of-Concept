@@ -1,0 +1,214 @@
+<script lang="ts">
+  import CrawlerForm from "./components/CrawlerForm.svelte";
+
+  const { spawn } = require('child_process');
+
+  const exePath = 'c:\\Work\\siteone-website-crawler\\crawler.bat';
+
+  var Convert = require('ansi-to-html');
+  var convert = new Convert({stream: true, newline: false});
+
+  let consoleContent: string = '';
+
+  function onClick() {
+    consoleContent = '';
+    // alert('ahoj-pred: '+exePath);
+    const child = spawn(exePath, ['--url=https://www.drom.sk/', '--max-visited-urls=200']);
+    child.stdout.on('data', (data) => {
+      // alert('ahoj-data: '+data);
+      consoleContent += convertConsoleLine(data.toString());
+      setTimeout(scrollToBottom, 20);
+      console.log("STDOOUT: "+data.toString());
+    });
+
+    child.stderr.on('data', (data) => {
+      // alert('ahoj-error: '+data);
+      consoleContent += convertConsoleLine(data.toString());
+      setTimeout(scrollToBottom, 20);
+      console.error(`stderr: ${data}`);
+    });
+
+    child.on('close', (code) => {
+      // alert('ahoj-close: '+code);
+      console.log(`Child process exited with code ${code}`);
+    });
+    //alert('ahoj-po');
+  }
+
+  function convertConsoleLine(str: string): string {
+    return convert.toHtml(str);
+  }
+
+  function scrollToBottom() {
+    var div = document.getElementById("terminal");
+    div.scrollTop = div.scrollHeight;
+  }
+
+
+</script>
+
+<div class="container">
+
+  <CrawlerForm />
+
+  <div class="features">
+    <div class="feature-item">
+      <button on:click={onClick} style="padding: 8px;">Run Crawler</button>
+    </div>
+  </div>
+
+  <div style="margin-top:10px;">
+    <h3 style="margin-bottom: 10px;">Console output</h3>
+    <div id="terminal" class="terminal">
+      {@html consoleContent}
+    </div>
+  </div>
+
+</div>
+
+<style>
+  .container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 15px 30px 0 30px;
+  }
+
+  .terminal :global(h1), .terminal :global(h2), .terminal :global(h3), .terminal :global(h4), .terminal :global(h5), .terminal :global(h6) {
+    all: unset;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    line-height: 12px;
+  }
+
+  .terminal {
+    width: 100%;
+    height: 800px;
+    background-color: #111111;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    padding: 10px;
+    border-radius: 5px;
+    line-height: 12px;
+    white-space: pre-wrap;
+    overflow-x: auto;
+    overflow-y: scroll;
+    overflow-anchor: auto;
+  }
+
+  .hero-logo {
+    margin-top: -0.4rem;
+    transition: all 0.3s;
+  }
+
+  @media (max-width: 1600px) {
+    .hero-logo {
+      margin-top: -1.5rem;
+    }
+  }
+
+  .hero-text {
+    font-weight: 400;
+    color: #c2f5ff;
+    text-align: center;
+    margin-top: -0.5rem;
+    margin-bottom: 10px;
+  }
+
+  @media (max-width: 660px) {
+    .hero-logo {
+      display: none;
+    }
+
+    .hero-text {
+      margin-top: 20px;
+    }
+  }
+
+  .hero-tagline {
+    text-align: center;
+    margin-bottom: 14px;
+  }
+
+  .links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    font-size: 18px;
+    font-weight: 500;
+  }
+
+  .links a {
+    font-weight: 500;
+  }
+
+  .links .link-item {
+    padding: 0 4px;
+  }
+
+  .features {
+    display: flex;
+    flex-wrap: wrap;
+    margin: -6px;
+  }
+
+  .features .feature-item {
+    width: 33.33%;
+    box-sizing: border-box;
+    padding: 6px;
+  }
+
+  .features article {
+    background-color: rgba(194, 245, 255, 0.1);
+    border-radius: 8px;
+    box-sizing: border-box;
+    padding: 12px;
+    height: 100%;
+  }
+
+  .features span {
+    color: #d4e8ef;
+    word-break: break-all;
+  }
+
+  .features .title {
+    font-size: 17px;
+    font-weight: 500;
+    color: #c2f5ff;
+    line-height: 22px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .features .detail {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px;
+    margin-top: 6px;
+  }
+
+  @media (max-width: 660px) {
+    .features .feature-item {
+      width: 50%;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .links {
+      flex-direction: column;
+      line-height: 32px;
+    }
+
+    .links .link-dot {
+      display: none;
+    }
+
+    .features .feature-item {
+      width: 100%;
+    }
+  }
+</style>
