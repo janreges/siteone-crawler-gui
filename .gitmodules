@@ -1,0 +1,3 @@
+[submodule "src/siteone-crawler"]
+	path = src/siteone-crawler
+	url = https://github.com/janreges/siteone-crawler.git
