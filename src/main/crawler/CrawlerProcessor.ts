@@ -93,6 +93,8 @@ class CrawlerProcessor {
       cliParams.push('--websocket-server=' + this.websocketHostAndPort);
     }
 
+    cliParams.push('--force-color');
+
     this.crawlerProcess = spawn(swoolePath, cliParams);
 
     if (this.crawlerProcess === null) {
@@ -101,6 +103,9 @@ class CrawlerProcessor {
       return;
     } else if (this.crawlerProcess.stdout) {
       this.crawlerProcess.stdout.on('data', (data: Buffer) => {
+        this.sendMessageToRenderer(CrawlerMessageType.STDOUT_DATA, {
+          message: data.toString()
+        });
         console.log(`Crawler: ${data.toString()}`);
       });
     }

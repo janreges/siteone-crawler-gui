@@ -15,13 +15,27 @@
   import type { CrawlerMessage } from '../../../main/crawler/CrawlerMessage';
   import { CrawlerMessageType } from '../../../main/crawler/CrawlerMessage';
 
+  let consoleOutput: string|null = null;
+
   export let formData: CrawlerFormContent = null;
   if (formData === null) {
     formData = new CrawlerFormContent();
   }
 
   const c: (event: any, message: CrawlerMessage) => void = function(_event, message) {
-    console.log('Crawler message:');
+    if (message.type === CrawlerMessageType.STARTED) {
+      consoleOutput = null;
+    }
+    else if (message.type === CrawlerMessageType.STDOUT_DATA) {
+      if (consoleOutput === null) {
+        consoleOutput = message.data.message.replace("\n", "\n<br>") + '<br>';
+      }
+      else {
+        consoleOutput += message.data.message.replace("\n", "\n<br>") + '<br>';
+      }
+    }
+    // console.log('Crawler message:');
+    // console.log(_event);
     console.log(message);
   };
 
@@ -42,6 +56,11 @@
               tooltip="Required URL. Enclose in quotes if URL contains query parameters." />
     <button type="button" on:click={onSubmit}>Run</button>
   </fieldset>
+
+  <div class="terminal">
+    {consoleOutput}
+  </div>
+
   <div class="fieldset-container">
     <!-- Basic settings -->
     <fieldset>

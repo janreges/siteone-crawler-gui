@@ -61,3 +61,17 @@ a {
 a:hover {
   border-bottom: 1px solid;
 }
+
+.url {
+
+}
+
+.url .form-group input, .url .form-group label, .url .form-group button {
+  font-size: 1.8em !important;
+}
+
+.terminal {
+  width: 100%;
+  min-height:300px;
+  overflow: scroll;
+}
