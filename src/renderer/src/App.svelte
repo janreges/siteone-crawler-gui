@@ -7,6 +7,7 @@
 </div>
 
 <style>
+  @import "assets/global.css";
   .container {
     flex: 1;
     display: flex;
