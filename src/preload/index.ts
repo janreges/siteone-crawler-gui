@@ -1,11 +1,13 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import { electronAPI } from '@electron-toolkit/preload';
 import { CrawlerMessage } from '../main/crawler/CrawlerMessage';
+const os = require('os');
 
 // Custom APIs for renderer
 const api = {
   setMessageToBackend: (message: CrawlerMessage) => ipcRenderer.send('crawler-message', message),
   onCrawlerMessage: (callback: (event: any, message: CrawlerMessage) => void) => ipcRenderer.on('crawler-message', callback),
+  getPlatform: () => os.platform()
 };
 
 // Use `contextBridge` APIs to expose Electron APIs to

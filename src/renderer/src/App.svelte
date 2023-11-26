@@ -24,6 +24,10 @@
 
     onMount(() => {
         window.addEventListener('resize', debouncedResize);
+        window.addEventListener('DOMContentLoaded', () => {
+            const platform = window.api.getPlatform();
+            document.body.dataset.osplatform = platform;
+        });
     });
 
     onDestroy(() => {
