@@ -15,7 +15,7 @@
 
 <div class="form-group">
   <label for={htmlId}>{label}</label>
-  <input id={htmlId} type="email" bind:value title={tooltip} />
+  <input id={htmlId} type="email" class="input input-bordered input-xs" bind:value title={tooltip} />
   {#if $error}
     <span class="error">{$error}</span>
   {/if}

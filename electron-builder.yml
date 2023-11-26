@@ -17,6 +17,8 @@ win:
   extraResources:
     - from: 'bin/win-${arch}/'
       to: 'bin'
+    - from: 'src/siteone-crawler/src/'
+      to: 'src/siteone-crawler/src'
   files:
     - from: 'bin/win-${arch}/crawler.bat'
       to: 'crawler.bat'
@@ -36,6 +38,8 @@ mac:
   extraResources:
     - from: 'bin/mac-${arch}/'
       to: 'bin'
+    - from: 'src/siteone-crawler/src/'
+      to: 'src/siteone-crawler/src'
   files:
     - from: 'bin/mac-${arch}/crawler'
       to: 'crawler'
@@ -51,6 +55,8 @@ linux:
   extraResources:
     - from: 'bin/linux-${arch}/'
       to: 'bin'
+    - from: 'src/siteone-crawler/src/'
+      to: 'src/siteone-crawler/src'
   files:
     - from: 'bin/linux-${arch}/crawler'
       to: 'crawler'

@@ -1,4 +1,4 @@
-# SiteOne Crawler
+# SiteOne Crawler GUI
 
 The best and easy-to-use multi-functional web crawler, offline exporter and analysis tool you'll love :)
 

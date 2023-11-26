@@ -8,7 +8,7 @@
 
 <div class="form-group">
   <label for={htmlId}>{label}</label>
-  <select id={htmlId} bind:value title={tooltip}>
+  <select id={htmlId} bind:value title={tooltip} class="select select-bordered select-xs">
     {#each options as option}
       <option value={option}>{option}</option>
     {/each}

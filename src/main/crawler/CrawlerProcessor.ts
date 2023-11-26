@@ -1,9 +1,10 @@
-import { ChildProcess, spawn } from 'child_process';
-import WebSocket, { ErrorEvent, CloseEvent, MessageEvent } from 'ws';
-import { BrowserWindow } from 'electron';
-import { CrawlerMessageType } from './CrawlerMessage';
-import { app } from 'electron';
+import {ChildProcess, spawn} from 'child_process';
+import WebSocket, {ErrorEvent, CloseEvent, MessageEvent} from 'ws';
+import {BrowserWindow} from 'electron';
+import {CrawlerMessageType} from './CrawlerMessage';
+import {app} from 'electron';
 import crawlerFormContent from '../../renderer/src/types/CrawlerFormContent';
+import {clearTimeout} from "timers";
 
 const path = require('path');
 const fs = require('fs');
@@ -16,6 +17,7 @@ class CrawlerProcessor {
   private crawlerProcess: ChildProcess | null;
   private websocket: WebSocket | null;
   private websocketHostAndPort: string | null = null;
+  private reconnectWebSocketId: any = null;
 
   private static RECONNECT_TIMEOUT = 1000;
 
@@ -51,7 +53,8 @@ class CrawlerProcessor {
     if (request['websocketServer']) {
       this.websocketHostAndPort = request['websocketServer'];
     } else {
-      this.websocketHostAndPort = '127.0.0.1:8233';
+      // TODO: WS does not work properly in Cygwin, still without WS
+      // this.websocketHostAndPort = '127.0.0.1:8233';
     }
 
     this.sendMessageToRenderer(CrawlerMessageType.STARTING, request);
@@ -73,10 +76,10 @@ class CrawlerProcessor {
 
     if (isProduction) {
       swoolePath = path.join(process.resourcesPath, 'bin', 'swoole-cli'.concat(process.platform === 'win32' ? '.exe' : ''));
-      crawlerPhpPath = path.join(process.resourcesPath, 'src', 'crawler.php');
+      crawlerPhpPath = path.join(process.resourcesPath, 'src', 'siteone-crawler', 'src', 'crawler.php');
     } else {
-      swoolePath = path.join(__dirname, '..', '..', 'dev', 'bin', 'swoole-cli'.concat(process.platform === 'win32' ? '.exe' : ''));
-      crawlerPhpPath = path.join(__dirname, '..', '..', 'dev', 'src', 'crawler.php');
+      swoolePath = path.join(__dirname, '..', '..', 'bin', 'swoole-cli'.concat(process.platform === 'win32' ? '.exe' : ''));
+      crawlerPhpPath = path.join(__dirname, '..', '..', 'src', 'siteone-crawler', 'src', 'crawler.php');
     }
 
     if (!fs.existsSync(swoolePath)) {
@@ -89,7 +92,7 @@ class CrawlerProcessor {
       cliParams.push(param);
     });
 
-    if (!request['websocketServer']) {
+    if (!request['websocketServer'] && this.websocketHostAndPort) {
       cliParams.push('--websocket-server=' + this.websocketHostAndPort);
     }
 
@@ -102,16 +105,29 @@ class CrawlerProcessor {
       this.stopCrawler();
       return;
     } else if (this.crawlerProcess.stdout) {
+
+      this.crawlerProcess.on('close', (code) => {
+        console.log(`child process exited with code ${code}`);
+        this.stopCrawler();
+      });
+
+      this.crawlerProcess.on('error', (error) => {
+        console.error(`failed to start child process: ${error}`);
+        this.stopCrawler();
+      });
+
       this.crawlerProcess.stdout.on('data', (data: Buffer) => {
         this.sendMessageToRenderer(CrawlerMessageType.STDOUT_DATA, {
           message: data.toString()
         });
-        console.log(`Crawler: ${data.toString()}`);
+        // console.log(`Crawler stdout on data: ${data.toString()}`);
       });
     }
 
     this.isRunning = true;
-    this.connectWebSocket();
+    if (this.websocketHostAndPort) {
+      this.connectWebSocket();
+    }
   }
 
   public stopCrawler(): void {
@@ -123,18 +139,20 @@ class CrawlerProcessor {
     this.isRunning = false;
     this.progress = 0;
     if (this.websocket) {
-      this.websocket.close();
+      if (this.reconnectWebSocketId) {
+        clearTimeout(this.reconnectWebSocketId);
+      }
+      this.killWebSocket();
     }
 
     this.sendMessageToRenderer(CrawlerMessageType.STOPPED, {});
   }
 
   private connectWebSocket(): void {
-    this.sendMessageToRenderer(CrawlerMessageType.DEBUG, { message: 'Connecting to WebSocket...' });
+    this.sendMessageToRenderer(CrawlerMessageType.DEBUG, {message: 'Connecting to WebSocket...'});
     const connect = (): void => {
       if (this.websocket) {
-        this.websocket.close();
-        this.websocket = null;
+        this.killWebSocket();
       }
       this.websocket = new WebSocket('ws://' + this.websocketHostAndPort);
 
@@ -156,8 +174,7 @@ class CrawlerProcessor {
           message: 'WebSocket connection closed.',
           code: event.code
         });
-        // console.log('WebSocket connection closed. Attempt to reconnect in 1 second.');
-        // setTimeout(connect, 1000);
+        this.killWebSocket();
       });
 
       this.websocket.on('error', (event: ErrorEvent) => {
@@ -166,9 +183,9 @@ class CrawlerProcessor {
           error: event.message
         });
         console.error('WebSocket Error:', event.message);
-        if (!this.websocket || this.websocket.readyState !== WebSocket.OPEN) {
+        if (this.websocket.readyState !== WebSocket.OPEN) {
           console.log('Attempt to reconnect in ' + CrawlerProcessor.RECONNECT_TIMEOUT + '  ms.');
-          setTimeout(connect, 1000);
+          this.reconnectWebSocketId = setTimeout(connect, 1000);
         }
       });
     };
@@ -176,8 +193,20 @@ class CrawlerProcessor {
     connect();
   }
 
+  private killWebSocket(): void
+  {
+    if (this.reconnectWebSocketId) {
+      clearTimeout(this.reconnectWebSocketId);
+    }
+
+    if (this.websocket !== null) {
+      this.websocket.close();
+      this.websocket = null;
+    }
+  }
+
   private sendMessageToRenderer(type: CrawlerMessageType, data: object): void {
-    this.mainWindow.webContents.send('crawler-message', { type, data });
+    this.mainWindow.webContents.send('crawler-message', {type, data});
   }
 }
 
