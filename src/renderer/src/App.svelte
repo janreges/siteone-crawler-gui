@@ -8,6 +8,9 @@
     function handleResize() {
         windowWidth = window.innerWidth;
         windowHeight = window.innerHeight;
+        if (form) {
+            form.handleResize();
+        }
     }
 
     function debounce(func, timeout = 100) {
@@ -21,6 +24,7 @@
     }
 
     const debouncedResize = debounce(handleResize);
+    let form;
 
     onMount(() => {
         window.addEventListener('resize', debouncedResize);
@@ -36,7 +40,7 @@
 </script>
 
 <div class="container max-h-screen h-screen w-full max-w-full min-w-full">
-    <CrawlerForm {windowWidth} {windowHeight}/>
+    <CrawlerForm {windowWidth} {windowHeight} bind:this={form}/>
 </div>
 
 <style>

@@ -25,13 +25,18 @@
     let terminal;
     var term;
     onMount(async () => {
+        const osPlatform = document.body.dataset.osplatform;
+        const defaultFont = osPlatform ? (osPlatform === 'win32' ? 'Consolas' : (osPlatform === 'darwin' ? 'SF Mono' : 'DejaVu Sans Mono')) : 'monospace';
         term = new Terminal({
             fontSize: 11,
-            fontFamily: 'Courier New',
-            cols: 230, // TODO: calculate from window size
-            rows: 57, // TODO: calculate from window size
+            fontFamily: defaultFont,
+            cols: getTerminalCols(),
+            rows: getTerminalRows(),
             scrollback: Number.MAX_SAFE_INTEGER,
-            allowProposedApi: true
+            allowProposedApi: true,
+            theme: {
+                background: '#111111'
+            }
         });
         var fitAddon = new FitAddon();
         term.open(terminal);
@@ -42,7 +47,7 @@
     });
 
 
-    const CRAWLER_IS_NOT_RUNNING = 'Crawler is not running...';
+    // const CRAWLER_IS_NOT_RUNNING = 'Crawler is not running...';
     const CRAWLER_IS_STARTING = 'Crawler is starting...';
     const CRAWLER_STOPPED = 'Crawler stopped.';
 
@@ -53,6 +58,7 @@
     let formState: string = STATE_NOT_RUNNING;
     let hasResult: boolean = false;
     let historyStorage:HistoryStorage = new HistoryStorage();
+    let basicFormPart:BasicFormPart = null;
 
     export let formData: CrawlerFormContent = null;
 
@@ -60,8 +66,9 @@
     export let windowWidth: number;
     export let windowHeight: number;
 
+    let basicFormPartHeight: number = 0;
     $: terminalWidth = windowWidth - 20;
-    $: terminalHeight = windowHeight - 200;
+    $: terminalHeight = windowHeight - basicFormPartHeight - 140;
 
     let activeTab: string = 'setup';
 
@@ -74,6 +81,7 @@
 
             case CrawlerMessageType.STARTED:
                 term.writeln(CRAWLER_IS_STARTING);
+                term.scrollToBottom();
                 break;
 
             case CrawlerMessageType.STOPPED:
@@ -95,10 +103,13 @@
         activeTab = 'output';
         formState = STATE_RUNNING;
 
-        formData.consoleWidth = Math.floor(terminalWidth / 7.9);
+        formData.consoleWidth = getTerminalCols();
         formData.cliParams = formData.generateCliParams();
 
+        term.resize(getTerminalCols(), getTerminalRows());
         term.writeln(CRAWLER_IS_STARTING);
+        term.scrollToBottom();
+
         window.api.setMessageToBackend({type: CrawlerMessageType.START, data: formData});
 
         const datetime = getCurrentDateTime();
@@ -129,6 +140,18 @@
         return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     }
 
+    function getTerminalCols() {
+        return Math.floor(terminalWidth / 7);
+    }
+
+    function getTerminalRows() {
+        return Math.floor(terminalHeight / 12);
+    }
+
+    export function handleResize(): void {
+        setTimeout(() => term.resize(getTerminalCols(), getTerminalRows()), 50);
+    }
+
     window.api.onCrawlerMessage(crawlerMessageHandler);
 
 </script>
@@ -137,7 +160,7 @@
     <!-- URL -->
 
     <div>
-        <BasicFormPart bind:value={formData.url} on:run={onRun} on:stop={onStop} label="URL"
+        <BasicFormPart bind:value={formData.url} bind:this={basicFormPart} bind:containerDivHeight={basicFormPartHeight} on:run={onRun} on:stop={onStop} label="URL"
                        on:loadFromHistory={handleLoadFromHistory} {historyStorage}
                        {formState} tooltip="Required URL. Enclose in quotes if URL contains query parameters."/>
     </div>
@@ -353,8 +376,9 @@
 
             <div class="mockup-window border border-base-300 bg-base-300 max-h-full h-full w-full">
 
-                <div id="terminal" class="terminal max-h-full h-full w-full" style="height: {terminalHeight}px" bind:this={terminal}/>
-                <!--                -->
+                <div id="terminal" class="terminal max-h-full h-full w-full" style="height: {terminalHeight}px; padding: 10px; background-color: #111;" bind:this={terminal}>
+
+                </div>
 <!--                <div id="terminal" class="terminal max-h-full h-full w-full" style="height: {terminalHeight}px">-->
 <!--                    { consoleOutput ? consoleOutput : CRAWLER_IS_NOT_RUNNING}-->
 <!--                </div>-->
@@ -475,7 +499,7 @@
     .tab-content-active {
         display: block;
     }
-
+/*
     .terminal :global(h1), .terminal :global(h2), .terminal :global(h3), .terminal :global(h4), .terminal :global(h5), .terminal :global(h6) {
         all: unset;
         font-family: 'Courier New', monospace;
@@ -497,6 +521,8 @@
         overflow-y: scroll;
         overflow-anchor: auto;
     }
+
+ */
 
     :global(.checkbox) {
         border-radius: 2px !important;
