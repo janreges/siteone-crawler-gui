@@ -131,10 +131,14 @@ class CrawlerProcessor {
   }
 
   public stopCrawler(): void {
+    if (!this.isRunning) {
+      return;
+    }
+    this.isRunning = false;
     this.sendMessageToRenderer(CrawlerMessageType.STOPPING, {});
 
     if (this.crawlerProcess && !this.crawlerProcess.killed) {
-      this.crawlerProcess.kill();
+      this.crawlerProcess.kill('SIGINT');
     }
     this.isRunning = false;
     this.progress = 0;

@@ -50,6 +50,11 @@ function createWindow(): void {
     }
   });
 
+  ipcMain.handle('get-exe-path', async (event) => {
+    console.log('EVENT: received get-exe-path' + event);
+    return app.getPath('exe');
+  });
+
 }
 
 // This method will be called when Electron has finished

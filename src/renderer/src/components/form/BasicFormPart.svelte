@@ -8,9 +8,10 @@
     export let label: string = "";
     export let tooltip: string = "";
     export let formState: string;
+    export let htmlReportFilePath: string = "";
 
     export let historyStorage:HistoryStorage;
-    export let containerDiv: HTMLDivElement;
+    let containerDiv: HTMLDivElement;
     export let containerDivHeight: number;
 
     const htmlId: string = "id" + Math.random().toString(36).substr(2, 9);
@@ -35,7 +36,7 @@
     }
 
     function handleFlush() {
-        if (window.confirm('Are you sure you want to erase history?')) {
+        if (window.confirm('Are you sure you want to erase history? ')) {
             historyStorage.flush();
             historyStorage = historyStorage;
             selectedHistoryItemKey = '';
@@ -57,6 +58,7 @@
         const resizeObserver = new ResizeObserver(entries => {
             debounce(() => {
                 for (let entry of entries) {
+                    entry = entry; // to avoid unused variable warning
                     updateHeight();
                 }
             }, 100);
@@ -68,6 +70,10 @@
             resizeObserver.unobserve(containerDiv);
         };
     });
+
+    // function openHtmlReportInBrowser(): void {
+    //     window.api.openExternal('file://' + htmlReportFilePath);
+    // }
 
 </script>
 
@@ -99,6 +105,11 @@
             {/each}
         </select>
         <a class="btn btn-xs" title="Erase history" on:click={handleFlush} class:btn-disabled={historyItems.length === 0}>Erase history</a>
+        <!--{#if htmlReportFilePath}-->
+        <!--    <a class="btn btn-xs btn-success btn-active" href="#" on:click={openHtmlReportInBrowser}>Open report</a>-->
+        <!--{:else}-->
+        <!--    <a class="btn btn-xs btn-disabled">Report not ready</a>-->
+        <!--{/if}-->
     </div>
 
 

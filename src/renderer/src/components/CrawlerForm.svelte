@@ -25,10 +25,11 @@
     let terminal;
     var term;
     onMount(async () => {
-        const osPlatform = document.body.dataset.osplatform;
+        const osPlatform = window.api.getPlatform();
         const defaultFont = osPlatform ? (osPlatform === 'win32' ? 'Consolas' : (osPlatform === 'darwin' ? 'SF Mono' : 'DejaVu Sans Mono')) : 'monospace';
+        console.log(defaultFont);
         term = new Terminal({
-            fontSize: 11,
+            fontSize: 12,
             fontFamily: defaultFont,
             cols: getTerminalCols(),
             rows: getTerminalRows(),
@@ -58,13 +59,13 @@
     let formState: string = STATE_NOT_RUNNING;
     let hasResult: boolean = false;
     let historyStorage:HistoryStorage = new HistoryStorage();
-    let basicFormPart:BasicFormPart = null;
 
     export let formData: CrawlerFormContent = null;
 
-
     export let windowWidth: number;
     export let windowHeight: number;
+    let reportBaseFilePath: string | null = null;
+    let offlineWebsiteDir: string | null = null;
 
     let basicFormPartHeight: number = 0;
     $: terminalWidth = windowWidth - 20;
@@ -86,13 +87,23 @@
 
             case CrawlerMessageType.STOPPED:
                 term.writeln(CRAWLER_STOPPED);
+                term.scrollToBottom();
                 formState = STATE_NOT_RUNNING;
                 hasResult = true;
                 break;
 
             case CrawlerMessageType.STDOUT_DATA:
                 let lines = message.data.message.trim().split(/\r?\n/);
-                lines.map((line) => {
+                lines.map(async (line) => {
+                    if (line && line.includes('HTML report saved')) {
+                        const pathDelimiter = window.api.getPlatform() === 'win32' ? '\\' : '/';
+                        reportBaseFilePath = await window.api.getTmpDir() + pathDelimiter + getReportBaseName(line);
+                        setTimeout(() => activeTab = 'result', 1000);
+                    } else if (line && line.includes('Offline website generated to')) {
+                        const pathDelimiter = window.api.getPlatform() === 'win32' ? '\\' : '/';
+                        offlineWebsiteDir = await window.api.getTmpDir() + pathDelimiter + getOfflineVersionBaseName(line);
+                        setTimeout(() => activeTab = 'result', 1000);
+                    }
                     term.writeln(line);
                 });
                 break;
@@ -102,6 +113,8 @@
     const onRun = function (): void {
         activeTab = 'output';
         formState = STATE_RUNNING;
+        reportBaseFilePath = null;
+        offlineWebsiteDir = null;
 
         formData.consoleWidth = getTerminalCols();
         formData.cliParams = formData.generateCliParams();
@@ -145,11 +158,49 @@
     }
 
     function getTerminalRows() {
-        return Math.floor(terminalHeight / 12);
+        return Math.floor(terminalHeight / 15);
     }
 
     export function handleResize(): void {
         setTimeout(() => term.resize(getTerminalCols(), getTerminalRows()), 50);
+    }
+
+    function getReportBaseName(text: string): string | null {
+        const regex = /HTML report saved to '([^']+)'/;
+        const match = text.match(regex);
+        if (match && match[1]) {
+            const fullPath = match[1].replace('.html', '');
+            const pathSegments = fullPath.split('/');
+            return pathSegments[pathSegments.length - 1];
+        }
+        return null;
+    }
+
+    function getOfflineVersionBaseName(text: string): string | null {
+        const regex = /Offline website generated to '([^']+)'/;
+        const match = text.match(regex);
+        if (match && match[1]) {
+            const fullPath = match[1];
+            const pathSegments = fullPath.split('/');
+            return pathSegments[pathSegments.length - 1];
+        }
+        return null;
+    }
+
+    function openReportInBrowser(extension:string): void {
+        window.api.openExternal('file://' + getReportFilePath(extension));
+    }
+
+    function openOfflineVersion():void {
+        window.api.openExternal('file://' + offlineWebsiteDir + '/index.html');
+    }
+
+    function getReportFilePath(extension:string): string {
+        let result = reportBaseFilePath + '.' + extension;
+        if (extension === 'json' || extension === 'txt') {
+            result = result.replace('report.', 'output.');
+        }
+        return result;
     }
 
     window.api.onCrawlerMessage(crawlerMessageHandler);
@@ -160,11 +211,10 @@
     <!-- URL -->
 
     <div>
-        <BasicFormPart bind:value={formData.url} bind:this={basicFormPart} bind:containerDivHeight={basicFormPartHeight} on:run={onRun} on:stop={onStop} label="URL"
-                       on:loadFromHistory={handleLoadFromHistory} {historyStorage}
+        <BasicFormPart bind:value={formData.url} bind:containerDivHeight={basicFormPartHeight} on:run={onRun} on:stop={onStop} label="URL"
+                       on:loadFromHistory={handleLoadFromHistory} {historyStorage} bind:htmlReportFilePath={reportBaseFilePath}
                        {formState} tooltip="Required URL. Enclose in quotes if URL contains query parameters."/>
     </div>
-
     <div role="tablist" class="tabs tabs-bordered">
         <a role="tab" class="tab font-semibold" class:tab-active={activeTab === 'setup'}
            on:click={() => activeTab = 'setup'}>Setup</a>
@@ -172,6 +222,7 @@
            on:click={() => activeTab = 'output'}>Output</a>
         <a role="tab" class="tab font-semibold" class:tab-active={activeTab === 'result'}
            class:tab-disabled={!hasResult} on:click={() => hasResult ? (activeTab = 'result') : null}>Result</a>
+
         <div role="tabpanel" class="tab-content  pt-4 h-full max-h-full w-full"
              class:tab-content-active={activeTab === 'setup'}>
             <div class="fieldset-container">
@@ -323,8 +374,8 @@
                 <!-- Offline exporter options -->
                 <fieldset>
                     <legend>Offline Exporter Options</legend>
-                    <DirInput bind:value={formData.offlineExportDirectory} label="Offline Export Directory"
-                              tooltip="Path to directory where to save the offline version of the website."/>
+                    <DirInput bind:value={formData.offlineExportDirectory} label="Offline Export Directory" placeholder="tmp/yourdomain.com"
+                              tooltip="Path to directory where to save the offline version of the website. Required to set `tmp/*`, e.g. `tmp/yourdomain.com`"/>
                     <RegexInput bind:value={formData.offlineExportStoreOnlyUrlRegex} label="Store Only URL Regex"
                                 tooltip="For debug - store only URLs which match one of these PCRE regexes."/>
                 </fieldset>
@@ -385,9 +436,42 @@
             </div>
         </div>
 
-        <div role="tabpanel" class="tab-content bg-base-100 pt-4 max-h-full h-full w-full"
+        <div role="tabpanel" class="tab-content bg-base-100 pt-4 max-h-full h-full w-full gap-12"
              class:tab-content-active={activeTab === 'result'}>
-            RESULT EXAMPLE
+
+            {#if offlineWebsiteDir}
+                <div role="alert" class="alert alert-success" style="margin-bottom: 20px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span>Congrats! Offline website has been successfully generated.</span>
+                    <div>
+                        <a class="btn btn-active btn-primary" href="#" on:click={() => openOfflineVersion()}>Browse offline website</a>
+                    </div>
+                </div>
+            {/if}
+
+            {#if reportBaseFilePath}
+                <div role="alert" class="alert">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-success shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span class="text-success">Crawling has been finished and your reports are generated:</span>
+                    <div>
+                        <a class="btn btn-active btn-success" href="#" on:click={() => openReportInBrowser('html')}>HTML report</a>
+                        <a class="btn btn-active btn-info" href="#" on:click={() => openReportInBrowser('json')}>JSON report</a>
+                        <a class="btn btn-active btn-warning" href="#" on:click={() => openReportInBrowser('txt')}>TXT report</a>
+                    </div>
+                </div>
+
+                <h2 style="font-size: 1em; margin: 24px 0;">... or manually go to the temporary folder and view older reports as well:</h2>
+
+                <div class="mockup-code" style="font-size: 0.8em;">
+                    <pre data-prefix="$"><code class="text-warning">cd {reportBaseFilePath.replace(/[\/\\][^\/\\]+$/, '')}</code></pre>
+                </div>
+            {:else}
+                <div role="alert" class="alert">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-info shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>Enter the URL above and start crawling to generate reports.</span>
+                </div>
+            {/if}
+
         </div>
     </div>
 
