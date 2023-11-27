@@ -83,38 +83,38 @@
 
 </script>
 
-<div class="form-group form-group-url" bind:this={containerDiv} style="width: 100%; margin-bottom: 20px;">
-
-    <svg width="70px" height="34px" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 119 59" xml:space="preserve">
-        <path d="M49.4 29.1L49.4 29.1L49.4 29.1l8.8-8.8l0 0h0V0h-9.9v16.2l-5.9 5.9L29.1 8.9L15.9 22.1l-5.9-5.9V0H0v20.2h0l0 0l8.8 8.8
-            l0 0l0 0L0 37.9l0 0h0v20.2h9.9V42l5.9-5.9l13.3 13.3l13.3-13.3l5.9 5.9v16.2h9.9V38h0l0 0L49.4 29.1z M29.1 35.4l-6.3-6.3l6.3-6.3
-            l6.3 6.3L29.1 35.4z" fill="#FFFFFF"/>
-        <path fill-rule="evenodd" clip-rule="evenodd"
-              d="M92.3 15v33.2H75.5v10H119v-10h-16.4V0h-9.3L67.1 26.2l7 7C74.1 33.2 92.3 15 92.3 15z"
-              fill="#777777"/>
-    </svg>
-
-    <input id={htmlId}
-           type="text"
-           class="input input-bordered w-full max-w-xs text-blue-500"
-           bind:value
-           title={tooltip}
-           placeholder="https://"
-           style="min-width: 350px;"
-           disabled={formState === 'running' || formState === 'stopping'}
-           on:keydown={handleKeydown}
-    />
-
-    {#if formState === 'not-running'}
-        <button class="btn text-blue-500" type="button" on:click={() => dispatch('run')} disabled={!value.match(/^https?:\/\/[^/]{3,}/)}> Run crawler</button>
-    {:else if formState === 'stopping'}
-        <button class="btn text-gray-500 btn-disabled" type="button"><span class="loading loading-spinner loading-sm"></span> Stopping...</button>
-    {:else}
-        <button class="btn text-red-500" type="button" on:click={() => dispatch('stop')}><span class="loading loading-spinner loading-sm"></span> Stop crawler</button>
-    {/if}
-
-    <HistoryDropdown {historyItems} on:erase={() => handleEraseHistory()} on:loadFromHistory={(event) => loadFromHistory(event.detail)} />
-
+<div class="form-group form-group-url flex justify-between flex-wrap" bind:this={containerDiv} style="width: 100%; margin-bottom: 20px;">
+    <div class="flex gap-4">
+        <svg style="margin-top: 7px;" width="70px" height="34px" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 119 59" xml:space="preserve">
+            <path d="M49.4 29.1L49.4 29.1L49.4 29.1l8.8-8.8l0 0h0V0h-9.9v16.2l-5.9 5.9L29.1 8.9L15.9 22.1l-5.9-5.9V0H0v20.2h0l0 0l8.8 8.8
+                l0 0l0 0L0 37.9l0 0h0v20.2h9.9V42l5.9-5.9l13.3 13.3l13.3-13.3l5.9 5.9v16.2h9.9V38h0l0 0L49.4 29.1z M29.1 35.4l-6.3-6.3l6.3-6.3
+                l6.3 6.3L29.1 35.4z" fill="#FFFFFF"/>
+            <path fill-rule="evenodd" clip-rule="evenodd"
+                  d="M92.3 15v33.2H75.5v10H119v-10h-16.4V0h-9.3L67.1 26.2l7 7C74.1 33.2 92.3 15 92.3 15z"
+                  fill="#777777"/>
+        </svg>
+        <div class="flex flex-col">
+            <input id={htmlId}
+                   type="text"
+                   class="input input-bordered w-full max-w-xs text-blue-500"
+                   bind:value
+                   title={tooltip}
+                   placeholder="https://"
+                   style="min-width: 350px;"
+                   disabled={formState === 'running' || formState === 'stopping'}
+                   on:keydown={handleKeydown}
+            />
+            <div>
+                {#if formState === 'not-running'}
+                    <button class="btn text-blue-500" type="button" on:click={() => dispatch('run')} disabled={!value.match(/^https?:\/\/[^/]{3,}/)}> Run crawler</button>
+                {:else if formState === 'stopping'}
+                    <button class="btn text-gray-500 btn-disabled" type="button"><span class="loading loading-spinner loading-sm"></span> Stopping...</button>
+                {:else}
+                    <button class="btn text-red-500" type="button" on:click={() => dispatch('stop')}><span class="loading loading-spinner loading-sm"></span> Stop crawler</button>
+                {/if}
+                <HistoryDropdown {historyItems} on:erase={() => handleEraseHistory()} on:loadFromHistory={(event) => loadFromHistory(event.detail)} />
+            </div>
+        </div>
+    </div>
     <slot />
-
 </div>
