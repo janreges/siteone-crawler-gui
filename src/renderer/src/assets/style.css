@@ -1,6 +1,7 @@
 .timeline .timeline-box-small {
   padding: 0.1rem 0.4rem !important;
   border-radius: 0.6rem;
+  font-size: 0.8em;
 }
 
 .dropdown-content li a {

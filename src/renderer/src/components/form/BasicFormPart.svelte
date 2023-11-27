@@ -4,7 +4,6 @@
     import type {HistoryStorage} from "../../history/HistoryStorage";
     import CrawlerFormContent from "../../types/CrawlerFormContent";
     import HistoryDropdown from "../HistoryDropdown.svelte";
-    import Timeline from "../Timeline.svelte";
 
     export let value: string = "";
     export let label: string = "";
@@ -116,6 +115,6 @@
 
     <HistoryDropdown {historyItems} on:erase={() => handleEraseHistory()} on:loadFromHistory={(event) => loadFromHistory(event.detail)} />
 
-    <Timeline />
+    <slot />
 
 </div>

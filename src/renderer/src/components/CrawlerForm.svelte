@@ -21,6 +21,8 @@
     import { FitAddon } from "xterm-addon-fit";
     import { CanvasAddon } from "xterm-addon-canvas";
     import {onMount} from "svelte";
+    import Timeline from "./Timeline.svelte";
+    import {TimelineState} from "../types/TimelineState";
 
     let terminal;
     var term;
@@ -60,6 +62,8 @@
     let hasResult: boolean = false;
     let historyStorage:HistoryStorage = new HistoryStorage();
 
+    const timelineState = new TimelineState();
+
     export let formData: CrawlerFormContent = null;
 
     export let windowWidth: number;
@@ -90,6 +94,9 @@
                 term.scrollToBottom();
                 formState = STATE_NOT_RUNNING;
                 hasResult = true;
+                if (timelineState.htmlReport) {
+                    timelineState.finished = true;
+                }
                 break;
 
             case CrawlerMessageType.STDOUT_DATA:
@@ -98,11 +105,20 @@
                     if (line && line.includes('HTML report saved')) {
                         const pathDelimiter = window.api.getPlatform() === 'win32' ? '\\' : '/';
                         reportBaseFilePath = await window.api.getTmpDir() + pathDelimiter + getReportBaseName(line);
+                        timelineState.htmlReport = true;
                         setTimeout(() => activeTab = 'result', 1000);
                     } else if (line && line.includes('Offline website generated to')) {
                         const pathDelimiter = window.api.getPlatform() === 'win32' ? '\\' : '/';
                         offlineWebsiteDir = await window.api.getTmpDir() + pathDelimiter + getOfflineVersionBaseName(line);
+                        timelineState.offlineExport = true;
                         setTimeout(() => activeTab = 'result', 1000);
+                    } else {
+                        var match = line.match(/(\d+)\/(\d+)\s*\|\s*(\d+)%/);
+                        if (match) {
+                            timelineState.progressCurrent = parseInt(match[1]);
+                            timelineState.progressTotal = parseInt(match[2]);
+                            timelineState.progressPercentage = parseInt(match[3]);
+                        }
                     }
                     term.writeln(line);
                 });
@@ -115,6 +131,9 @@
         formState = STATE_RUNNING;
         reportBaseFilePath = null;
         offlineWebsiteDir = null;
+
+        timelineState.reset();
+        timelineState.started = true;
 
         formData.consoleWidth = getTerminalCols();
         formData.cliParams = formData.generateCliParams();
@@ -213,7 +232,9 @@
     <div>
         <BasicFormPart bind:value={formData.url} bind:containerDivHeight={basicFormPartHeight} on:run={onRun} on:stop={onStop} label="URL"
                        on:loadFromHistory={handleLoadFromHistory} {historyStorage} bind:htmlReportFilePath={reportBaseFilePath}
-                       {formState} tooltip="Required URL. Enclose in quotes if URL contains query parameters."/>
+                       {formState} tooltip="Required URL. Enclose in quotes if URL contains query parameters.">
+            <Timeline state={timelineState} />
+        </BasicFormPart>
     </div>
     <div role="tablist" class="tabs tabs-bordered">
         <a role="tab" class="tab font-semibold" class:tab-active={activeTab === 'setup'}
