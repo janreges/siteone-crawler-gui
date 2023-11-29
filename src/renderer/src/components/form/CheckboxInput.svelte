@@ -4,7 +4,7 @@
   export let tooltip: string = "";
 </script>
 
-<label>
-  <input type="checkbox" class="checkbox checkbox-xs checkbox-info" bind:checked title={tooltip} />
+<label style="display: flex; align-items: center;">
+  <input type="checkbox" class="checkbox checkbox-xs checkbox-info" bind:checked title={tooltip} style="margin-right: 6px;" />
   {label}
 </label>

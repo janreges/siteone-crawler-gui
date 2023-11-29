@@ -87,6 +87,20 @@ a.timeline-link {
   top: 6px;
 }
 
+.alert-buttons a {
+  margin-left: 10px;
+}
+
+.hidden-with-effect {
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.visible-with-effect {
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out;
+}
+
 body .tab-content {
   display: none !important;
 }

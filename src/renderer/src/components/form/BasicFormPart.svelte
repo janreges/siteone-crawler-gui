@@ -109,6 +109,7 @@
                        placeholder="https://"
                        style="min-width: 350px;"
                        disabled={formState === 'running' || formState === 'stopping'}
+                       on:change={(event) => dispatch('urlChange', event)}
                        on:keydown={handleKeydown}
                 />
                 {#if formState === 'not-running'}

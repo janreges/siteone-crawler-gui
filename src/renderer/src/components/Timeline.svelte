@@ -107,6 +107,14 @@
             </div>
         </li>
     </ul>
-    <progress class="progress w-148" value={state.progressPercentage} max="100" class:progress-warning={state.progressPercentage < 100} class:progress-success={state.progressPercentage === 100}></progress>
+    <progress
+        class="progress w-148"
+        value={state.progressPercentage}
+        max="100"
+        class:hidden-with-effect={state.progressPercentage === null || state.progressPercentage === 0 || state.progressPercentage === 100}
+        class:visible-with-effect={state.progressPercentage !== null && state.progressPercentage !== 100}
+        class:progress-warning={state.progressPercentage < 90}
+        class:progress-success={state.progressPercentage >= 90}
+    ></progress>
 </div>
 

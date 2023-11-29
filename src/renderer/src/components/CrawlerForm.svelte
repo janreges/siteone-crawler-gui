@@ -25,7 +25,8 @@
     import {TimelineState} from "../types/TimelineState";
     import BasicForm from './BasicForm.svelte';
     import { PLATFORM, ARCHITECTURE, VERSION } from '../types/CrawlerInfo';
-    import CrawlerMiniStats from "./CrawlerMiniStats.svelte";
+    import CrawlerMiniStats from "./MiniStats.svelte";
+    import { MiniStatsData } from '../types/MiniStatsData';
 
     let terminal;
     var term;
@@ -43,6 +44,7 @@
     let historyStorage:HistoryStorage = new HistoryStorage();
 
     const timelineState = new TimelineState();
+    let miniStatsData = new MiniStatsData();
 
     export let formData: CrawlerFormContent = null;
 
@@ -124,6 +126,8 @@
                             timelineState.progressCurrent = parseInt(match[1]);
                             timelineState.progressTotal = parseInt(match[2]);
                             timelineState.progressPercentage = parseInt(match[3]);
+                            miniStatsData.handleUrlInfoLine(line);
+                            miniStatsData = miniStatsData;
                         }
                     }
                     term.writeln(line);
@@ -138,6 +142,8 @@
         reportBaseFilePath = null;
         offlineWebsiteDir = null;
 
+        miniStatsData.reset();
+        miniStatsData = miniStatsData;
         timelineState.reset();
         timelineState.started = true;
 
@@ -163,6 +169,7 @@
 
     function handleLoadFromHistory(event) {
         formData = event.detail;
+        handleUrlChange();
     }
 
     function getCurrentDateTime() {
@@ -253,6 +260,13 @@
         formData.allowedDomainForExternalFiles = stringToDomains(event.detail.currentTarget.value);
     }
 
+    function handleUrlChange(): void {
+        if (formData.url.match(/^https?:\/\/[a-z0-9]/)) {
+            // if URL changed and offline export dir was set, then recalculate it
+            formData.offlineExportDirectory = formData.offlineExportDirectory !== null ? 'tmp/'+formData.getDomainFromUrl() : null;
+        }
+    }
+
     window.api.onCrawlerMessage(crawlerMessageHandler);
 
 </script>
@@ -263,7 +277,7 @@
     <div>
         <BasicFormPart bind:value={formData.url} bind:containerDivHeight={basicFormPartHeight} on:run={onRun} on:stop={onStop} label="URL"
                        on:loadFromHistory={handleLoadFromHistory} {historyStorage} bind:htmlReportFilePath={reportBaseFilePath}
-                       on:openCrawlerHomepage={openCrawlerHomepage}
+                       on:openCrawlerHomepage={openCrawlerHomepage} on:urlChange={handleUrlChange}
                        {formState} tooltip="Required URL. Enclose in quotes if URL contains query parameters.">
             <Timeline state={timelineState} />
         </BasicFormPart>
@@ -490,7 +504,7 @@
              class:tab-content-active={activeTab === 'output'}>
 
             <div class="mockup-window border border-base-300 bg-base-300 max-h-full h-full w-full">
-                <CrawlerMiniStats/>
+                <CrawlerMiniStats data={miniStatsData}/>
                 <div id="terminal" class="terminal max-h-full h-full w-full" style="height: {terminalHeight}px; padding: 10px; background-color: #111;" bind:this={terminal}>
 
                 </div>
@@ -506,38 +520,41 @@
             {#if reportBaseFilePath}
                 <div role="alert" class="alert">
                     <svg xmlns="http://www.w3.org/2000/svg" class="stroke-success shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    <span class="text-success">Crawling has been finished and your reports are generated:</span>
-                    <div>
-                        <a class="btn btn-active btn-success" href="#" on:click={() => openReportInBrowser('html')}>HTML report</a>
-                        <a class="btn btn-active btn-info" href="#" on:click={() => openReportInBrowser('json')}>JSON report</a>
-                        <a class="btn btn-active btn-warning" href="#" on:click={() => openReportInBrowser('txt')}>TXT report</a>
+                    <span class="text-success">Crawling has been finished and your reports are generated.</span>
+                    <div class="alert-buttons">
+                        <a class="btn btn-active btn-primary" title="Open HTML report" aria-label="Open HTML label" href="#" on:click={() => openReportInBrowser('html')}>HTML report</a>
+                        <a class="btn btn-active btn-info" title="Open JSON report" aria-label="Open JSON label" href="#" on:click={() => openReportInBrowser('json')}>JSON report</a>
+                        <a class="btn btn-active btn-warning" title="Open TXT report" aria-label="Open TXT label" href="#" on:click={() => openReportInBrowser('txt')}>TXT report</a>
                     </div>
                 </div>
+            {/if}
 
+            {#if offlineWebsiteDir || true}
+                <div role="alert" class="alert" style="margin-top: 14px; margin-bottom: 20px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-success shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span class="text-success">Offline website has been successfully generated.</span>
+                    <div>
+                        <a class="btn btn-active btn-secondary" title="Browse offline website" aria-label="Browse offline website" href="#" on:click={() => openOfflineVersion()}>Browse offline website</a>
+                    </div>
+                </div>
+            {/if}
+
+            {#if reportBaseFilePath}
                 <h2 style="font-size: 1em; margin: 24px 0;">... or manually go to the temporary folder and view older reports as well:</h2>
 
                 <div class="mockup-code" style="font-size: 0.8em;">
                     <pre data-prefix="$"><code class="text-warning">cd {reportBaseFilePath.replace(/[\/\\][^\/\\]+$/, '')}</code></pre>
                 </div>
-            {:else}
+            {/if}
+
+            {#if !reportBaseFilePath}
                 <div role="alert" class="alert">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-info shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     <span>Enter the URL above and start crawling to generate reports.</span>
                 </div>
             {/if}
 
-            {#if offlineWebsiteDir}
-                <div role="alert" class="alert" style="margin-bottom: 20px;">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-success shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    <span class="text-success">Congrats! Offline website has been successfully generated.</span>
-                    <div>
-                        <a class="btn btn-active btn-primary" href="#" on:click={() => openOfflineVersion()}>Browse offline website</a>
-                    </div>
-                </div>
-            {/if}
-
         </div>
-    </div>
 
 </form>
 
