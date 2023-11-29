@@ -6,32 +6,35 @@
 
     const SHOW_LIMIT = 10;
     let dropdownEl: HTMLDivElement;
+    let selectEl: HTMLSelectElement;
     let showMore: boolean = false;
-    $: historyItemsToShow = historyItems.slice(0, showMore ? 10000 : SHOW_LIMIT);
+    $: historyItemsToShow = [...historyItems].reverse().slice(0, showMore ? 10000 : SHOW_LIMIT);
 
     const dispatch = createEventDispatcher();
 
-    onMount(() => {
-        const dropdownContent = document.querySelectorAll(".dropdown-content>li>a");
-        dropdownContent.forEach((element) => {
-            element.addEventListener("click", () => {
-                document.activeElement.blur();
-            });
-        });
-    });
+    function handleChange() {
+        const value = selectEl.value;
+        if (value === 'erase') {
+            dispatch('erase');
+        } else if (value === 'showMore') {
+            showMore = !showMore;
+            selectEl.value = '';
+        } else {
+            dispatch('loadFromHistory', value);
+        }
+    }
 
 </script>
-<div bind:this={dropdownEl} class="dropdown dropdown-end dropdown-hover">
-    <div tabindex="0" role="button" class="btn m-1">History ({historyItems.length})</div>
-    <ul class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box" style="width: 360px;">
-        {#each historyItemsToShow.reverse() as {key, datetime, url}}
-            <li><a href="#" on:click={() => {dispatch('loadFromHistory', key); dropdownEl.classList.toggle('dropdown-open'); document.activeElement.blur()}}>{datetime} ({url.replace(/^https?:\/\/([^/]+).*$/, '$1')})</a></li>
-        {/each}
-        {#if historyItems.length > 0}
-            <li><a class="link link-warning" title="Erase history" aria-label="Erase history" on:click={() => dispatch('erase')}>Erase history</a></li>
-        {/if}
-        {#if historyItems.length > SHOW_LIMIT}
-            <li><a class="link link-info" title="Show more" aria-label="Show more" on:click={() => showMore = !showMore}>{showMore ? 'Show less' : 'Show more'}</a></li>
-        {/if}
-    </ul>
-</div>
+
+<select bind:this={selectEl} class="select select-bordered select-sm mt-2" style="width: 350px;" on:change={handleChange} class:select-disabled={historyItems.length === 0}>
+    <option value="">== Load settings from history ({historyItems.length}) ==</option>
+    {#each historyItemsToShow as {key, datetime, url}}
+        <option value={key}>{datetime} ({url.replace(/^https?:\/\/([^/]+).*$/, '$1')})</option>
+    {/each}
+    {#if historyItems.length > 0}
+        <option value="erase" style="color: #ff4c4c;">••• Erase history •••</option>
+    {/if}
+    {#if historyItems.length > SHOW_LIMIT}
+        <option value="showMore" style="color: #ff9234">••• {showMore ? 'Show less' : 'Show all ' + historyItems.length + ' items'} •••</option>
+    {/if}
+</select>

@@ -23,32 +23,11 @@
     import {onMount} from "svelte";
     import Timeline from "./Timeline.svelte";
     import {TimelineState} from "../types/TimelineState";
+    import BasicForm from './BasicForm.svelte';
+    import { PLATFORM, ARCHITECTURE, VERSION } from '../types/CrawlerInfo';
 
     let terminal;
     var term;
-    onMount(async () => {
-        const osPlatform = window.api.getPlatform();
-        const defaultFont = osPlatform ? (osPlatform === 'win32' ? 'Consolas' : (osPlatform === 'darwin' ? 'SF Mono' : 'DejaVu Sans Mono')) : 'monospace';
-        console.log(defaultFont);
-        term = new Terminal({
-            fontSize: 12,
-            fontFamily: defaultFont,
-            cols: getTerminalCols(),
-            rows: getTerminalRows(),
-            scrollback: Number.MAX_SAFE_INTEGER,
-            allowProposedApi: true,
-            theme: {
-                background: '#111111'
-            }
-        });
-        var fitAddon = new FitAddon();
-        term.open(terminal);
-        term.loadAddon(new CanvasAddon());
-        term.loadAddon(fitAddon);
-        fitAddon.fit();
-        term.writeln('Hello from SiteOne Crawler!');
-    });
-
 
     // const CRAWLER_IS_NOT_RUNNING = 'Crawler is not running...';
     const CRAWLER_IS_STARTING = 'Crawler is starting...';
@@ -75,11 +54,37 @@
     $: terminalWidth = windowWidth - 20;
     $: terminalHeight = windowHeight - basicFormPartHeight - 140;
 
-    let activeTab: string = 'setup';
+    let activeTab: string = 'basic';
 
     if (formData === null) {
         formData = new CrawlerFormContent();
     }
+
+    $: allowedDomainForCrawlingString = domainsToString(formData.allowedDomainForCrawling);
+    $: allowedDomainForExternalString = domainsToString(formData.allowedDomainForExternalFiles);
+
+    onMount(async () => {
+        const osPlatform = window.api.getPlatform();
+        const defaultFont = osPlatform ? (osPlatform === 'win32' ? 'Consolas' : (osPlatform === 'darwin' ? 'SF Mono' : 'DejaVu Sans Mono')) : 'monospace';
+        console.log(defaultFont);
+        term = new Terminal({
+            fontSize: 12,
+            fontFamily: defaultFont,
+            cols: getTerminalCols(),
+            rows: getTerminalRows(),
+            scrollback: Number.MAX_SAFE_INTEGER,
+            allowProposedApi: true,
+            theme: {
+                background: '#111111'
+            }
+        });
+        var fitAddon = new FitAddon();
+        term.open(terminal);
+        term.loadAddon(new CanvasAddon());
+        term.loadAddon(fitAddon);
+        fitAddon.fit();
+        term.writeln('Hello from SiteOne Crawler! Enter the URL above and let me do my work :-)');
+    });
 
     const crawlerMessageHandler: (event: any, message: CrawlerMessage) => void = function (_event, message) {
         switch(message.type) {
@@ -137,6 +142,7 @@
 
         formData.consoleWidth = getTerminalCols();
         formData.cliParams = formData.generateCliParams();
+        console.log('CLI params', formData.cliParams);
 
         term.resize(getTerminalCols(), getTerminalRows());
         term.writeln(CRAWLER_IS_STARTING);
@@ -210,8 +216,16 @@
         window.api.openExternal('file://' + getReportFilePath(extension));
     }
 
+    function openHtmlReport(): void {
+      window.api.openExternal('file://' + getReportFilePath('html'));
+    }
+
     function openOfflineVersion():void {
         window.api.openExternal('file://' + offlineWebsiteDir + '/index.html');
+    }
+
+    function openCrawlerHomepage():void {
+      window.api.openExternal('https://crawler.siteone.io/?utm_source=app&utm_medium='+PLATFORM+'&utm_campaign='+ARCHITECTURE+'&utm_content='+VERSION);
     }
 
     function getReportFilePath(extension:string): string {
@@ -220,6 +234,22 @@
             result = result.replace('report.', 'output.');
         }
         return result;
+    }
+
+    function domainsToString(domainsArray:string[]): string {
+        return domainsArray ? domainsArray.join(',') : '';
+    }
+
+    function stringToDomains(domainsString:string): string[] {
+        return domainsString.split(',').map(domain => domain.trim());
+    }
+
+    function handleAllowedDomainForCrawlingChange(event): void {
+        formData.allowedDomainForCrawling = stringToDomains(event.detail.currentTarget.value);
+    }
+
+    function handleAllowedDomainForExternalFilesChange(event): void {
+        formData.allowedDomainForExternalFiles = stringToDomains(event.detail.currentTarget.value);
     }
 
     window.api.onCrawlerMessage(crawlerMessageHandler);
@@ -232,17 +262,27 @@
     <div>
         <BasicFormPart bind:value={formData.url} bind:containerDivHeight={basicFormPartHeight} on:run={onRun} on:stop={onStop} label="URL"
                        on:loadFromHistory={handleLoadFromHistory} {historyStorage} bind:htmlReportFilePath={reportBaseFilePath}
+                       on:openCrawlerHomepage={openCrawlerHomepage}
                        {formState} tooltip="Required URL. Enclose in quotes if URL contains query parameters.">
             <Timeline state={timelineState} />
         </BasicFormPart>
     </div>
     <div role="tablist" class="tabs tabs-bordered">
-        <a role="tab" class="tab font-semibold" class:tab-active={activeTab === 'setup'}
-           on:click={() => activeTab = 'setup'}>Setup</a>
-        <a role="tab" class="tab font-semibold" class:tab-active={activeTab === 'output'}
+        <a role="tab" class="tab font-semibold text-gray-300" class:tab-active={activeTab === 'basic'}
+         on:click={() => activeTab = 'basic'}>Basic&nbsp;settings</a>
+        <a role="tab" class="tab font-semibold text-gray-300" class:tab-active={activeTab === 'setup'}
+           on:click={() => activeTab = 'setup'}>Full&nbsp;settings</a>
+        <a role="tab" class="tab font-semibold text-gray-300" class:tab-active={activeTab === 'output'}
            on:click={() => activeTab = 'output'}>Output</a>
         <a role="tab" class="tab font-semibold" class:tab-active={activeTab === 'result'}
            class:tab-disabled={!hasResult} on:click={() => hasResult ? (activeTab = 'result') : null}>Result</a>
+
+        <div role="tabpanel" class="tab-content  pt-4 h-full max-h-full w-full"
+             class:tab-content-active={activeTab === 'basic'}>
+
+            <BasicForm bind:data={formData} />
+
+        </div>
 
         <div role="tabpanel" class="tab-content  pt-4 h-full max-h-full w-full"
              class:tab-content-active={activeTab === 'setup'}>
@@ -292,10 +332,12 @@
                 <!-- Resource filtering -->
                 <fieldset>
                     <legend>Resource Filtering</legend>
-                    <ValInput bind:value={formData.allowedDomainForExternalFiles} label="Allowed Domain for Ext. Files"
-                              tooltip="Allows loading of file content from another domain as well."/>
-                    <ValInput bind:value={formData.allowedDomainForCrawling} label="Allowed Domain for Crawling"
-                              tooltip="Allows crawling of all content from other listed domains."/>
+                    <ValInput value={allowedDomainForExternalString} label="Allowed Domains for Ext. Files"
+                              on:input={handleAllowedDomainForExternalFilesChange}
+                              tooltip="Allows loading of file content from another domains as well. Comma delimited."/>
+                    <ValInput value={allowedDomainForCrawlingString} label="Allowed Domains for Crawling"
+                              on:input={handleAllowedDomainForCrawlingChange}
+                              tooltip="Allows crawling of all content from other listed domains. Comma delimited."/>
                     <CheckboxInput bind:checked={formData.disableJavascript} label="Disable JavaScript"
                                    tooltip="Disables JavaScript downloading and removes all JavaScript code from HTML."/>
                     <CheckboxInput bind:checked={formData.disableStyles} label="Disable Styles"
@@ -460,16 +502,6 @@
         <div role="tabpanel" class="tab-content bg-base-100 pt-4 max-h-full h-full w-full gap-12"
              class:tab-content-active={activeTab === 'result'}>
 
-            {#if offlineWebsiteDir}
-                <div role="alert" class="alert alert-success" style="margin-bottom: 20px;">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    <span>Congrats! Offline website has been successfully generated.</span>
-                    <div>
-                        <a class="btn btn-active btn-primary" href="#" on:click={() => openOfflineVersion()}>Browse offline website</a>
-                    </div>
-                </div>
-            {/if}
-
             {#if reportBaseFilePath}
                 <div role="alert" class="alert">
                     <svg xmlns="http://www.w3.org/2000/svg" class="stroke-success shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -490,6 +522,16 @@
                 <div role="alert" class="alert">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-info shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     <span>Enter the URL above and start crawling to generate reports.</span>
+                </div>
+            {/if}
+
+            {#if offlineWebsiteDir}
+                <div role="alert" class="alert" style="margin-bottom: 20px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-success shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span class="text-success">Congrats! Offline website has been successfully generated.</span>
+                    <div>
+                        <a class="btn btn-active btn-primary" href="#" on:click={() => openOfflineVersion()}>Browse offline website</a>
+                    </div>
                 </div>
             {/if}
 
@@ -559,7 +601,7 @@
     :global(input[type="password"]),
     :global(select) {
         flex-grow: 1;
-        color: rgb(59 130 246);
+        color: oklch(var(--in)) !important;
         cursor: help;
     }
 
@@ -604,30 +646,6 @@
     .tab-content-active {
         display: block;
     }
-/*
-    .terminal :global(h1), .terminal :global(h2), .terminal :global(h3), .terminal :global(h4), .terminal :global(h5), .terminal :global(h6) {
-        all: unset;
-        font-family: 'Courier New', monospace;
-        font-size: 11px;
-        line-height: 12px;
-    }
-
-    .terminal {
-        width: 100%;
-        height: 100%;
-        background-color: #000000;
-        font-family: 'Courier New', monospace;
-        font-size: 11px;
-        padding: 10px;
-        border-radius: 5px;
-        line-height: 12px;
-        white-space: pre-wrap;
-        overflow-x: auto;
-        overflow-y: scroll;
-        overflow-anchor: auto;
-    }
-
- */
 
     :global(.checkbox) {
         border-radius: 2px !important;

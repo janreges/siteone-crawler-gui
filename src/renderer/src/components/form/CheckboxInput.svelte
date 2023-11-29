@@ -5,6 +5,6 @@
 </script>
 
 <label>
-  <input type="checkbox" class="checkbox checkbox-xs" bind:checked title={tooltip} />
+  <input type="checkbox" class="checkbox checkbox-xs checkbox-info" bind:checked title={tooltip} />
   {label}
 </label>

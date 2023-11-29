@@ -7,6 +7,12 @@ module.exports = {
   plugins: [
     require('daisyui')
   ],
+  safelist: [
+    'tooltip-top',
+    'tooltip-right',
+    'tooltip-bottom',
+    'tooltip-left',
+  ],
   // daisyUI config (optional - here are the default values)
   daisyui: {
     themes: ["light", "dark"], // false: only light + dark | true: all themes | array: specific themes like this ["light", "dark", "cupcake"]

@@ -12,7 +12,7 @@ class CrawlerFormContent {
 
     // Output settings
     output?: 'text' | 'json' | null = null;
-    extraColumns?: string | null = null;
+    extraColumns?: string | null = '';
     urlColumnSize?: number | null = null;
     showInlineCriticals?: boolean | null = null;
     showInlineWarnings?: boolean | null = null;
@@ -31,11 +31,11 @@ class CrawlerFormContent {
     removeAllAnchorListeners?: boolean | null = null;
 
     // Advanced crawler settings
-    workers?: number | null = null;
-    maxReqsPerSec?: number | null = null;
+    workers?: number | null = 1;
+    maxReqsPerSec?: number | null = 10;
     memoryLimit?: string | null = null;
-    allowedDomainForExternalFiles?: string | null = null;
-    allowedDomainForCrawling?: string | null = null;
+    allowedDomainForExternalFiles?: string[] | null = ['*'];
+    allowedDomainForCrawling?: string[] | null = [];
     includeRegex?: string | null = null;
     ignoreRegex?: string | null = null;
     analyzerFilterRegex?: string | null = null;
@@ -43,14 +43,14 @@ class CrawlerFormContent {
     removeQueryParams?: boolean | null = null;
     addRandomQueryParams?: boolean | null = null;
     maxQueueLength?: number | null = null;
-    maxVisitedUrls?: number | null = null;
+    maxVisitedUrls?: number | null = 10100;
     maxUrlLength?: number | null = null;
 
     // Expert settings
     debug?: boolean | null = null;
     debugLogFile?: string | null = null;
     debugUrlRegex?: string | null = null;
-    resultStorage?: 'memory' | 'file' | null = null;
+    resultStorage?: 'memory' | 'file' | null = 'memory';
     resultStorageDir?: string | null = null;
     resultStorageCompression?: boolean | null = null;
     httpCacheDir?: string | null = null;
@@ -107,6 +107,9 @@ class CrawlerFormContent {
     generateCliParams(): string[] {
         const params: string[] = [];
 
+        // make corrections for specific params/cases
+        this.makeCorrections();
+
         // Basic settings
         if (this.url !== null) params.push(`--url=${this.url}`);
         if (this.device !== null) params.push(`--device=${this.device}`);
@@ -119,7 +122,7 @@ class CrawlerFormContent {
 
         // Output settings
         if (this.output !== null) params.push(`--output=${this.output}`);
-        if (this.extraColumns !== null) params.push(`--extra-columns=${this.extraColumns}`);
+        if (this.extraColumns !== null && this.extraColumns.trim() !== '') params.push(`--extra-columns=${this.extraColumns}`);
         if (this.urlColumnSize !== null) params.push(`--url-column-size=${this.urlColumnSize}`);
         if (this.showInlineCriticals) params.push(`--show-inline-criticals`);
         if (this.showInlineWarnings) params.push(`--show-inline-warnings`);
@@ -141,8 +144,20 @@ class CrawlerFormContent {
         if (this.workers !== null) params.push(`--workers=${this.workers}`);
         if (this.maxReqsPerSec !== null) params.push(`--max-reqs-per-sec=${this.maxReqsPerSec}`);
         if (this.memoryLimit !== null) params.push(`--memory-limit=${this.memoryLimit}`);
-        if (this.allowedDomainForExternalFiles !== null) params.push(`--allowed-domain-for-external-files=${this.allowedDomainForExternalFiles}`);
-        if (this.allowedDomainForCrawling !== null) params.push(`--allowed-domain-for-crawling=${this.allowedDomainForCrawling}`);
+        if (this.allowedDomainForExternalFiles !== null) {
+            this.allowedDomainForExternalFiles.forEach((domain) => {
+                if (domain !== null && domain.trim() !== '') {
+                    params.push(`--allowed-domain-for-external-files=${domain}`);
+                }
+            });
+        }
+        if (this.allowedDomainForCrawling !== null) {
+            this.allowedDomainForCrawling.forEach((domain) => {
+                if (domain !== null && domain.trim() !== '') {
+                    params.push(`--allowed-domain-for-crawling=${domain}`);
+                }
+            });
+        }
         if (this.includeRegex !== null) params.push(`--include-regex=${this.includeRegex}`);
         if (this.ignoreRegex !== null) params.push(`--ignore-regex=${this.ignoreRegex}`);
         if (this.analyzerFilterRegex !== null) params.push(`--analyzer-filter-regex=${this.analyzerFilterRegex}`);
@@ -160,7 +175,7 @@ class CrawlerFormContent {
         if (this.resultStorage !== null) params.push(`--result-storage=${this.resultStorage}`);
         if (this.resultStorageDir !== null) params.push(`--result-storage-dir=${this.resultStorageDir}`);
         if (this.resultStorageCompression) params.push(`--result-storage-compression`);
-        if (this.httpCacheDir !== null) params.push(`--http-cache-dir=${this.httpCacheDir}`);
+        if (this.httpCacheDir !== null) params.push(`--http-cache-dir='${this.httpCacheDir}'`);
         if (this.httpCacheCompression) params.push(`--http-cache-compression`);
         if (this.websocketServer !== null) params.push(`--websocket-server=${this.websocketServer}`);
         if (this.consoleWidth !== null) params.push(`--console-width=${this.consoleWidth}`);
@@ -206,6 +221,27 @@ class CrawlerFormContent {
 
         return params;
     }
+
+    public getDomainFromUrl(): string {
+        if (this.url === null || this.url.trim().match(/^https?:\/\/$/i)) {
+            return '';
+        }
+        return this.url.replace(/^https?:\/\/([^/]+).*?$/i, '$1');
+    }
+
+    private makeCorrections(): void {
+      // this is ugly, but I don't have a time to do it better
+      if (this.offlineExportDirectory !== null && (this.offlineExportDirectory.trim() === 'tmp' || this.offlineExportDirectory.trim() === 'tmp/')) {
+        this.offlineExportDirectory = 'tmp/' + this.getDomainFromUrl();
+      }
+      if (this.sitemapXmlFile !== null && this.sitemapXmlFile.trim() === 'tmp/.sitemap.xml') {
+        this.sitemapXmlFile = 'tmp/' + this.getDomainFromUrl() + '.sitemap.xml';
+      }
+      if (this.sitemapTxtFile !== null && this.sitemapTxtFile.trim() === 'tmp/.sitemap.txt') {
+        this.sitemapTxtFile = 'tmp/' + this.getDomainFromUrl() + '.sitemap.txt';
+      }
+    }
+
 }
 
 export default CrawlerFormContent;

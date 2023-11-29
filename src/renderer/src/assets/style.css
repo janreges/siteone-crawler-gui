@@ -8,4 +8,89 @@
   padding: 0.2rem 0.4rem !important;
 }
 
+a.timeline-link {
+  cursor: pointer;
+  font-weight: bold;
+  text-decoration: underline !important;
+}
 
+.form-control {
+  flex-direction: row !important;
+}
+
+.basic-form fieldset {
+  margin-bottom: 20px;
+  padding-right: 20px;
+}
+
+.basic-form fieldset legend {
+  margin-bottom: 14px;
+}
+
+.fieldset-basic-1 {
+  display: flex;
+  flex-direction: column;
+  gap:12px;
+}
+
+.fieldset-basic-1 label {
+  padding-top: 0;
+  margin-top: 0;
+  vertical-align: top;
+  align-items: baseline;
+}
+
+.form-control-checkbox {
+  align-items: center;
+}
+
+.form-control-checkbox input {
+  margin-left: 0.25rem;
+}
+
+.form-control-checkbox label {
+  padding-left: 10px;
+}
+
+.label-text {
+  display: flex;
+  align-items: center;
+}
+
+.basic-form .form-control label {
+  margin-top: 0;
+  vertical-align: top;
+  align-items: baseline;
+}
+
+.basic-form .form-control-radios {
+  margin-top: 8px;
+  align-items: baseline;
+}
+
+.basic-form .form-control-radios .radio-label {
+  display: inline;
+  align-items: baseline;
+  margin: 0 10px;
+  min-width: 50px;
+  font-size: 0.9em;
+}
+
+.basic-form .form-control-radios .radios {
+  display: flex;
+  align-items: baseline;
+  max-width: 200px;
+}
+
+.basic-form .form-control-radios .radios input {
+  position: relative;
+  top: 6px;
+}
+
+body .tab-content {
+  display: none !important;
+}
+
+body .tab-content.tab-content-active {
+  display: block !important;
+}
