@@ -25,6 +25,7 @@
     import {TimelineState} from "../types/TimelineState";
     import BasicForm from './BasicForm.svelte';
     import { PLATFORM, ARCHITECTURE, VERSION } from '../types/CrawlerInfo';
+    import CrawlerMiniStats from "./CrawlerMiniStats.svelte";
 
     let terminal;
     var term;
@@ -489,7 +490,7 @@
              class:tab-content-active={activeTab === 'output'}>
 
             <div class="mockup-window border border-base-300 bg-base-300 max-h-full h-full w-full">
-
+                <CrawlerMiniStats/>
                 <div id="terminal" class="terminal max-h-full h-full w-full" style="height: {terminalHeight}px; padding: 10px; background-color: #111;" bind:this={terminal}>
 
                 </div>
