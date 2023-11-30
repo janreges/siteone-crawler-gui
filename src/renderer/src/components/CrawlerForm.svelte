@@ -514,8 +514,7 @@
             </div>
         </div>
 
-        <div role="tabpanel" class="tab-content bg-base-100 pt-4 max-h-full h-full w-full gap-12"
-             class:tab-content-active={activeTab === 'result'}>
+        <div role="tabpanel" class="tab-content bg-base-100 pt-4 max-h-full h-full w-full gap-12" class:tab-content-active={activeTab === 'result'}>
 
             {#if reportBaseFilePath}
                 <div role="alert" class="alert">
@@ -540,7 +539,8 @@
             {/if}
 
             {#if reportBaseFilePath}
-                <h2 style="font-size: 1em; margin: 24px 0;">... or manually go to the temporary folder and view older reports as well:</h2>
+                <h2 style="font-size: 1.4em;">Manually browsing the output</h2>
+                <h3 style="font-size: 1em; margin: 24px 0;">All types of output are generated in the tmp folder of the crawler. You can use the command below to move to this folder and view older reports, exports or delete the cache manually.</h3>
 
                 <div class="mockup-code" style="font-size: 0.8em;">
                     <pre data-prefix="$"><code class="text-warning">cd {reportBaseFilePath.replace(/[\/\\][^\/\\]+$/, '')}</code></pre>
