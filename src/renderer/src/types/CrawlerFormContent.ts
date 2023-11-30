@@ -1,106 +1,106 @@
 class CrawlerFormContent {
 
     // Basic settings
-    url?: string | null = 'https://';
-    device?: 'desktop' | 'tablet' | 'mobile' | null = null;
-    userAgent?: string | null = null;
-    timeout?: number | null = null;
-    proxy?: string | null = null;
-    httpAuth?: string | null = null;
-    help?: boolean | null = null;
-    version?: boolean | null = null;
+    url: string | null = 'https://';
+    device: 'desktop' | 'tablet' | 'mobile' | null = null;
+    userAgent: string | null = null;
+    timeout: number | null = null;
+    proxy: string | null = null;
+    httpAuth: string | null = null;
+    help: boolean | null = null;
+    version: boolean | null = null;
 
     // Output settings
-    output?: 'text' | 'json' | null = null;
-    extraColumns?: string | null = '';
-    urlColumnSize?: number | null = null;
-    showInlineCriticals?: boolean | null = null;
-    showInlineWarnings?: boolean | null = null;
-    doNotTruncateUrl?: boolean | null = null;
-    showSchemeAndHost?: boolean | null = null;
-    hideProgressBar?: boolean | null = null;
-    noColor?: boolean | null = null;
-    forceColor?: boolean | null = true;
+    output: 'text' | 'json' | null = null;
+    extraColumns: string | null = '';
+    urlColumnSize: number | null = null;
+    showInlineCriticals: boolean | null = null;
+    showInlineWarnings: boolean | null = null;
+    doNotTruncateUrl: boolean | null = null;
+    showSchemeAndHost: boolean | null = null;
+    hideProgressBar: boolean | null = null;
+    noColor: boolean | null = null;
+    forceColor: boolean | null = true;
 
     // Resource filtering
-    disableJavascript?: boolean | null = null;
-    disableStyles?: boolean | null = null;
-    disableFonts?: boolean | null = null;
-    disableImages?: boolean | null = null;
-    disableFiles?: boolean | null = null;
-    removeAllAnchorListeners?: boolean | null = null;
+    disableJavascript: boolean | null = null;
+    disableStyles: boolean | null = null;
+    disableFonts: boolean | null = null;
+    disableImages: boolean | null = null;
+    disableFiles: boolean | null = null;
+    removeAllAnchorListeners: boolean | null = null;
 
     // Advanced crawler settings
-    workers?: number | null = 1;
-    maxReqsPerSec?: number | null = 10;
-    memoryLimit?: string | null = null;
-    allowedDomainForExternalFiles?: string[] | null = ['*'];
-    allowedDomainForCrawling?: string[] | null = [];
-    includeRegex?: string | null = null;
-    ignoreRegex?: string | null = null;
-    analyzerFilterRegex?: string | null = null;
-    acceptEncoding?: string | null = null;
-    removeQueryParams?: boolean | null = null;
-    addRandomQueryParams?: boolean | null = null;
-    maxQueueLength?: number | null = null;
-    maxVisitedUrls?: number | null = 10100;
-    maxUrlLength?: number | null = null;
+    workers: number | null = 1;
+    maxReqsPerSec: number | null = 10;
+    memoryLimit: string | null = null;
+    allowedDomainForExternalFiles: string[] | null = ['*'];
+    allowedDomainForCrawling: string[] | null = [];
+    includeRegex: string | null = null;
+    ignoreRegex: string | null = null;
+    analyzerFilterRegex: string | null = null;
+    acceptEncoding: string | null = null;
+    removeQueryParams: boolean | null = null;
+    addRandomQueryParams: boolean | null = null;
+    maxQueueLength: number | null = null;
+    maxVisitedUrls: number | null = 10100;
+    maxUrlLength: number | null = null;
 
     // Expert settings
-    debug?: boolean | null = null;
-    debugLogFile?: string | null = null;
-    debugUrlRegex?: string | null = null;
-    resultStorage?: 'memory' | 'file' | null = 'memory';
-    resultStorageDir?: string | null = null;
-    resultStorageCompression?: boolean | null = null;
-    httpCacheDir?: string | null = null;
-    httpCacheCompression?: boolean | null = null;
-    websocketServer?: string | null = null;
-    consoleWidth?: number | null = null;
+    debug: boolean | null = null;
+    debugLogFile: string | null = null;
+    debugUrlRegex: string | null = null;
+    resultStorage: 'memory' | 'file' | null = 'memory';
+    resultStorageDir: string | null = null;
+    resultStorageCompression: boolean | null = null;
+    httpCacheDir: string | null = null;
+    httpCacheCompression: boolean | null = null;
+    websocketServer: string | null = null;
+    consoleWidth: number | null = null;
 
     // File export settings
-    outputHtmlReport?: string | null = null;
-    outputJsonFile?: string | null = null;
-    outputTextFile?: string | null = null;
-    addHostToOutputFile?: boolean | null = null;
-    addTimestampToOutputFile?: boolean | null = null;
+    outputHtmlReport: string | null = null;
+    outputJsonFile: string | null = null;
+    outputTextFile: string | null = null;
+    addHostToOutputFile: boolean | null = null;
+    addTimestampToOutputFile: boolean | null = null;
 
     // Mailer options
-    mailTo?: string | null = null;
-    mailFrom?: string | null = null;
-    mailFromName?: string | null = null;
-    mailSubjectTemplate?: string | null = null;
-    mailSmtpHost?: string | null = null;
-    mailSmtpPort?: number | null = null;
-    mailSmtpUser?: string | null = null;
-    mailSmtpPass?: string | null = null;
+    mailTo: string | null = null;
+    mailFrom: string | null = null;
+    mailFromName: string | null = null;
+    mailSubjectTemplate: string | null = null;
+    mailSmtpHost: string | null = null;
+    mailSmtpPort: number | null = null;
+    mailSmtpUser: string | null = null;
+    mailSmtpPass: string | null = null;
 
     // Offline exporter options
-    offlineExportDirectory?: string | null = null;
-    offlineExportStoreOnlyUrlRegex?: string | null = null;
+    offlineExportDirectory: string | null = null;
+    offlineExportStoreOnlyUrlRegex: string | null = null;
 
     // Sitemap options
-    sitemapXmlFile?: string | null = null;
-    sitemapTxtFile?: string | null = null;
-    sitemapBasePriority?: string | null = null;
-    sitemapPriorityIncrease?: string | null = null;
+    sitemapXmlFile: string | null = null;
+    sitemapTxtFile: string | null = null;
+    sitemapBasePriority: string | null = null;
+    sitemapPriorityIncrease: string | null = null;
 
     // Fastest URL analyzer
-    fastestUrlsTopLimit?: number | null = null;
-    fastestUrlsMaxTime?: string | null = null;
+    fastestUrlsTopLimit: number | null = null;
+    fastestUrlsMaxTime: string | null = null;
 
     // SEO and OpenGraph analyzer
-    maxHeadingLevel?: number | null = null;
+    maxHeadingLevel: number | null = null;
 
     // Slowest URL analyzer
-    slowestUrlsTopLimit?: number | null = null;
-    slowestUrlsMinTime?: string | null = null;
-    slowestUrlsMaxTime?: string | null = null;
+    slowestUrlsTopLimit: number | null = null;
+    slowestUrlsMinTime: string | null = null;
+    slowestUrlsMaxTime: string | null = null;
 
     // URL params
     cliParams: string[] = [];
 
-    constructor(init?: Partial<CrawlerFormContent>) {
+    constructor(init: Partial<CrawlerFormContent>) {
         Object.assign(this, init);
     }
 

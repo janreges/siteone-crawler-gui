@@ -1,11 +1,10 @@
 <script lang="ts">
     import type {HistoryItem} from "../history/HistoryItem";
-    import {createEventDispatcher, onMount} from "svelte";
+    import {createEventDispatcher} from "svelte";
 
     export let historyItems: HistoryItem[] = [];
 
     const SHOW_LIMIT = 10;
-    let dropdownEl: HTMLDivElement;
     let selectEl: HTMLSelectElement;
     let showMore: boolean = false;
     $: historyItemsToShow = [...historyItems].reverse().slice(0, showMore ? 10000 : SHOW_LIMIT);

@@ -2,7 +2,6 @@
   import InfoIcon from './InfoIcon.svelte';
   import type CrawlerFormContent from '../types/CrawlerFormContent';
   import { PLATFORM } from '../types/CrawlerInfo';
-  import { onMount } from 'svelte';
 
   export let data:CrawlerFormContent;
   export let extraColumns: string[] = [];

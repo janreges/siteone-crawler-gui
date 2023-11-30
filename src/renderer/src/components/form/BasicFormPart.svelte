@@ -17,7 +17,6 @@
 
     const htmlId: string = "id" + Math.random().toString(36).substr(2, 9);
     const dispatch = createEventDispatcher();
-    let selectedHistoryItemKey = '';
     let urlInput: HTMLInputElement;
     $: historyItems = historyStorage.getItems();
 
@@ -25,10 +24,6 @@
         if (event.key === 'Enter' && value.match(/^https?:\/\/[^/]{3,}/)) {
             dispatch('run');
         }
-    }
-
-    function handleLoadFromHistory(event) {
-        loadFromHistory(event.target.value);
     }
 
     function loadFromHistory(historyItemKey:string):void
@@ -46,7 +41,6 @@
         if (window.confirm('Are you sure you want to erase history? ')) {
             historyStorage.flush();
             historyStorage = historyStorage;
-            selectedHistoryItemKey = '';
         }
     }
 
@@ -79,10 +73,6 @@
             resizeObserver.unobserve(containerDiv);
         };
     });
-
-    // function openHtmlReportInBrowser(): void {
-    //     window.api.openExternal('file://' + htmlReportFilePath);
-    // }
 
 </script>
 
