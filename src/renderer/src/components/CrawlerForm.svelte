@@ -123,7 +123,7 @@
                         }
                         timeoutIdToResult = setTimeout(() => activeTab = 'result', 1000);
                     } else if (line && line.includes('Offline website generated to')) {
-                        offlineWebsiteDir = getOfflineVersionBaseName(line);
+                        offlineWebsiteDir = getOfflineVersionBasePath(line);
                         timelineState.offlineExport = true;
                         if (timeoutIdToResult) {
                             clearTimeout(timeoutIdToResult)
@@ -228,13 +228,11 @@
         return null;
     }
 
-    function getOfflineVersionBaseName(text: string): string | null {
+    function getOfflineVersionBasePath(text: string): string | null {
         const regex = /Offline website generated to '([^']+)'/;
         const match = text.match(regex);
         if (match && match[1]) {
-            const fullPath = match[1];
-            const pathSegments = fullPath.split('/');
-            return pathSegments[pathSegments.length - 1];
+            return match[1];
         }
         return null;
     }
