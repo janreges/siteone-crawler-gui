@@ -68,11 +68,11 @@
 
     onMount(async () => {
         const osPlatform = window.api.getPlatform();
-        const defaultFont = osPlatform ? (osPlatform === 'win32' ? 'Consolas' : (osPlatform === 'darwin' ? 'SF Mono' : 'DejaVu Sans Mono')) : 'monospace';
-        console.log(defaultFont);
+        const fontFamily = osPlatform ? (osPlatform === 'win32' ? 'Consolas' : (osPlatform === 'darwin' ? 'Monaco' : 'DejaVu Sans Mono')) : 'monospace';
+        const fontSize: number = osPlatform ? (osPlatform === 'darwin' ? 11 : 12) : 12;
         term = new Terminal({
-            fontSize: 12,
-            fontFamily: defaultFont,
+            fontSize: fontSize,
+            fontFamily: fontFamily,
             cols: getTerminalCols(),
             rows: getTerminalRows(),
             scrollback: Number.MAX_SAFE_INTEGER,
@@ -191,7 +191,9 @@
     }
 
     function getTerminalRows() {
-        return Math.floor(terminalHeight / 15);
+        const osPlatform = window.api.getPlatform();
+        const rowHeight = osPlatform ? (osPlatform === 'darwin' ? 15.5 : 15) : 15;
+        return Math.floor(terminalHeight / rowHeight);
     }
 
     export function handleResize(): void {
