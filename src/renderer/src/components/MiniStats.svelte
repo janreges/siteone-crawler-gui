@@ -2,7 +2,6 @@
 
     import type { MiniStatsData } from '../types/MiniStatsData';
 
-    export let fontFamily = 'Consolas';
     export let data: MiniStatsData;
 
     function formatTime(seconds: number | null): string {
@@ -38,7 +37,7 @@
 </script>
 
 <div class="mini-stats flex flex-col w-full items-end"
-     style="font-family: {fontFamily}; padding-left: 100px; padding-right: 10px; margin-top: -37px; margin-bottom: 7px">
+     style="padding-left: 100px; padding-right: 10px; margin-top: -37px; margin-bottom: 7px">
     <div class="flex flex-col min-w-max">
         <div class=" flex gap-4">
             <div class="flex gap-2">
