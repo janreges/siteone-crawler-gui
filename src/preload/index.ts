@@ -1,4 +1,4 @@
-import {contextBridge, ipcRenderer, shell} from 'electron';
+import { contextBridge, ipcRenderer, shell } from 'electron';
 import {electronAPI} from '@electron-toolkit/preload';
 import {CrawlerMessage} from '../main/crawler/CrawlerMessage';
 
@@ -31,8 +31,6 @@ if (process.contextIsolated) {
   window.api = api;
 }
 
-async function getTmpDir() {
-  const exePath = await ipcRenderer.invoke('get-exe-path');
-  const dirPath = path.dirname(exePath);
-  return path.join(dirPath, 'resources', 'src', 'siteone-crawler', 'tmp');
+async function getTmpDir(): Promise<string> {
+  return await ipcRenderer.invoke('get-tmp-dir') as string;
 }

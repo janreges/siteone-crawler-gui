@@ -8,8 +8,8 @@
   const error = writable("");
 
   $: {
-    const regex = /^[a-zA-Z0-9\-_\/.]+\.[a-zA-Z0-9]+$/;
-    error.set(!value || regex.test(value) ? "" : "Neplatný název souboru nebo přípona");
+    const regex = /^[a-zA-Z0-9%\-_\/.]+\.[a-zA-Z0-9]+$/;
+    error.set(!value || regex.test(value) ? "" : "Invalid file name or extension");
   }
 </script>
 

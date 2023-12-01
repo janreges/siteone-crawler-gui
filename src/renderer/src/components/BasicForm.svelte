@@ -177,7 +177,7 @@
       <fieldset class="w-full md:w-1/2 p-2">
         <legend class="font-bold text-gray-300">Generators</legend>
         <div class="form-control form-control-checkbox">
-          <input id="chkOffline" type="checkbox" class="checkbox checkbox-info" checked={data.offlineExportDirectory !== null} on:change={(event) => (data.offlineExportDirectory = event.currentTarget.checked ? 'tmp/'+data.getDomainFromUrl() : null)} />
+          <input id="chkOffline" type="checkbox" class="checkbox checkbox-info" checked={data.offlineExportDir !== null} on:change={(event) => (data.offlineExportDir = event.currentTarget.checked ? data.getDomainFromUrl() : null)} />
           <label for="chkOffline" class="label">
             <span class="label-text">
               Generate offline website
@@ -192,8 +192,8 @@
             class="checkbox checkbox-info"
             checked={data.sitemapXmlFile !== null}
             on:change={(event) => {
-              data.sitemapXmlFile = event.currentTarget.checked ? 'tmp/'+data.getDomainFromUrl()+'.sitemap.xml' : null;
-              data.sitemapTxtFile = event.currentTarget.checked ? 'tmp/'+data.getDomainFromUrl()+'.sitemap.txt' : null;
+              data.sitemapXmlFile = event.currentTarget.checked ? data.getDomainFromUrl()+'.sitemap.xml' : null;
+              data.sitemapTxtFile = event.currentTarget.checked ? data.getDomainFromUrl()+'.sitemap.txt' : null;
             }} />
           <label for="chkSitemap" class="label">
             <span class="label-text">
@@ -221,7 +221,7 @@
           class="checkbox checkbox-info"
           checked={data.httpCacheDir === null}
           on:change={(event) => {
-              data.httpCacheDir = event.currentTarget.checked ? null : '';
+              data.httpCacheDir = event.currentTarget.checked ? 'http-client-cache' : 'off';
             }}
         />
       </div>

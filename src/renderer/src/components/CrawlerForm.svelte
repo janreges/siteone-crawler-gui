@@ -30,6 +30,7 @@
 
     let terminal;
     var term;
+    let lastCliParams: string[] = [];
 
     // const CRAWLER_IS_NOT_RUNNING = 'Crawler is not running...';
     const CRAWLER_IS_STARTING = 'Crawler is starting...';
@@ -42,6 +43,7 @@
     let formState: string = STATE_NOT_RUNNING;
     let hasResult: boolean = false;
     let historyStorage:HistoryStorage = new HistoryStorage();
+    var timeoutIdToResult;
 
     const timelineState = new TimelineState();
     let miniStatsData = new MiniStatsData();
@@ -52,6 +54,8 @@
     export let windowHeight: number;
     let reportBaseFilePath: string | null = null;
     let offlineWebsiteDir: string | null = null;
+    let sitemapXmlFile: string | null = null;
+    let sitemapTxtFile: string | null = null;
 
     let basicFormPartHeight: number = 0;
     $: terminalWidth = windowWidth - 20;
@@ -111,15 +115,23 @@
                 let lines = message.data.message.trim().split(/\r?\n/);
                 lines.map(async (line) => {
                     if (line && line.includes('HTML report saved')) {
-                        const pathDelimiter = window.api.getPlatform() === 'win32' ? '\\' : '/';
-                        reportBaseFilePath = await window.api.getTmpDir() + pathDelimiter + getReportBaseName(line);
+                        reportBaseFilePath = getReportBaseName(line);
                         timelineState.htmlReport = true;
-                        setTimeout(() => activeTab = 'result', 1000);
+                        if (timeoutIdToResult) {
+                            clearTimeout(timeoutIdToResult)
+                        }
+                        timeoutIdToResult = setTimeout(() => activeTab = 'result', 1000);
                     } else if (line && line.includes('Offline website generated to')) {
-                        const pathDelimiter = window.api.getPlatform() === 'win32' ? '\\' : '/';
-                        offlineWebsiteDir = await window.api.getTmpDir() + pathDelimiter + getOfflineVersionBaseName(line);
+                        offlineWebsiteDir = getOfflineVersionBaseName(line);
                         timelineState.offlineExport = true;
-                        setTimeout(() => activeTab = 'result', 1000);
+                        if (timeoutIdToResult) {
+                            clearTimeout(timeoutIdToResult)
+                        }
+                        timeoutIdToResult = setTimeout(() => activeTab = 'result', 1000);
+                    } else if (line && line.includes('XML sitemap generated to')) {
+                        sitemapXmlFile = getSitemapXmlPath(line);
+                    } else if (line && line.includes('TXT sitemap generated to')) {
+                        sitemapTxtFile = getSitemapTxtPath(line);
                     } else {
                         var match = line.match(/(\d+)\/(\d+)\s*\|\s*(\d+)%/);
                         if (match) {
@@ -136,19 +148,25 @@
         }
     };
 
-    const onRun = function (): void {
+    const onRun = async function (): void {
         activeTab = 'output';
         formState = STATE_RUNNING;
         reportBaseFilePath = null;
         offlineWebsiteDir = null;
+        sitemapXmlFile = null;
+        sitemapTxtFile = null;
 
         miniStatsData.reset();
         miniStatsData = miniStatsData;
         timelineState.reset();
         timelineState.started = true;
 
+        const tmpDir = await window.api.getTmpDir();
+        const pathDelimiter = window.api.getPlatform() === 'win32' ? '\\' : '/';
+
         formData.consoleWidth = getTerminalCols();
-        formData.cliParams = formData.generateCliParams();
+        formData.cliParams = formData.generateCliParams(tmpDir, pathDelimiter);
+        lastCliParams = formData.cliParams;
         console.log('CLI params', formData.cliParams);
 
         term.resize(getTerminalCols(), getTerminalRows());
@@ -222,6 +240,24 @@
         return null;
     }
 
+    function getSitemapXmlPath(text: string): string | null {
+        const regex = /XML sitemap generated to '([^']+)'/;
+        const match = text.match(regex);
+        if (match && match[1]) {
+            return match[1];
+        }
+        return null;
+    }
+
+    function getSitemapTxtPath(text: string): string | null {
+        const regex = /TXT sitemap generated to '([^']+)'/;
+        const match = text.match(regex);
+        if (match && match[1]) {
+            return match[1];
+        }
+        return null;
+    }
+
     function openReportInBrowser(extension:string): void {
         window.api.openExternal('file://' + getReportFilePath(extension));
     }
@@ -236,6 +272,18 @@
 
     function openCrawlerHomepage():void {
       window.api.openExternal('https://crawler.siteone.io/?utm_source=app&utm_medium='+PLATFORM+'&utm_campaign='+ARCHITECTURE+'&utm_content='+VERSION);
+    }
+
+    function openSitemapXml():void {
+        window.api.openExternal('file://' + sitemapXmlFile);
+    }
+
+    function openSitemapTxt():void {
+        window.api.openExternal('file://' + sitemapTxtFile);
+    }
+
+    async function openTmpDir(): Promise<void> {
+        window.api.openExternal('file://' + await window.api.getTmpDir());
     }
 
     function getReportFilePath(extension:string): string {
@@ -265,7 +313,7 @@
     function handleUrlChange(): void {
         if (formData.url.match(/^https?:\/\/[a-z0-9]/)) {
             // if URL changed and offline export dir was set, then recalculate it
-            formData.offlineExportDirectory = formData.offlineExportDirectory !== null ? 'tmp/'+formData.getDomainFromUrl() : null;
+            formData.offlineExportDir = formData.offlineExportDir !== null ? formData.getDomainFromUrl() : null;
         }
     }
 
@@ -454,8 +502,8 @@
                 <!-- Offline exporter options -->
                 <fieldset>
                     <legend>Offline Exporter Options</legend>
-                    <DirInput bind:value={formData.offlineExportDirectory} label="Offline Export Directory" placeholder="tmp/yourdomain.com"
-                              tooltip="Path to directory where to save the offline version of the website. Required to set `tmp/*`, e.g. `tmp/yourdomain.com`"/>
+                    <DirInput bind:value={formData.offlineExportDir} label="Offline Export Directory"
+                              tooltip="Name of directory in user-data folder where to save the offline version of the website. E.g. `mydomain.tld`"/>
                     <RegexInput bind:value={formData.offlineExportStoreOnlyUrlRegex} label="Store Only URL Regex"
                                 tooltip="For debug - store only URLs which match one of these PCRE regexes."/>
                 </fieldset>
@@ -540,12 +588,33 @@
                 </div>
             {/if}
 
-            {#if reportBaseFilePath}
-                <h2 style="font-size: 1.4em;">Manually browsing the output</h2>
-                <h3 style="font-size: 1em; margin: 24px 0;">All types of output are generated in the tmp folder of the crawler. You can use the command below to move to this folder and view older reports, exports or delete the cache manually.</h3>
+            {#if sitemapXmlFile || sitemapTxtFile}
+                <div role="alert" class="alert" style="margin-top: 14px; margin-bottom: 20px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-success shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span class="text-success">Sitemap has been successfully generated.</span>
+                    <div>
+                        {#if sitemapXmlFile}<a class="btn btn-active btn-neutral" title="Open Sitemap XML" aria-label="Open Sitemap XML" href="#" on:click={() => openSitemapXml()}>Open sitemap.xml</a>{/if}
+                        {#if sitemapTxtFile}<a class="btn btn-active btn-neutral" title="Open Sitemap TXT" aria-label="Open Sitemap TXT" href="#" on:click={() => openSitemapTxt()}>Open sitemap.txt</a>{/if}
+                    </div>
+                </div>
+            {/if}
 
+            {#if reportBaseFilePath}
+                <div style="margin-top: 12px; margin-left: 6px">
+                  <h2 style="margin-top: 12px; font-size: 1.4em;">Manually browsing the output</h2>
+                    <h3 style="font-size: 1em; margin: 24px 0;">All types of output are generated in the <a href="#" class="text-blue-500" on:click={() => openTmpDir()}>tmp folder</a> of the crawler. You can use the command below to move to this folder and view older reports, exports or delete the cache manually.</h3>
+                </div>
                 <div class="mockup-code" style="font-size: 0.8em;">
-                    <pre data-prefix="$"><code class="text-warning">cd {reportBaseFilePath.replace(/[\/\\][^\/\\]+$/, '')}</code></pre>
+                    <pre><code class="text-warning" style="width: 100%; word-wrap: break-word">cd {reportBaseFilePath.replace(/[\/\\][^\/\\]+$/, '')}</code></pre>
+                </div>
+
+                <div style="margin-top: 20px; margin-left: 6px">
+                  <h2 style="margin-top: 16px; margin-bottom: 12px; font-size: 1.4em;">Executed command</h2>
+                  <h3 style="font-size: 1em; margin: 24px 0;">This graphical interface launched the command below of the <a href="https://crawler.siteone.io/getting-started/basic-usage/?utm_source=app-result-page&utm_medium={PLATFORM}&utm_campaign={ARCHITECTURE}&utm_content={VERSION}" class="text-blue-500" target="_blank">command-line part of the Crawler</a>.</h3>
+                  <div class="mockup-code" style="font-size: 0.8em;">
+                    <pre><code class="text-warning" style="width: 100%; word-wrap: break-word">./crawler
+    {lastCliParams.join(" \\\n    ")}</code></pre>
+                  </div>
                 </div>
             {/if}
 

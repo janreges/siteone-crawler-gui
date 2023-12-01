@@ -55,6 +55,10 @@ function createWindow(): void {
     return app.getPath('exe');
   });
 
+  ipcMain.handle('get-tmp-dir', async (event) => {
+    return app.getPath('userData');
+  });
+
 }
 
 // This method will be called when Electron has finished

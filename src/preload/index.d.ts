@@ -5,7 +5,7 @@ export interface IAPI {
   setMessageToBackend: (message: CrawlerMessage) => void,
   onCrawlerMessage: (callback: (event: any, message: CrawlerMessage) => void) => void,
   getPlatform: () => any,
-  getTmpDir: () => string,
+  getTmpDir: () => Promise<string>,
   openExternal: (url: string) => void
 }
 

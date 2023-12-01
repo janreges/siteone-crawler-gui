@@ -59,9 +59,9 @@ class CrawlerFormContent {
     consoleWidth: number | null = null;
 
     // File export settings
-    outputHtmlReport: string | null = null;
-    outputJsonFile: string | null = null;
-    outputTextFile: string | null = null;
+    outputHtmlReport: string | null = 'report.%domain%.%datetime%.html';
+    outputJsonFile: string | null = 'output.%domain%.%datetime%.json';
+    outputTextFile: string | null = 'output.%domain%.%datetime%.txt';
     addHostToOutputFile: boolean | null = null;
     addTimestampToOutputFile: boolean | null = null;
 
@@ -76,7 +76,7 @@ class CrawlerFormContent {
     mailSmtpPass: string | null = null;
 
     // Offline exporter options
-    offlineExportDirectory: string | null = null;
+    offlineExportDir: string | null = null;
     offlineExportStoreOnlyUrlRegex: string | null = null;
 
     // Sitemap options
@@ -104,7 +104,7 @@ class CrawlerFormContent {
         Object.assign(this, init);
     }
 
-    generateCliParams(): string[] {
+    generateCliParams(tmpDir: string, pathDelimiter: string): string[] {
         const params: string[] = [];
 
         // make corrections for specific params/cases
@@ -170,40 +170,86 @@ class CrawlerFormContent {
 
         // Expert settings
         if (this.debug) params.push(`--debug`);
-        if (this.debugLogFile !== null) params.push(`--debug-log-file=${this.debugLogFile}`);
-        if (this.debugUrlRegex !== null) params.push(`--debug-url-regex=${this.debugUrlRegex}`);
+        if (this.debugLogFile !== null) params.push(`--debug-log-file='${this.debugLogFile}'`);
+        if (this.debugUrlRegex !== null) params.push(`--debug-url-regex='${this.debugUrlRegex}'`);
         if (this.resultStorage !== null) params.push(`--result-storage=${this.resultStorage}`);
-        if (this.resultStorageDir !== null) params.push(`--result-storage-dir=${this.resultStorageDir}`);
+        if (this.resultStorageDir !== null) params.push(`--result-storage-dir='${this.resultStorageDir}'`);
         if (this.resultStorageCompression) params.push(`--result-storage-compression`);
-        if (this.httpCacheDir !== null) params.push(`--http-cache-dir='${this.httpCacheDir}'`);
+        if (this.httpCacheDir !== null && this.httpCacheDir !== '') {
+          if (this.httpCacheDir !== 'off') {
+            let prefix = '';
+            if (this.httpCacheDir.substring(0, 1) != '/') {
+              prefix = tmpDir + pathDelimiter;
+            }
+            params.push(`--http-cache-dir='${prefix}${this.httpCacheDir}'`);
+          } else {
+            params.push(`--http-cache-dir='off'`);
+          }
+        }
         if (this.httpCacheCompression) params.push(`--http-cache-compression`);
-        if (this.websocketServer !== null) params.push(`--websocket-server=${this.websocketServer}`);
+        if (this.websocketServer !== null) params.push(`--websocket-server='${this.websocketServer}'`);
         if (this.consoleWidth !== null) params.push(`--console-width=${this.consoleWidth}`);
 
         // File export settings
-        if (this.outputHtmlReport !== null) params.push(`--output-html-report=${this.outputHtmlReport}`);
-        if (this.outputJsonFile !== null) params.push(`--output-json-file=${this.outputJsonFile}`);
-        if (this.outputTextFile !== null) params.push(`--output-text-file=${this.outputTextFile}`);
+        if (this.outputHtmlReport !== null && this.outputHtmlReport !== '') {
+          let prefix = '';
+          if (this.outputHtmlReport.substring(0, 1) != '/') {
+            prefix = tmpDir + pathDelimiter;
+          }
+          params.push(`--output-html-report='${prefix}${this.outputHtmlReport}'`);
+        }
+        if (this.outputJsonFile !== null && this.outputJsonFile !== '') {
+          let prefix = '';
+          if (this.outputJsonFile.substring(0, 1) != '/') {
+            prefix = tmpDir + pathDelimiter;
+          }
+          params.push(`--output-json-file='${prefix}${this.outputJsonFile}'`);
+        }
+        if (this.outputTextFile !== null && this.outputTextFile !== '') {
+          let prefix = '';
+          if (this.outputTextFile.substring(0, 1) != '/') {
+            prefix = tmpDir + pathDelimiter;
+          }
+          params.push(`--output-text-file='${prefix}${this.outputTextFile}'`);
+        }
         if (this.addHostToOutputFile) params.push(`--add-host-to-output-file`);
         if (this.addTimestampToOutputFile) params.push(`--add-timestamp-to-output-file`);
 
         // Mailer options
-        if (this.mailTo !== null) params.push(`--mail-to=${this.mailTo}`);
-        if (this.mailFrom !== null) params.push(`--mail-from=${this.mailFrom}`);
-        if (this.mailFromName !== null) params.push(`--mail-from-name=${this.mailFromName}`);
-        if (this.mailSubjectTemplate !== null) params.push(`--mail-subject-template=${this.mailSubjectTemplate}`);
-        if (this.mailSmtpHost !== null) params.push(`--mail-smtp-host=${this.mailSmtpHost}`);
-        if (this.mailSmtpPort !== null) params.push(`--mail-smtp-port=${this.mailSmtpPort}`);
-        if (this.mailSmtpUser !== null) params.push(`--mail-smtp-user=${this.mailSmtpUser}`);
-        if (this.mailSmtpPass !== null) params.push(`--mail-smtp-pass=${this.mailSmtpPass}`);
+        if (this.mailTo !== null) params.push(`--mail-to='${this.mailTo}'`);
+        if (this.mailFrom !== null) params.push(`--mail-from='${this.mailFrom}'`);
+        if (this.mailFromName !== null) params.push(`--mail-from-name='${this.mailFromName}'`);
+        if (this.mailSubjectTemplate !== null) params.push(`--mail-subject-template='${this.mailSubjectTemplate}'`);
+        if (this.mailSmtpHost !== null) params.push(`--mail-smtp-host='${this.mailSmtpHost}'`);
+        if (this.mailSmtpPort !== null) params.push(`--mail-smtp-port='${this.mailSmtpPort}'`);
+        if (this.mailSmtpUser !== null) params.push(`--mail-smtp-user='${this.mailSmtpUser}'`);
+        if (this.mailSmtpPass !== null) params.push(`--mail-smtp-pass='${this.mailSmtpPass}'`);
 
         // Offline exporter options
-        if (this.offlineExportDirectory !== null) params.push(`--offline-export-directory=${this.offlineExportDirectory}`);
-        if (this.offlineExportStoreOnlyUrlRegex !== null) params.push(`--offline-export-store-only-url-regex=${this.offlineExportStoreOnlyUrlRegex}`);
+        if (this.offlineExportDir !== null && this.offlineExportDir !== '') {
+          let prefix = '';
+          if (this.offlineExportDir.substring(0, 1) != '/') {
+            prefix = tmpDir + pathDelimiter;
+          }
+          params.push(`--offline-export-dir='${prefix}${this.offlineExportDir}'`);
+        }
+        if (this.offlineExportStoreOnlyUrlRegex !== null) params.push(`--offline-export-store-only-url-regex='${this.offlineExportStoreOnlyUrlRegex}'`);
 
         // Sitemap options
-        if (this.sitemapXmlFile !== null) params.push(`--sitemap-xml-file=${this.sitemapXmlFile}`);
-        if (this.sitemapTxtFile !== null) params.push(`--sitemap-txt-file=${this.sitemapTxtFile}`);
+        if (this.sitemapXmlFile !== null && this.sitemapXmlFile !== '') {
+          let prefix = '';
+          if (this.sitemapXmlFile.substring(0, 1) != '/') {
+            prefix = tmpDir + pathDelimiter;
+          }
+          params.push(`--sitemap-xml-file='${prefix}${this.sitemapXmlFile}'`);
+        }
+        if (this.sitemapTxtFile !== null) {
+          let prefix = '';
+          if (this.sitemapTxtFile.substring(0, 1) != '/') {
+            prefix = tmpDir + pathDelimiter;
+          }
+          params.push(`--sitemap-txt-file='${prefix}${this.sitemapTxtFile}'`);
+        }
         if (this.sitemapBasePriority !== null) params.push(`--sitemap-base-priority=${this.sitemapBasePriority}`);
         if (this.sitemapPriorityIncrease !== null) params.push(`--sitemap-priority-increase=${this.sitemapPriorityIncrease}`);
 
@@ -230,15 +276,14 @@ class CrawlerFormContent {
     }
 
     private makeCorrections(): void {
-      // this is ugly, but I don't have a time to do it better
-      if (this.offlineExportDirectory !== null && (this.offlineExportDirectory.trim() === 'tmp' || this.offlineExportDirectory.trim() === 'tmp/')) {
-        this.offlineExportDirectory = 'tmp/' + this.getDomainFromUrl();
+      if (this.offlineExportDir !== null && this.offlineExportDir.trim() === '') {
+        this.offlineExportDir = this.getDomainFromUrl();
       }
-      if (this.sitemapXmlFile !== null && this.sitemapXmlFile.trim() === 'tmp/.sitemap.xml') {
-        this.sitemapXmlFile = 'tmp/' + this.getDomainFromUrl() + '.sitemap.xml';
+      if (this.sitemapXmlFile !== null && this.sitemapXmlFile.trim() === '.sitemap.xml') {
+        this.sitemapXmlFile = this.getDomainFromUrl() + '.sitemap.xml';
       }
-      if (this.sitemapTxtFile !== null && this.sitemapTxtFile.trim() === 'tmp/.sitemap.txt') {
-        this.sitemapTxtFile = 'tmp/' + this.getDomainFromUrl() + '.sitemap.txt';
+      if (this.sitemapTxtFile !== null && this.sitemapTxtFile.trim() === '.sitemap.txt') {
+        this.sitemapTxtFile = this.getDomainFromUrl() + '.sitemap.txt';
       }
     }
 
