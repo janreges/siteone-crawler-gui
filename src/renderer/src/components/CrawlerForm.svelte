@@ -62,6 +62,7 @@
     $: terminalHeight = windowHeight - basicFormPartHeight - 140;
 
     let activeTab: string = 'basic';
+    let consoleFontFamily: string = null;
 
     if (formData === null) {
         formData = new CrawlerFormContent({});
@@ -72,11 +73,11 @@
 
     onMount(async () => {
         const osPlatform = window.api.getPlatform();
-        const fontFamily = osPlatform ? (osPlatform === 'win32' ? 'Consolas' : (osPlatform === 'darwin' ? 'Monaco' : 'DejaVu Sans Mono')) : 'monospace';
+        consoleFontFamily = osPlatform ? (osPlatform === 'win32' ? 'Consolas' : (osPlatform === 'darwin' ? 'Monaco' : 'DejaVu Sans Mono')) : 'monospace';
         const fontSize: number = osPlatform ? (osPlatform === 'darwin' ? 11 : 12) : 12;
         term = new Terminal({
             fontSize: fontSize,
-            fontFamily: fontFamily,
+            fontFamily: consoleFontFamily,
             cols: getTerminalCols(),
             rows: getTerminalRows(),
             scrollback: Number.MAX_SAFE_INTEGER,
@@ -554,7 +555,7 @@
              class:tab-content-active={activeTab === 'output'}>
 
             <div class="mockup-window border border-base-300 bg-base-300 max-h-full h-full w-full">
-                <CrawlerMiniStats data={miniStatsData}/>
+                <CrawlerMiniStats data={miniStatsData} fontFamily={consoleFontFamily}/>
                 <div id="terminal" class="terminal max-h-full h-full w-full" style="height: {terminalHeight}px; padding: 10px; background-color: #111;" bind:this={terminal}>
 
                 </div>
@@ -571,9 +572,9 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="stroke-success shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     <span class="text-success">Crawling has been finished and your reports are generated.</span>
                     <div class="alert-buttons">
-                        <a class="btn btn-active btn-primary" title="Open HTML report" aria-label="Open HTML label" href="#" on:click={() => openReportInBrowser('html')}>HTML report</a>
-                        <a class="btn btn-active btn-info" title="Open JSON report" aria-label="Open JSON label" href="#" on:click={() => openReportInBrowser('json')}>JSON report</a>
-                        <a class="btn btn-active btn-warning" title="Open TXT report" aria-label="Open TXT label" href="#" on:click={() => openReportInBrowser('txt')}>TXT report</a>
+                        <a class="btn btn-active btn-primary" title="Open HTML report" aria-label="Open HTML label" href="file:///{getReportFilePath('html').replace(/\\/g, '/')}" target="_blank">HTML report</a>
+                        <a class="btn btn-active btn-info" title="Open JSON report" aria-label="Open JSON label" href="file:///{getReportFilePath('json').replace(/\\/g, '/')}" target="_blank">JSON report</a>
+                        <a class="btn btn-active btn-warning" title="Open TXT report" aria-label="Open TXT label" href="file:///{getReportFilePath('txt').replace(/\\/g, '/')}" target="_blank">TXT report</a>
                     </div>
                 </div>
             {/if}
@@ -583,7 +584,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="stroke-success shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     <span class="text-success">Offline website has been successfully generated.</span>
                     <div>
-                        <a class="btn btn-active btn-secondary" title="Browse offline website" aria-label="Browse offline website" href="#" on:click={() => openOfflineVersion()}>Browse offline website</a>
+                        <a class="btn btn-active btn-secondary" title="Browse offline website" aria-label="Browse offline website" href="file:///{offlineWebsiteDir}/index.html" target="_blank">Browse offline website</a>
                     </div>
                 </div>
             {/if}
@@ -593,8 +594,8 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="stroke-success shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     <span class="text-success">Sitemap has been successfully generated.</span>
                     <div>
-                        {#if sitemapXmlFile}<a class="btn btn-active btn-neutral" title="Open Sitemap XML" aria-label="Open Sitemap XML" href="#" on:click={() => openSitemapXml()}>Open sitemap.xml</a>{/if}
-                        {#if sitemapTxtFile}<a class="btn btn-active btn-neutral" title="Open Sitemap TXT" aria-label="Open Sitemap TXT" href="#" on:click={() => openSitemapTxt()}>Open sitemap.txt</a>{/if}
+                        {#if sitemapXmlFile}<a class="btn btn-active btn-neutral" title="Open Sitemap XML" aria-label="Open Sitemap XML" href="file:///{sitemapXmlFile}" target="_blank">Open sitemap.xml</a>{/if}
+                        {#if sitemapTxtFile}<a class="btn btn-active btn-neutral" title="Open Sitemap TXT" aria-label="Open Sitemap TXT" href="file:///{sitemapXmlFile}" target="_blank">Open sitemap.txt</a>{/if}
                     </div>
                 </div>
             {/if}
@@ -602,7 +603,7 @@
             {#if reportBaseFilePath}
                 <div style="margin-top: 12px; margin-left: 6px">
                   <h2 style="margin-top: 12px; font-size: 1.4em;">Manually browsing the output</h2>
-                    <h3 style="font-size: 1em; margin: 24px 0;">All types of output are generated in the <a href="#" class="text-blue-500" on:click={() => openTmpDir()}>tmp folder</a> of the crawler. You can use the command below to move to this folder and view older reports, exports or delete the cache manually.</h3>
+                    <h3 style="font-size: 1em; margin: 24px 0;">All types of output are generated in the <a class="text-blue-500" on:click={() => openTmpDir()}>tmp folder</a> of the crawler. You can use the command below to move to this folder and view older reports, exports or delete the cache manually.</h3>
                 </div>
                 <div class="mockup-code" style="font-size: 0.8em;">
                     <pre><code class="text-warning" style="width: 100%; word-wrap: break-word">cd {reportBaseFilePath.replace(/[\/\\][^\/\\]+$/, '')}</code></pre>

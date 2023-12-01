@@ -18,7 +18,8 @@ function createWindow(): void {
       sandbox: false,
       nodeIntegration: true,
       nodeIntegrationInWorker: true,
-      contextIsolation: true
+      contextIsolation: true,
+      webSecurity: false
     }
   });
 
