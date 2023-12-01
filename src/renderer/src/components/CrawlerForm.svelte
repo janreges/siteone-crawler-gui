@@ -591,7 +591,7 @@
                     <span class="text-success">Sitemap has been successfully generated.</span>
                     <div>
                         {#if sitemapXmlFile}<a class="btn btn-active btn-neutral" title="Open Sitemap XML" aria-label="Open Sitemap XML" href="file:///{sitemapXmlFile}" target="_blank">Open sitemap.xml</a>{/if}
-                        {#if sitemapTxtFile}<a class="btn btn-active btn-neutral" title="Open Sitemap TXT" aria-label="Open Sitemap TXT" href="file:///{sitemapXmlFile}" target="_blank">Open sitemap.txt</a>{/if}
+                        {#if sitemapTxtFile}<a class="btn btn-active btn-neutral" title="Open Sitemap TXT" aria-label="Open Sitemap TXT" href="file:///{sitemapTxtFile}" target="_blank">Open sitemap.txt</a>{/if}
                     </div>
                 </div>
             {/if}
