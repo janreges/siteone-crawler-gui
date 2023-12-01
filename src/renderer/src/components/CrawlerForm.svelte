@@ -116,7 +116,7 @@
                 let lines = message.data.message.trim().split(/\r?\n/);
                 lines.map(async (line) => {
                     if (line && line.includes('HTML report saved')) {
-                        reportBaseFilePath = getReportBaseName(line);
+                        reportBaseFilePath = getReportBaseFilePath(line);
                         timelineState.htmlReport = true;
                         if (timeoutIdToResult) {
                             clearTimeout(timeoutIdToResult)
@@ -219,13 +219,11 @@
         setTimeout(() => term.resize(getTerminalCols(), getTerminalRows()), 50);
     }
 
-    function getReportBaseName(text: string): string | null {
+    function getReportBaseFilePath(text: string): string | null {
         const regex = /HTML report saved to '([^']+)'/;
         const match = text.match(regex);
         if (match && match[1]) {
-            const fullPath = match[1].replace('.html', '');
-            const pathSegments = fullPath.split('/');
-            return pathSegments[pathSegments.length - 1];
+            return match[1].replace('.html', '');
         }
         return null;
     }
