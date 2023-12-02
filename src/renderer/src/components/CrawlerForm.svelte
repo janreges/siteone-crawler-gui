@@ -568,9 +568,9 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="stroke-success shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     <span class="text-success">Crawling has been finished and your reports are generated.</span>
                     <div class="alert-buttons">
-                        <a class="btn btn-active btn-primary" title="Open HTML report" aria-label="Open HTML label" href="file:///{getReportFilePath('html').replace(/\\/g, '/')}" target="_blank">HTML report</a>
-                        <a class="btn btn-active btn-info" title="Open JSON report" aria-label="Open JSON label" href="file:///{getReportFilePath('json').replace(/\\/g, '/')}" target="_blank">JSON report</a>
-                        <a class="btn btn-active btn-warning" title="Open TXT report" aria-label="Open TXT label" href="file:///{getReportFilePath('txt').replace(/\\/g, '/')}" target="_blank">TXT report</a>
+                        <a class="btn btn-active btn-primary" title="Open HTML report" aria-label="Open HTML label" on:click={() => openReportInBrowser('html')} target="_blank">HTML report</a>
+                        <a class="btn btn-active btn-info" title="Open JSON report" aria-label="Open JSON label" on:click={() => openReportInBrowser('json')} target="_blank">JSON report</a>
+                        <a class="btn btn-active btn-warning" title="Open TXT report" aria-label="Open TXT label" on:click={() => openReportInBrowser('txt')} target="_blank">TXT report</a>
                     </div>
                 </div>
             {/if}
@@ -580,7 +580,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="stroke-success shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     <span class="text-success">Offline website has been successfully generated.</span>
                     <div>
-                        <a class="btn btn-active btn-secondary" title="Browse offline website" aria-label="Browse offline website" href="file:///{offlineWebsiteDir}/index.html" target="_blank">Browse offline website</a>
+                        <a class="btn btn-active btn-secondary" title="Browse offline website" aria-label="Browse offline website" on:click={() => openOfflineVersion()} target="_blank">Browse offline website</a>
                     </div>
                 </div>
             {/if}
@@ -590,8 +590,8 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="stroke-success shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     <span class="text-success">Sitemap has been successfully generated.</span>
                     <div>
-                        {#if sitemapXmlFile}<a class="btn btn-active btn-neutral" title="Open Sitemap XML" aria-label="Open Sitemap XML" href="file:///{sitemapXmlFile}" target="_blank">Open sitemap.xml</a>{/if}
-                        {#if sitemapTxtFile}<a class="btn btn-active btn-neutral" title="Open Sitemap TXT" aria-label="Open Sitemap TXT" href="file:///{sitemapTxtFile}" target="_blank">Open sitemap.txt</a>{/if}
+                        {#if sitemapXmlFile}<a class="btn btn-active btn-neutral" title="Open Sitemap XML" aria-label="Open Sitemap XML" on:click={() => openSitemapXml()} target="_blank">Open sitemap.xml</a>{/if}
+                        {#if sitemapTxtFile}<a class="btn btn-active btn-neutral" title="Open Sitemap TXT" aria-label="Open Sitemap TXT" on:click={() => openSitemapTxt()} target="_blank">Open sitemap.txt</a>{/if}
                     </div>
                 </div>
             {/if}

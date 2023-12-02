@@ -19,7 +19,7 @@ function createWindow(): void {
       nodeIntegration: true,
       nodeIntegrationInWorker: true,
       contextIsolation: true,
-      webSecurity: false
+      webSecurity: true
     }
   });
 
@@ -28,7 +28,12 @@ function createWindow(): void {
   });
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
-    shell.openExternal(details.url);
+    if (details.url.startsWith('file://') && details.url.includes('/SiteOne-Crawler/')) {
+      console.log('Allowing file:// ... ' + details.url);
+      shell.openExternal(details.url);
+      return { action: 'allow' };
+    }
+    console.log('Denying file:// ... ' + details.url);
     return { action: 'deny' };
   });
 
