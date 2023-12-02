@@ -135,12 +135,24 @@
                     } else if (line && line.includes('TXT sitemap generated to')) {
                         sitemapTxtFile = getSitemapTxtPath(line);
                     } else {
-                        var match = line.match(/(\d+)\/(\d+)\s*\|\s*(\d+)%/);
+                        var match = line.match(/(\d+)\/(\d+)\s*\|\s*([\d%]*)/);
                         if (match) {
+                            const compactMode = match[3] && match[3].includes('%') ? false : true;
                             timelineState.progressCurrent = parseInt(match[1]);
                             timelineState.progressTotal = parseInt(match[2]);
-                            timelineState.progressPercentage = parseInt(match[3]);
-                            miniStatsData.handleUrlInfoLine(line);
+
+                            if (compactMode) {
+                                timelineState.progressPercentage = Math.round(timelineState.progressCurrent / timelineState.progressTotal * 100);
+                                // modify line to same as in non-compact mode for parser in handleUrlInfoLine
+                                const lineToParse = line.replace(
+                                  match[0],
+                                  timelineState.progressCurrent + '/' + timelineState.progressTotal + ' | ' + timelineState.progressPercentage + '%' + ' |> | '
+                                );
+                                miniStatsData.handleUrlInfoLine(lineToParse);
+                            } else {
+                                timelineState.progressPercentage = parseInt(match[3].replace('%', ''));
+                                miniStatsData.handleUrlInfoLine(line);
+                            }
                             miniStatsData = miniStatsData;
                         }
                     }
