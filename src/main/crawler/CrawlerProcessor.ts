@@ -29,7 +29,7 @@ class CrawlerProcessor {
     this.websocket = null;
 
     const debugObj = {
-      dirNam: __dirname,
+      dirName: __dirname,
       exe: app.getPath('exe'),
       resources: app.getPath('appData'),
       userData: app.getPath('userData'),
