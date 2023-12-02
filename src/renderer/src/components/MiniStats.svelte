@@ -4,6 +4,10 @@
 
     export let data: MiniStatsData;
     export let fontFamily: string;
+    export let platform: string;
+
+    $: upTrendIcon = platform === 'win32' ? '🡅' : '↑';
+    $: downTrendIcon = platform === 'win32' ? '🡇' : '↓';
 
     function formatTime(seconds: number | null): string {
         return seconds === null ? '-' : ((seconds * 1024).toFixed(0) + ' ms');
@@ -47,9 +51,9 @@
                     <p>HTML</p>
                     <span>⌀</span>
                     {#if data.htmlTimeAvgDirection === 'up'}
-                        <span class="text-red-600 cursor-help" title="The average duration has an increasing tendency">🡅</span>
+                        <span class="text-red-600 cursor-help" title="The average duration has an increasing tendency">{upTrendIcon}</span>
                     {:else if data.htmlTimeAvgDirection === 'down'}
-                        <span class="text-green-600 cursor-help" title="The average duration has a decreasing tendency">🡇</span>
+                        <span class="text-green-600 cursor-help" title="The average duration has a decreasing tendency">{downTrendIcon}</span>
                     {/if}
                     <span class="text-blue-500 cursor-help" title="Average HTML response time">{formatTime(data.htmlTimeAvg)}</span>
                     <span>↓</span>

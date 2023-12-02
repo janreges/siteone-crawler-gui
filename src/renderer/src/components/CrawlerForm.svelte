@@ -62,7 +62,8 @@
     $: terminalHeight = windowHeight - basicFormPartHeight - 140;
 
     let activeTab: string = 'basic';
-    let consoleFontFamily: string = null;
+    let osPlatform: string | null = null;
+    let consoleFontFamily: string | null = null;
 
     if (formData === null) {
         formData = new CrawlerFormContent({});
@@ -72,7 +73,7 @@
     $: allowedDomainForExternalString = domainsToString(formData.allowedDomainForExternalFiles);
 
     onMount(async () => {
-        const osPlatform = window.api.getPlatform();
+        osPlatform = window.api.getPlatform();
         consoleFontFamily = osPlatform ? (osPlatform === 'win32' ? 'Consolas' : (osPlatform === 'darwin' ? 'Monaco' : 'DejaVu Sans Mono')) : 'monospace';
         const fontSize: number = osPlatform ? (osPlatform === 'darwin' ? 11 : 12) : 12;
         term = new Terminal({
@@ -551,7 +552,7 @@
              class:tab-content-active={activeTab === 'output'}>
 
             <div class="mockup-window border border-base-300 bg-base-300 max-h-full h-full w-full">
-                <CrawlerMiniStats data={miniStatsData} fontFamily={consoleFontFamily}/>
+                <CrawlerMiniStats data={miniStatsData} fontFamily={consoleFontFamily} platform={osPlatform}/>
                 <div id="terminal" class="terminal max-h-full h-full w-full" style="height: {terminalHeight}px; padding: 10px; background-color: #111;" bind:this={terminal}>
 
                 </div>
