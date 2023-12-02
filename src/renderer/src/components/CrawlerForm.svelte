@@ -310,7 +310,7 @@
     function handleUrlChange(): void {
         if (formData.url.match(/^https?:\/\/[a-z0-9]/)) {
             // if URL changed and offline export dir was set, then recalculate it
-            formData.offlineExportDir = formData.offlineExportDir !== null ? formData.getDomainFromUrl() : null;
+            formData.offlineExportDir = formData.offlineExportDir !== null ? '%domain%' : null;
         }
     }
 

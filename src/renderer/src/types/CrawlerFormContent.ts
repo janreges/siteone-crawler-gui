@@ -51,9 +51,9 @@ class CrawlerFormContent {
     debugLogFile: string | null = null;
     debugUrlRegex: string | null = null;
     resultStorage: 'memory' | 'file' | null = 'memory';
-    resultStorageDir: string | null = null;
+    resultStorageDir: string | null = 'result-storage';
     resultStorageCompression: boolean | null = null;
-    httpCacheDir: string | null = null;
+    httpCacheDir: string | null = 'http-client-cache';
     httpCacheCompression: boolean | null = null;
     websocketServer: string | null = null;
     consoleWidth: number | null = null;
@@ -173,7 +173,13 @@ class CrawlerFormContent {
         if (this.debugLogFile !== null) params.push(`--debug-log-file='${this.debugLogFile}'`);
         if (this.debugUrlRegex !== null) params.push(`--debug-url-regex='${this.debugUrlRegex}'`);
         if (this.resultStorage !== null) params.push(`--result-storage=${this.resultStorage}`);
-        if (this.resultStorageDir !== null) params.push(`--result-storage-dir='${this.resultStorageDir}'`);
+        if (this.resultStorageDir !== null) {
+          let prefix = '';
+          if (this.resultStorageDir.substring(0, 1) != '/') {
+            prefix = tmpDir + pathDelimiter;
+          }
+          params.push(`--result-storage-dir='${prefix}${this.resultStorageDir}'`);
+        }
         if (this.resultStorageCompression) params.push(`--result-storage-compression`);
         if (this.httpCacheDir !== null && this.httpCacheDir !== '') {
           if (this.httpCacheDir !== 'off') {
@@ -268,22 +274,22 @@ class CrawlerFormContent {
         return params;
     }
 
-    public getDomainFromUrl(): string {
-        if (this.url === null || this.url.trim().match(/^https?:\/\/$/i)) {
-            return '';
-        }
-        return this.url.replace(/^https?:\/\/([^/]+).*?$/i, '$1');
-    }
+    // public getDomainFromUrl(): string {
+    //     if (this.url === null || this.url.trim().match(/^https?:\/\/$/i)) {
+    //         return '';
+    //     }
+    //     return this.url.replace(/^https?:\/\/([^/]+).*?$/i, '$1');
+    // }
 
     private makeCorrections(): void {
       if (this.offlineExportDir !== null && this.offlineExportDir.trim() === '') {
-        this.offlineExportDir = this.getDomainFromUrl();
+        this.offlineExportDir = '%domain%';
       }
       if (this.sitemapXmlFile !== null && this.sitemapXmlFile.trim() === '.sitemap.xml') {
-        this.sitemapXmlFile = this.getDomainFromUrl() + '.sitemap.xml';
+        this.sitemapXmlFile = '%domain%.sitemap.xml';
       }
       if (this.sitemapTxtFile !== null && this.sitemapTxtFile.trim() === '.sitemap.txt') {
-        this.sitemapTxtFile = this.getDomainFromUrl() + '.sitemap.txt';
+        this.sitemapTxtFile = '%domain%.sitemap.txt';
       }
     }
 

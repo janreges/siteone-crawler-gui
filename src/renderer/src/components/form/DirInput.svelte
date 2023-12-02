@@ -9,7 +9,7 @@
   const error = writable("");
 
   $: {
-    const regex = /^[a-zA-Z0-9\-_.]+$/;
+    const regex = /^[a-zA-Z0-9\-_%.]+$/;
     error.set(!value || regex.test(value) ? "" : "Invalid characters - only letters, numbers, dashes, underscores and dots are allowed.");
   }
 </script>
