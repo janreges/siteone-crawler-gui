@@ -61,8 +61,8 @@ function createWindow(): void {
     return app.getPath('exe');
   });
 
-  ipcMain.handle('get-tmp-dir', async (event) => {
-    return app.getPath('userData');
+  ipcMain.handle('get-tmp-dir', async () => {
+    return app.getPath('desktop') + (process.platform === 'win32' ? '\\' : '/') + 'SiteOne-Crawler';
   });
 
 }
