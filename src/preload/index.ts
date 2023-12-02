@@ -3,7 +3,6 @@ import {electronAPI} from '@electron-toolkit/preload';
 import {CrawlerMessage} from '../main/crawler/CrawlerMessage';
 
 const os = require('os');
-const path = require('path');
 
 // Custom APIs for renderer
 const api = {
