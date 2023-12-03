@@ -1,11 +1,10 @@
 <script lang="ts">
   import InfoIcon from './InfoIcon.svelte';
   import type CrawlerFormContent from '../types/CrawlerFormContent';
-  import { PLATFORM } from '../types/CrawlerInfo';
 
   export let data:CrawlerFormContent;
   export let extraColumns: string[] = [];
-  export let workersAlert: string | null = null;
+  export let platform: string;
 
   $: allowedDomainForCrawlingString = domainsToString(data.allowedDomainForCrawling);
   $: allowedDomainForExternalBoolean = (data.allowedDomainForExternalFiles.length === 1 && data.allowedDomainForExternalFiles[0] === '*');
@@ -78,10 +77,10 @@
             <span>4</span>
             <span>5</span>
           </div>
-          {#if data.workers > 1 && PLATFORM === 'Windows'}
+          {#if data.workers > 1 && platform === 'win32'}
             <div role="alert" class="alert alert-warning" style="display: flex; padding: 2px 6px; gap: 0.2em; font-size: 0.7em; border-radius: 8px; margin-top: 10px;">
               <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-              <span>Warning: On Windows, if you use more than 1 worker, there may be a crash and the need to repeat crawling. We will fix it in the future.</span>
+              <span>Warning: on Windows, if you use more than 1 worker, you may experience an unexpected termination and you will see premature 'Crawler stopped' in the console, so you may need to run the crawler again. We will fix it in the future.</span>
             </div>
           {/if}
         </div>
@@ -301,7 +300,7 @@
         <label for="chDomainsForCrawling" class="label" style="width: 184px;">
           <span class="label-text">
             Extra crawled domains
-            <InfoIcon tip="A comma-separated list of domains that the crawler is allowed to crawl. You can use '*', e.g. *.mydomain.tld." />
+            <InfoIcon tip="A comma-delimited list of domains that the crawler is allowed to crawl. You can use '*', e.g. *.mydomain.tld." />
           </span>
         </label>
         <input
