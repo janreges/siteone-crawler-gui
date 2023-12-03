@@ -1,5 +1,5 @@
 appId: com.electron.siteone-crawler
-productName: 'SiteOne-Crawler'
+productName: 'SiteOne Crawler'
 directories:
   buildResources: build
 files:
