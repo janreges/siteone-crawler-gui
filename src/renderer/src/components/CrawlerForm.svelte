@@ -1,4 +1,8 @@
 <script lang="ts">
+
+    // NOTE: When developing the first version, I focused on functionality and the fastest possible startup time.
+    // In the following versions, this large component will be divided and refactored into approx. 5-7 components.
+
     import "xterm/css/xterm.css";
     import ValInput from './form/ValInput.svelte';
     import FileInput from './form/FileInput.svelte';
@@ -310,6 +314,10 @@
 
     function openSitemapTxt():void {
         window.api.openExternal('file://' + sitemapTxtFile);
+    }
+
+    function openDocsBasicUsage():void {
+        window.api.openExternal('https://crawler.siteone.io/getting-started/basic-usage/?utm_source=app-result-page&utm_medium='+osPlatform+'&utm_campaign='+osArchitecture+'&utm_content='+VERSION);
     }
 
     async function openTmpDir(): Promise<void> {
@@ -640,7 +648,7 @@
             {#if reportBaseFilePath}
                 <div style="margin-top: 12px; margin-left: 6px">
                   <h2 style="margin-top: 12px; font-size: 1.4em;">Manually browsing the output</h2>
-                    <h3 style="font-size: 1em; margin: 24px 0;">All types of output are generated in the <a class="text-blue-500" on:click={() => openTmpDir()}>tmp folder</a> of the crawler. You can use the command below to move to this folder and view older reports, exports or delete the cache manually.</h3>
+                    <h3 style="font-size: 1em; margin: 24px 0;">All types of output are generated in the <a class="text-blue-500 cursor-pointer" on:click={() => openTmpDir()}>output folder 'SiteOne-Crawler'</a> on your desktop. You can use the command below to move to this folder and view older reports, exports or delete the cache manually.</h3>
                 </div>
                 <div class="mockup-code" style="font-size: 0.8em;">
                     <pre><code class="text-warning" style="width: 100%; word-wrap: break-word">cd {reportBaseFilePath.replace(/[\/\\][^\/\\]+$/, '')}</code></pre>
@@ -648,7 +656,7 @@
 
                 <div style="margin-top: 20px; margin-left: 6px">
                   <h2 style="margin-top: 16px; margin-bottom: 12px; font-size: 1.4em;">Executed command</h2>
-                  <h3 style="font-size: 1em; margin: 24px 0;">This graphical interface launched the command below of the <a href="https://crawler.siteone.io/getting-started/basic-usage/?utm_source=app-result-page&utm_medium={osPlatform}&utm_campaign={osArchitecture}&utm_content={VERSION}" class="text-blue-500" target="_blank">command-line part of the Crawler</a>.</h3>
+                  <h3 style="font-size: 1em; margin: 24px 0;">This graphical interface launched the command below of the <a on:click={openDocsBasicUsage} class="text-blue-500 cursor-pointer" target="_blank">command-line part of the Crawler</a>.</h3>
                   <div class="mockup-code" style="font-size: 0.8em;">
                     <pre><code class="text-warning" style="width: 100%; word-wrap: break-word">./crawler
     {lastCliParams.join(" \\\n    ")}</code></pre>
