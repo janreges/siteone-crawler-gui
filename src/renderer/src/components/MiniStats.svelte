@@ -46,15 +46,15 @@
     <div class="flex flex-col min-w-max">
         <div class=" flex gap-4">
             <div class="flex gap-2">
-                <h6 class="font-bold">Response times</h6>
+                <h6 class="text-neutral-200 font-bold">Response times</h6>
                 <div class="flex gap-1">
-                    <p>HTML</p>
-                    <span>⌀</span>
+                    <p class="text-neutral-200">HTML</p>
                     {#if data.htmlTimeAvgDirection === 'up'}
                         <span class="text-red-600 cursor-help" title="The average duration has an increasing tendency">{upTrendIcon}</span>
                     {:else if data.htmlTimeAvgDirection === 'down'}
                         <span class="text-green-600 cursor-help" title="The average duration has a decreasing tendency">{downTrendIcon}</span>
                     {/if}
+                    <span>⌀</span>
                     <span class="text-blue-500 cursor-help" title="Average HTML response time">{formatTime(data.htmlTimeAvg)}</span>
                     <span>↓</span>
                     <span class="text-green-500 cursor-help" title="Min HTML response time">{formatTime(data.htmlTimeMin)}</span>
@@ -63,7 +63,7 @@
                 </div>
             </div>
             <div class="flex gap-2">
-                <h6 class="font-bold">HTTP codes</h6>
+                <h6 class="font-bold text-neutral-200">HTTP codes</h6>
                 <div class="flex gap-2">
                     <p>20x: <span class="cursor-help" title="Number of requests with HTTP code 20x" class:text-green-500={data.code200x}>{formatCount(data.code200x)}</span></p>
                     <p>30x: <span class="cursor-help" title="Number of requests with HTTP code 30x" class:text-orange-500={data.code300x}>{formatCount(data.code300x)}</span></p>
@@ -74,30 +74,30 @@
             </div>
         </div>
         <div class="flex gap-2">
-            <h6 class="font-bold">Content types</h6>
+            <h6 class="text-neutral-200 font-bold">Content types</h6>
             <div class="flex gap-1">
                 <p class="flex gap-1">
-                    <span class="border-neutral-800 bg-neutral-900 rounded-md px-0.5" style="border-width: 1px;">HTML</span>
+                    <span class="text-neutral-200 px-0.5">HTML</span>
                     {formatCount(data.contentHtmlNumber)}/{formatSize(data.contentHtmlSize)}
                 </p>
                 <p class="flex gap-1">
-                    <span class="border-neutral-800 bg-neutral-900 rounded-md px-0.5" style="border-width: 1px;">IMG</span>
+                    <span class="text-neutral-200 px-0.5">IMG</span>
                     {formatCount(data.contentImgNumber)}/{formatSize(data.contentImgSize)}
                 </p>
                 <p class="flex gap-1">
-                    <span class="border-neutral-800 bg-neutral-900 rounded-md px-0.5" style="border-width: 1px;">JS</span>
+                    <span class="text-neutral-200 px-0.5">JS</span>
                     {formatCount(data.contentJsNumber)}/{formatSize(data.contentJsSize)}
                 </p>
                 <p class="flex gap-1">
-                    <span class="border-neutral-800 bg-neutral-900 rounded-md px-0.5" style="border-width: 1px;">CSS</span>
+                    <span class="text-neutral-200 px-0.5">CSS</span>
                     {formatCount(data.contentCssNumber)}/{formatSize(data.contentCssSize)}
                 </p>
                 <p class="flex gap-1">
-                    <span class="border-neutral-800 bg-neutral-900 rounded-md px-0.5" style="border-width: 1px;">Fonts</span>
+                    <span class="text-neutral-200 px-0.5">Fonts</span>
                     {formatCount(data.contentFontsNumber)}/{formatSize(data.contentFontsSize)}
                 </p>
                 <p class="flex gap-1">
-                    <span class="border-neutral-800 bg-neutral-900 rounded-md px-0.5" style="border-width: 1px;">Files</span>
+                    <span class="text-neutral-200 px-0.5">Files</span>
                     {formatCount(data.contentFilesNumber)}/{formatSize(data.contentFilesSize)}
                 </p>
             </div>
