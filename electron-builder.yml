@@ -52,7 +52,8 @@ linux:
 #    - snap
 #    - deb
   maintainer: www.siteone.io
-  category: Utility
+  icon: build/icons/icon-512x512.png
+  category: Network
   extraResources:
     - from: 'bin/linux-${arch}/'
       to: 'bin'
