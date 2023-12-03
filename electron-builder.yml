@@ -29,8 +29,9 @@ nsis:
   createDesktopShortcut: always
 mac:
   entitlementsInherit: build/entitlements.mac.plist
-#  extendInfo:
-#    - NSCameraUsageDescription: Application requests access to the device's camera.
+  category: 'public.app-category.developer-tools'
+  extendInfo:
+    - NSDesktopFolderUsageDescription: The crawler asks for permission to access the Desktop - it creates a SiteOne-Crawler folder there, where it will store its data, including the generated report or the offline version of the website.
 #    - NSMicrophoneUsageDescription: Application requests access to the device's microphone.
 #    - NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
 #    - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
