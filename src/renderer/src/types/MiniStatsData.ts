@@ -49,10 +49,10 @@ export class MiniStatsData {
         this.contentFilesSize = null;
     }
 
-    public handleUrlInfoLine(line: string): void {
+    public handleUrlInfoLine(line: string): { statusCode: number, fileType: string, duration: number, size: number } | null {
         const info = this.parseUrlInfoLine(line);
         if (info === null) {
-            return;
+            return null;
         }
 
         // html stats
@@ -110,6 +110,8 @@ export class MiniStatsData {
             this.contentFilesNumber++;
             this.contentFilesSize += info.size;
         }
+
+        return info;
     }
 
     private parseUrlInfoLine(line: string): { statusCode: number, fileType: string, duration: number, size: number } | null {

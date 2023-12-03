@@ -27,6 +27,7 @@
     import { PLATFORM, ARCHITECTURE, VERSION } from '../types/CrawlerInfo';
     import CrawlerMiniStats from "./MiniStats.svelte";
     import { MiniStatsData } from '../types/MiniStatsData';
+    import NetworkStats from './NetworkStats.svelte';
 
     let terminal;
     var term;
@@ -47,6 +48,7 @@
 
     const timelineState = new TimelineState();
     let miniStatsData = new MiniStatsData();
+    let networkStats: typeof NetworkStats;
 
     export let formData: CrawlerFormContent = null;
 
@@ -141,6 +143,7 @@
                             timelineState.progressCurrent = parseInt(match[1]);
                             timelineState.progressTotal = parseInt(match[2]);
 
+                            let info;
                             if (compactMode) {
                                 timelineState.progressPercentage = Math.round(timelineState.progressCurrent / timelineState.progressTotal * 100);
                                 // modify line to same as in non-compact mode for parser in handleUrlInfoLine
@@ -148,12 +151,18 @@
                                   match[0],
                                   timelineState.progressCurrent + '/' + timelineState.progressTotal + ' | ' + timelineState.progressPercentage + '%' + ' |> | '
                                 );
-                                miniStatsData.handleUrlInfoLine(lineToParse);
+                                info = miniStatsData.handleUrlInfoLine(lineToParse);
                             } else {
                                 timelineState.progressPercentage = parseInt(match[3].replace('%', ''));
-                                miniStatsData.handleUrlInfoLine(line);
+                                info = miniStatsData.handleUrlInfoLine(line);
                             }
+
                             miniStatsData = miniStatsData;
+
+                            // update network statsu
+                            if (networkStats) {
+                                networkStats.addProcessedUrl(info.fileType, info.duration, info.size);
+                            }
                         }
                     }
                     term.writeln(line);
@@ -174,6 +183,8 @@
         miniStatsData = miniStatsData;
         timelineState.reset();
         timelineState.started = true;
+
+        networkStats.reset();
 
         const tmpDir = await window.api.getTmpDir();
         const pathDelimiter = window.api.getPlatform() === 'win32' ? '\\' : '/';
@@ -342,7 +353,8 @@
             <Timeline state={timelineState} on:openHtmlReport={openHtmlReport} />
         </BasicFormPart>
     </div>
-    <div role="tablist" class="tabs tabs-bordered">
+    <div role="tablist" class="tabs tabs-bordered" style="position: relative;">
+        <NetworkStats bind:this={networkStats} state={formState} />
         <a role="tab" class="tab font-semibold text-gray-300" class:tab-active={activeTab === 'basic'}
          on:click={() => activeTab = 'basic'}>Basic&nbsp;settings</a>
         <a role="tab" class="tab font-semibold text-gray-300" class:tab-active={activeTab === 'setup'}
