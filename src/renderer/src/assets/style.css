@@ -23,6 +23,10 @@ a.timeline-link {
   padding-right: 20px;
 }
 
+.basic-form fieldset:last-child {
+  margin-bottom: 0;
+}
+
 .basic-form fieldset legend {
   margin-bottom: 14px;
 }
