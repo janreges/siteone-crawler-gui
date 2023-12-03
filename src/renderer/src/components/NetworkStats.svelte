@@ -89,8 +89,7 @@
     height="40"
     valueAppend="req/s"
     barMinHeight="2"
-    linked="network-stats-link"
-    fadeOpacity="0.3"
+    fadeOpacity="0.5"
     dispatchEvents
     on:hover={(event) => selectedRPS = event.detail.value}
     on:blur={() => selectedRPS = null}
@@ -114,8 +113,7 @@
     height="40"
     valueAppend="MB/s"
     barMinHeight="2"
-    linked="network-stats-link"
-    fadeOpacity="0.3"
+    fadeOpacity="0.5"
     dispatchEvents
     on:hover={(event) => selectedDownload = parseFloat(event.detail.value)}
     on:blur={() => selectedDownload = null}
