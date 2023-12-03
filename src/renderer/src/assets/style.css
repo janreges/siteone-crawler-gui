@@ -105,6 +105,10 @@ a.timeline-link {
   transition: opacity 0.3s ease-in-out;
 }
 
+.pointer-span span {
+  cursor: pointer;
+}
+
 body .tab-content {
   display: none !important;
 }

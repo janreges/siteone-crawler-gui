@@ -51,13 +51,18 @@
           </span>
         </label>
         <div class="flex-grow">
-          <input id="rTimeout" type="range" class="range range-xs range-info" min="2" max="10" step="2" bind:value={data.timeout} />
-          <div class="w-full flex justify-between text-xs px-2">
-            <span>2</span>
-            <span>4</span>
-            <span>6</span>
-            <span>8</span>
-            <span>10</span>
+          <input id="rTimeout" type="range" class="range range-xs range-info" min="1" max="10" step="1" bind:value={data.timeout} />
+          <div class="w-full flex justify-between text-xs px-2 pointer-span">
+            <span on:click={() => data.timeout = 1}>1</span>
+            <span on:click={() => data.timeout = 2}>2</span>
+            <span on:click={() => data.timeout = 3}>3</span>
+            <span on:click={() => data.timeout = 4}>4</span>
+            <span on:click={() => data.timeout = 5}>5</span>
+            <span on:click={() => data.timeout = 6}>6</span>
+            <span on:click={() => data.timeout = 7}>7</span>
+            <span on:click={() => data.timeout = 8}>8</span>
+            <span on:click={() => data.timeout = 9}>9</span>
+            <span on:click={() => data.timeout = 10}>10</span>
           </div>
         </div>
       </div>
@@ -69,13 +74,18 @@
           </span>
         </label>
         <div class="flex-grow">
-          <input id="rWorkers" type="range" class="range range-xs range-error" min="1" max="5" step="1" bind:value={data.workers} />
-          <div class="w-full flex justify-between text-xs px-2">
-            <span>1</span>
-            <span>2</span>
-            <span>3</span>
-            <span>4</span>
-            <span>5</span>
+          <input id="rWorkers" type="range" class="range range-xs range-error" min="1" max="10" step="1" bind:value={data.workers} />
+          <div class="w-full flex justify-between text-xs px-2 pointer-span">
+            <span on:click={() => data.workers = 1}>1</span>
+            <span on:click={() => data.workers = 2}>2</span>
+            <span on:click={() => data.workers = 3}>3</span>
+            <span on:click={() => data.workers = 4}>4</span>
+            <span on:click={() => data.workers = 5}>5</span>
+            <span on:click={() => data.workers = 6}>6</span>
+            <span on:click={() => data.workers = 7}>7</span>
+            <span on:click={() => data.workers = 8}>8</span>
+            <span on:click={() => data.workers = 9}>9</span>
+            <span on:click={() => data.workers = 10}>10</span>
           </div>
           {#if data.workers > 1 && platform === 'win32'}
             <div role="alert" class="alert alert-warning" style="display: flex; padding: 2px 6px; gap: 0.2em; font-size: 0.7em; border-radius: 8px; margin-top: 10px;">
@@ -93,13 +103,18 @@
           </span>
         </label>
         <div class="flex-grow">
-          <input id="rRps" type="range" class="range range-xs range-secondary" min="5" max="25" step="5" bind:value={data.maxReqsPerSec} />
-          <div class="w-full flex justify-between text-xs px-2">
-            <span>5</span>
-            <span>10</span>
-            <span>15</span>
-            <span>20</span>
-            <span>25</span>
+          <input id="rRps" type="range" class="range range-xs range-secondary" min="5" max="50" step="5" bind:value={data.maxReqsPerSec} />
+          <div class="w-full flex justify-between text-xs px-2 pointer-span">
+            <span on:click={() => data.maxReqsPerSec = 5}>5</span>
+            <span on:click={() => data.maxReqsPerSec = 10}>10</span>
+            <span on:click={() => data.maxReqsPerSec = 15}>15</span>
+            <span on:click={() => data.maxReqsPerSec = 20}>20</span>
+            <span on:click={() => data.maxReqsPerSec = 25}>25</span>
+            <span on:click={() => data.maxReqsPerSec = 30}>30</span>
+            <span on:click={() => data.maxReqsPerSec = 35}>35</span>
+            <span on:click={() => data.maxReqsPerSec = 40}>40</span>
+            <span on:click={() => data.maxReqsPerSec = 45}>45</span>
+            <span on:click={() => data.maxReqsPerSec = 50}>50</span>
           </div>
         </div>
       </div>
@@ -112,13 +127,13 @@
         </label>
         <div class="flex-grow">
           <input id="rUrls" type="range" class="range range-xs range-info" min="100" max="10100" step="2000" bind:value={data.maxVisitedUrls} />
-          <div class="w-full flex justify-between text-xs px-2">
-            <span>100</span>
-            <span>2100</span>
-            <span>4100</span>
-            <span>6100</span>
-            <span>8100</span>
-            <span>10100</span>
+          <div class="w-full flex justify-between text-xs px-2 pointer-span">
+            <span on:click={() => data.maxVisitedUrls = 100}>100</span>
+            <span on:click={() => data.maxVisitedUrls = 2100}>2100</span>
+            <span on:click={() => data.maxVisitedUrls = 4100}>4100</span>
+            <span on:click={() => data.maxVisitedUrls = 6100}>6100</span>
+            <span on:click={() => data.maxVisitedUrls = 8100}>8100</span>
+            <span on:click={() => data.maxVisitedUrls = 10100}>10100</span>
           </div>
         </div>
       </div>
