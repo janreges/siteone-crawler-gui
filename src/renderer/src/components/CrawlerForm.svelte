@@ -349,7 +349,7 @@
         <BasicFormPart bind:value={formData.url} bind:containerDivHeight={basicFormPartHeight} on:run={onRun} on:stop={onStop} label="URL"
                        on:loadFromHistory={handleLoadFromHistory} {historyStorage} bind:htmlReportFilePath={reportBaseFilePath}
                        on:openCrawlerHomepage={openCrawlerHomepage} on:urlChange={handleUrlChange}
-                       {formState} tooltip="Required URL. Enclose in quotes if URL contains query parameters.">
+                       {formState} tooltip="Required URL with http:// or https:// protocol.">
             <Timeline
               state={timelineState}
               fontFamily={consoleFontFamily}
@@ -411,7 +411,7 @@
                                  options={['text', 'json']}/>
                     <ValInput bind:value={formData.extraColumns} label="Extra Columns"
                               tooltip="Extra table headers for output table, e.g., `DOM,X-Cache(10),Title(40>)`."/>
-                    <IntInput bind:value={formData.urlColumnSize} label="URL Column Size" tooltip="URL column width."/>
+                    <IntInput bind:value={formData.urlColumnSize} label="URL Column Size" tooltip="URL column width in the console output."/>
                     <CheckboxInput bind:checked={formData.showInlineCriticals} label="Show Inline Criticals"
                                    tooltip="Show criticals from the analyzer directly in the URL table."/>
                     <CheckboxInput bind:checked={formData.showInlineWarnings} label="Show Inline Warnings"
@@ -431,10 +431,10 @@
                     <legend>Resource Filtering</legend>
                     <ValInput value={allowedDomainForExternalString} label="Allowed Domains for Ext. Files"
                               on:input={handleAllowedDomainForExternalFilesChange}
-                              tooltip="Allows loading of file content from another domains as well. Comma delimited."/>
+                              tooltip="Allows loading of file content (typically assets) from another domains as well. Comma delimited. You can use wildcards '*'."/>
                     <ValInput value={allowedDomainForCrawlingString} label="Allowed Domains for Crawling"
                               on:input={handleAllowedDomainForCrawlingChange}
-                              tooltip="Allows crawling of all content from other listed domains. Comma delimited."/>
+                              tooltip="Allows crawling of all content (including pages) from other listed domains. Comma delimited. You can use wildcards '*'."/>
                     <CheckboxInput bind:checked={formData.disableJavascript} label="Disable JavaScript"
                                    tooltip="Disables JavaScript downloading and removes all JavaScript code from HTML."/>
                     <CheckboxInput bind:checked={formData.disableStyles} label="Disable Styles"
@@ -590,9 +590,6 @@
                 <div id="terminal" class="terminal max-h-full h-full w-full" style="height: {terminalHeight}px; padding: 10px; background-color: #111;" bind:this={terminal}>
 
                 </div>
-<!--                <div id="terminal" class="terminal max-h-full h-full w-full" style="height: {terminalHeight}px">-->
-<!--                    { consoleOutput ? consoleOutput : CRAWLER_IS_NOT_RUNNING}-->
-<!--                </div>-->
             </div>
         </div>
 
