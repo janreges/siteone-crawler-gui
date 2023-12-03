@@ -97,7 +97,7 @@
                        bind:value
                        title={tooltip}
                        placeholder="https://"
-                       style="min-width: 350px; cursor: default"
+                       style="min-width: 350px; cursor: default; font-size: 20px;"
                        disabled={formState === 'running' || formState === 'stopping'}
                        on:change={(event) => dispatch('urlChange', event)}
                        on:keydown={handleKeydown}
