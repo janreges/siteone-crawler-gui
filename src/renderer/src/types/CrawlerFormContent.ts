@@ -4,7 +4,7 @@ class CrawlerFormContent {
     url: string | null = 'https://';
     device: 'desktop' | 'tablet' | 'mobile' | null = null;
     userAgent: string | null = null;
-    timeout: number | null = null;
+    timeout: number | null = 5;
     proxy: string | null = null;
     httpAuth: string | null = null;
     help: boolean | null = null;
@@ -32,7 +32,7 @@ class CrawlerFormContent {
 
     // Advanced crawler settings
     workers: number | null = 1;
-    maxReqsPerSec: number | null = 10;
+    maxReqsPerSec: number | null = 15;
     memoryLimit: string | null = null;
     allowedDomainForExternalFiles: string[] | null = ['*'];
     allowedDomainForCrawling: string[] | null = [];
