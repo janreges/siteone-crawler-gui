@@ -77,7 +77,7 @@
     onMount(async () => {
         osPlatform = window.api.getPlatform();
         consoleFontFamily = osPlatform ? (osPlatform === 'win32' ? 'Consolas' : (osPlatform === 'darwin' ? 'Monaco' : 'DejaVu Sans Mono')) : 'monospace';
-        const fontSize: number = osPlatform ? (osPlatform === 'darwin' ? 11 : 12) : 12;
+        const fontSize: number = osPlatform ? (osPlatform === 'win32' ? 12 : 11) : 11;
         term = new Terminal({
             fontSize: fontSize,
             fontFamily: consoleFontFamily,
@@ -235,7 +235,14 @@
 
     function getTerminalRows() {
         const osPlatform = window.api.getPlatform();
-        const rowHeight = osPlatform ? (osPlatform === 'darwin' ? 15.5 : 15) : 15;
+
+        let rowHeight = 15; // default, e.g. for Windows - works well with Consolas font size 12 (tuned on Windows 11)
+        if (osPlatform === 'darwin') {
+            rowHeight = 15.5; // works well with Monaco font size 11 (tuned on macOS Sonoma 14)
+        } else if (osPlatform === 'linux') {
+            rowHeight = 13.5; // works well with DejaVu Sans Mono font size 11 (tuned on Ubuntu 22.04)
+        }
+
         return Math.floor(terminalHeight / rowHeight);
     }
 
@@ -377,7 +384,7 @@
         <div role="tabpanel" class="tab-content  pt-4 h-full max-h-full w-full"
              class:tab-content-active={activeTab === 'basic'}>
 
-            <BasicForm bind:data={formData} />
+            <BasicForm bind:data={formData} platform={osPlatform} />
 
         </div>
 
