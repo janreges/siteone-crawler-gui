@@ -287,7 +287,7 @@
       window.api.openExternal('file://' + getReportFilePath('html'));
     }
 
-    function openOfflineVersion():void {
+    function openOfflineExport():void {
         window.api.openExternal('file://' + offlineWebsiteDir + '/index.html');
     }
 
@@ -350,7 +350,12 @@
                        on:loadFromHistory={handleLoadFromHistory} {historyStorage} bind:htmlReportFilePath={reportBaseFilePath}
                        on:openCrawlerHomepage={openCrawlerHomepage} on:urlChange={handleUrlChange}
                        {formState} tooltip="Required URL. Enclose in quotes if URL contains query parameters.">
-            <Timeline state={timelineState} on:openHtmlReport={openHtmlReport} />
+            <Timeline
+              state={timelineState}
+              fontFamily={consoleFontFamily}
+              on:openHtmlReport={openHtmlReport}
+              on:openOfflineExport={openOfflineExport}
+            />
         </BasicFormPart>
     </div>
     <div role="tablist" class="tabs tabs-bordered" style="position: relative;">
@@ -610,7 +615,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="stroke-success shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     <span class="text-success">Offline website has been successfully generated.</span>
                     <div>
-                        <a class="btn btn-active btn-secondary" title="Browse offline website" aria-label="Browse offline website" on:click={() => openOfflineVersion()} target="_blank">Browse offline website</a>
+                        <a class="btn btn-active btn-secondary" title="Browse offline website" aria-label="Browse offline website" on:click={() => openOfflineExport()} target="_blank">Browse offline website</a>
                     </div>
                 </div>
             {/if}

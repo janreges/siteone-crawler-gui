@@ -3,10 +3,11 @@
     import { createEventDispatcher } from 'svelte';
 
     export let state:TimelineState;
+    export let fontFamily: string | null = 'Consolas';
     const dispatch = createEventDispatcher();
 </script>
 
-<div>
+<div style="font-family: {fontFamily}; font-size: 0.9em;">
     <ul class="timeline">
         <li>
             <div class="timeline-start timeline-box timeline-box-small" class:text-black={state.started} class:bg-success={state.started}><strong>Start</strong></div>
@@ -42,7 +43,7 @@
         </li>
         <li>
             <hr class:bg-warning={state.progressPercentage === 100 && !state.htmlReport} class:bg-success={state.htmlReport}/>
-            <div class="timeline-start timeline-box timeline-box-small" style="width: 112px; text-align: center" class:text-black={state.htmlReport} class:bg-success={state.htmlReport}>
+            <div class="timeline-start timeline-box timeline-box-small" style="white-space: nowrap; text-align: center" class:text-black={state.htmlReport} class:bg-success={state.htmlReport}>
               {#if state.htmlReport}
                 <a class="timeline-link" title="Open HTML report" aria-label="Open HTML report" on:click={() => dispatch('openHtmlReport')}>
                   HTML report
@@ -77,7 +78,7 @@
                           clip-rule="evenodd"/>
                 </svg>
             </div>
-            <div class="timeline-end timeline-box timeline-box-small" style="width: 124px; text-align: center" class:text-black={state.offlineExport} class:bg-success={state.offlineExport}>
+            <div class="timeline-end timeline-box timeline-box-small" style="white-space: nowrap; text-align: center" class:text-black={state.offlineExport} class:bg-success={state.offlineExport}>
               {#if state.offlineExport}
                 <a class="timeline-link" on:click={() => dispatch('openOfflineExport')}>
                   Offline export
