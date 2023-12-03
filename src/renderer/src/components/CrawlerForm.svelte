@@ -137,7 +137,7 @@
                     } else if (line && line.includes('TXT sitemap generated to')) {
                         sitemapTxtFile = getSitemapTxtPath(line);
                     } else {
-                        var match = line.match(/(\d+)\/(\d+)\s*\|\s*([\d%]*)/);
+                        var match = line.match(/^(\d+)\/(\d+)\s*\|\s*([\d%]*)/);
                         if (match) {
                             const compactMode = match[3] && match[3].includes('%') ? false : true;
                             timelineState.progressCurrent = parseInt(match[1]);
@@ -354,7 +354,12 @@
         </BasicFormPart>
     </div>
     <div role="tablist" class="tabs tabs-bordered" style="position: relative;">
-        <NetworkStats bind:this={networkStats} state={formState} />
+        <NetworkStats
+          bind:this={networkStats}
+          state={formState}
+          show={activeTab === 'output' || activeTab === 'result'}
+          crawlingDone={timelineState.progressPercentage === 100 && timelineState.progressCurrent === timelineState.progressTotal}
+        />
         <a role="tab" class="tab font-semibold text-gray-300" class:tab-active={activeTab === 'basic'}
          on:click={() => activeTab = 'basic'}>Basic&nbsp;settings</a>
         <a role="tab" class="tab font-semibold text-gray-300" class:tab-active={activeTab === 'setup'}

@@ -3,14 +3,18 @@
   import { LinkedChart } from 'svelte-tiny-linked-charts';
 
   export let state: 'not-running' | 'running' | 'stopping' | 'stopped' = 'not-running';
+  export let crawlingDone: boolean = false;
+  export let show: boolean = false;
 
   let stats: [] = [];
   let lastUpdate: number = new Date().getTime();
   let currentRPS: number = 0;
   let currentDownload: number = 0;
+  let selectedRPS: number | null = null;
+  let selectedDownload: number | null = null;
 
-  let rpsData: [] = [];
-  let downloadData: [] = [];
+  let rpsData: [] = Array(50).fill(0);
+  let downloadData: [] = Array(50).fill(0);
 
   export function addProcessedUrl(contentType: string, duration: number, size: number): void {
     const now = new Date().getTime();
@@ -55,7 +59,7 @@
     currentDownload = lastSecondStats.totalSize / 1024 / 1024; // MB
 
     rpsData[lastSecondStats.time] = lastSecondStats.count;
-    downloadData[lastSecondStats.time] = (lastSecondStats.totalSize / 1024 / 1024).toFixed(1);
+    downloadData[lastSecondStats.time] = (lastSecondStats.totalSize / 1024 / 1024).toFixed(3);
 
     if (rpsData.length > 60) {
       rpsData.shift();
@@ -65,7 +69,7 @@
 
   onMount(() => {
     const interval = setInterval(() => {
-      if (state === 'running') {
+      if (state === 'running' && !crawlingDone) {
         updateStats();
       }
     }, 1000);
@@ -74,23 +78,69 @@
   });
 </script>
 
-<div class="network-stats">
-  <span class="text-success" title="Current requests per seconds">
-    {currentRPS} reqs/s
-  </span>
-  <LinkedChart data={rpsData} showValue valuePosition="floating" barMinWidth="2" fill="#ffcc00" transition="500" width="100" height="40" valueAppend="reqs/s" barMinHeight="2" linked="link-1" />
-  <span
-    class="text-success"
-    title="Current download speed (in fact, it is the size of the decompressed content, so the speed will be higher than the actual network transfers)">
-    {currentDownload.toFixed(1)} MB/s
-  </span>
-  <LinkedChart data={downloadData} showValue valuePosition="static" barMinWidth="2" fill="#ffcc00" transition="500" width="100" height="40" valueAppend="MB/s" barMinHeight="2" linked="link-1" />
+<div class="network-stats" class:visible-with-effect={show} class:hidden-with-effect={!show}>
+
+  <LinkedChart
+    data={rpsData}
+    barMinWidth="2"
+    fill="#cccccc"
+    transition="500"
+    width="100"
+    height="40"
+    valueAppend="req/s"
+    barMinHeight="2"
+    linked="network-stats-link"
+    fadeOpacity="0.3"
+    dispatchEvents
+    on:hover={(event) => selectedRPS = event.detail.value}
+    on:blur={() => selectedRPS = null}
+  />
+
+  <div class="network-stats-box">
+    <span class="text-neutral-300" title="Selected requests per seconds">
+      {#if selectedRPS !== null}{selectedRPS} req/s{:else}&nbsp;{/if}
+    </span>
+    <span class="text-info" title="Current requests per seconds">
+      {currentRPS} req/s
+    </span>
+  </div>
+
+  <LinkedChart
+    data={downloadData}
+    barMinWidth="2"
+    fill="#cccccc"
+    transition="500"
+    width="100"
+    height="40"
+    valueAppend="MB/s"
+    barMinHeight="2"
+    linked="network-stats-link"
+    fadeOpacity="0.3"
+    dispatchEvents
+    on:hover={(event) => selectedDownload = parseFloat(event.detail.value)}
+    on:blur={() => selectedDownload = null}
+  />
+
+  <div class="network-stats-box">
+    <span class="text-neutral-300" title="Selected download speed">
+      {#if selectedDownload !== null && typeof selectedDownload === 'number'}{selectedDownload.toFixed(2)} MB/s{:else}&nbsp;{/if}
+    </span>
+    <span
+      class="text-info"
+      title="Current download speed (in fact, it is the size of the decompressed content, so the speed will be higher than the actual network transfers)">
+      {currentDownload.toFixed(2)} MB/s
+    </span>
+  </div>
+
 </div>
 
 <style>
     .network-stats {
         position: absolute;
-        top: 0;
+        display: flex;
+        gap: 0.3rem;
+        flex-direction: row;
+        top: -2rem;
         right: 0;
         padding: 0.5rem;
         color: white;
@@ -98,14 +148,27 @@
         z-index: 1000;
     }
 
-    .network-stats span {
-        margin-left: 0.5rem;
+    .network-stats-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 0.5rem;
+        text-align: right;
+        min-width: 92px;
+    }
+
+    .network-stats-box span {
         position: relative;
+        display: inline-block;
         top: 0.6rem;
+        min-width: 70px;
         cursor: help;
+        text-align: right;
     }
 
     :global(.network-stats svg) {
-        display: inline-block;
+        display: flex;
+        position: relative;
+        top: 1rem;
     }
 </style>
