@@ -5,9 +5,19 @@ import icon from '../../resources/icon.png?asset';
 import CrawlerProcessor from './crawler/CrawlerProcessor';
 import { CrawlerMessage } from './crawler/CrawlerMessage';
 
+let mainWindow: BrowserWindow | null = null;
+
 function createWindow(): void {
+
+  // for macOS - if the main window already exists, restore and focus it
+  if (mainWindow !== null) {
+    mainWindow.restore();
+    mainWindow.focus();
+    return;
+  }
+
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 1160,
     height: 720,
     minWidth: 860,
@@ -25,7 +35,9 @@ function createWindow(): void {
   });
 
   mainWindow.on('ready-to-show', () => {
-    mainWindow.show();
+    if (mainWindow) {
+      mainWindow.show();
+    }
   });
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
