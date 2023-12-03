@@ -24,7 +24,7 @@
     import Timeline from "./Timeline.svelte";
     import {TimelineState} from "../types/TimelineState";
     import BasicForm from './BasicForm.svelte';
-    import { PLATFORM, ARCHITECTURE, VERSION } from '../types/CrawlerInfo';
+    import { VERSION } from '../types/CrawlerInfo';
     import CrawlerMiniStats from "./MiniStats.svelte";
     import { MiniStatsData } from '../types/MiniStatsData';
     import NetworkStats from './NetworkStats.svelte';
@@ -65,6 +65,7 @@
 
     let activeTab: string = 'basic';
     let osPlatform: string | null = null;
+    let osArchitecture: string | null = null;
     let consoleFontFamily: string | null = null;
 
     if (formData === null) {
@@ -76,6 +77,7 @@
 
     onMount(async () => {
         osPlatform = window.api.getPlatform();
+        osArchitecture = window.api.getArchitecture();
         consoleFontFamily = osPlatform ? (osPlatform === 'win32' ? 'Consolas' : (osPlatform === 'darwin' ? 'Monaco' : 'DejaVu Sans Mono')) : 'monospace';
         const fontSize: number = osPlatform ? (osPlatform === 'win32' ? 12 : 11) : 11;
         term = new Terminal({
@@ -299,7 +301,7 @@
     }
 
     function openCrawlerHomepage():void {
-      window.api.openExternal('https://crawler.siteone.io/?utm_source=app&utm_medium='+PLATFORM+'&utm_campaign='+ARCHITECTURE+'&utm_content='+VERSION);
+      window.api.openExternal('https://crawler.siteone.io/?utm_source=app&utm_medium='+osPlatform+'&utm_campaign='+osArchitecture+'&utm_content='+VERSION);
     }
 
     function openSitemapXml():void {
@@ -646,7 +648,7 @@
 
                 <div style="margin-top: 20px; margin-left: 6px">
                   <h2 style="margin-top: 16px; margin-bottom: 12px; font-size: 1.4em;">Executed command</h2>
-                  <h3 style="font-size: 1em; margin: 24px 0;">This graphical interface launched the command below of the <a href="https://crawler.siteone.io/getting-started/basic-usage/?utm_source=app-result-page&utm_medium={PLATFORM}&utm_campaign={ARCHITECTURE}&utm_content={VERSION}" class="text-blue-500" target="_blank">command-line part of the Crawler</a>.</h3>
+                  <h3 style="font-size: 1em; margin: 24px 0;">This graphical interface launched the command below of the <a href="https://crawler.siteone.io/getting-started/basic-usage/?utm_source=app-result-page&utm_medium={osPlatform}&utm_campaign={osArchitecture}&utm_content={VERSION}" class="text-blue-500" target="_blank">command-line part of the Crawler</a>.</h3>
                   <div class="mockup-code" style="font-size: 0.8em;">
                     <pre><code class="text-warning" style="width: 100%; word-wrap: break-word">./crawler
     {lastCliParams.join(" \\\n    ")}</code></pre>

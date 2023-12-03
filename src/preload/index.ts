@@ -9,6 +9,7 @@ const api = {
   setMessageToBackend: (message: CrawlerMessage) => ipcRenderer.send('crawler-message', message),
   onCrawlerMessage: (callback: (event: any, message: CrawlerMessage) => void) => ipcRenderer.on('crawler-message', callback),
   getPlatform: () => os.platform(),
+  getArchitecture: () => os.arch(),
   getTmpDir: () => getTmpDir(),
   openExternal: (url) => shell.openExternal(url)
 };
