@@ -349,7 +349,7 @@
         <BasicFormPart bind:value={formData.url} bind:containerDivHeight={basicFormPartHeight} on:run={onRun} on:stop={onStop} label="URL"
                        on:loadFromHistory={handleLoadFromHistory} {historyStorage} bind:htmlReportFilePath={reportBaseFilePath}
                        on:openCrawlerHomepage={openCrawlerHomepage} on:urlChange={handleUrlChange}
-                       {formState} tooltip="Required URL with http:// or https:// protocol.">
+                       {formState} tooltip="Base URL where to start browsing the website (http:// or https://).">
             <Timeline
               state={timelineState}
               fontFamily={consoleFontFamily}
