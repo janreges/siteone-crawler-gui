@@ -83,6 +83,12 @@
         osPlatform = window.api.getPlatform();
         osArchitecture = window.api.getArchitecture();
         consoleFontFamily = osPlatform ? (osPlatform === 'win32' ? 'Consolas' : (osPlatform === 'darwin' ? 'Monaco' : 'DejaVu Sans Mono')) : 'monospace';
+
+        // default in formData.workers is only 1 (due to multi-worker issue in Cygwin) but on Linux/macOS we want default to 3 workers
+        if (osPlatform !== 'win32') {
+            formData.workers = 3;
+        }
+
         const fontSize: number = osPlatform ? (osPlatform === 'win32' ? 12 : 11) : 11;
         term = new Terminal({
             fontSize: fontSize,
