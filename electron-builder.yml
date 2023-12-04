@@ -15,6 +15,17 @@ asarUnpack:
   - resources/**
 win:
   executableName: SiteOne-Crawler
+  artifactName: ${name}-${os}-${arch}-${version}.${ext}
+  target:
+    - target: nsis
+      arch:
+        - x64
+    - target: msi
+      arch:
+        - x64
+    - target: portable
+      arch:
+        - x64
   extraResources:
     - from: 'bin/win-${arch}/'
       to: 'bin'
@@ -24,12 +35,13 @@ win:
     - from: 'bin/win-${arch}/crawler.bat'
       to: 'crawler.bat'
 nsis:
-  artifactName: ${name}-${version}-setup.${ext}
+  artifactName: ${name}-${os}-${arch}-${version}-setup.${ext}
   shortcutName: ${productName}
   uninstallDisplayName: ${productName}
   createDesktopShortcut: always
 mac:
   entitlementsInherit: build/entitlements.mac.plist
+  artifactName: ${name}-${os}-${arch}-${version}.${ext}
   category: 'public.app-category.developer-tools'
   extendInfo:
     - NSDesktopFolderUsageDescription: The crawler asks for permission to access the Desktop - it creates a SiteOne-Crawler folder there, where it will store its data, including the generated report or the offline version of the website.
@@ -46,12 +58,13 @@ mac:
     - from: 'bin/mac-${arch}/crawler'
       to: 'crawler'
 dmg:
-  artifactName: ${name}-${version}.${ext}
+  artifactName: ${name}-${os}-${arch}-${version}.${ext}
 linux:
+  artifactName: ${name}-${os}-${arch}-${version}.${ext}
   target:
     - AppImage
-#    - snap
-#    - deb
+    - snap
+    - deb
   maintainer: www.siteone.io
   icon: build/icons/icon-512x512.png
   category: Network
@@ -64,7 +77,7 @@ linux:
     - from: 'bin/linux-${arch}/crawler'
       to: 'crawler'
 appImage:
-  artifactName: ${name}-${version}.${ext}
+  artifactName: ${name}-${os}-${arch}-${version}.${ext}
 npmRebuild: false
 publish:
   provider: generic
