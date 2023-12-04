@@ -107,9 +107,16 @@ app.whenReady().then(() => {
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
+
+  // jan.reges: with the default commented code below, there is a problem on
+  // macOS when re-launching the application due to the event being raised again
+  // on ipcMain. I did not manage to solve it even after removing all events
+  // from ipcMain when the window was blocked.
+  app.quit();
+
+  //if (process.platform !== 'darwin') {
+  //  app.quit();
+  //}
 });
 
 // In this file you can include the rest of your app"s specific main process
