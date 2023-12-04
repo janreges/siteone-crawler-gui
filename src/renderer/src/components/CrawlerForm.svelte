@@ -38,12 +38,18 @@
     let lastCliParams: string[] = [];
 
     // const CRAWLER_IS_NOT_RUNNING = 'Crawler is not running...';
-    const CRAWLER_IS_STARTING = 'Crawler is starting...';
+    let CRAWLER_IS_STARTING = 'Crawler is starting...';
     const CRAWLER_STOPPED = 'Crawler stopped.';
 
     export const STATE_NOT_RUNNING = 'not-running';
     export const STATE_RUNNING = 'running';
     export const STATE_STOPPING = 'stopping';
+
+    const fontPerPlatform = {
+        'win32': 'Consolas',
+        'darwin': 'Monaco',
+        'linux': 'DejaVu Sans Mono'
+    };
 
     let formState: string = STATE_NOT_RUNNING;
     let hasResult: boolean = false;
@@ -71,6 +77,7 @@
     let osPlatform: string | null = null;
     let osArchitecture: string | null = null;
     let consoleFontFamily: string | null = null;
+    let isWindows: boolean = false;
 
     if (formData === null) {
         formData = new CrawlerFormContent({});
@@ -82,14 +89,17 @@
     onMount(async () => {
         osPlatform = window.api.getPlatform();
         osArchitecture = window.api.getArchitecture();
-        consoleFontFamily = osPlatform ? (osPlatform === 'win32' ? 'Consolas' : (osPlatform === 'darwin' ? 'Monaco' : 'DejaVu Sans Mono')) : 'monospace';
+        isWindows = osPlatform === 'win32';
+        consoleFontFamily = osPlatform ? fontPerPlatform[osPlatform] : 'monospace';
 
-        // default in formData.workers is only 1 (due to multi-worker issue in Cygwin) but on Linux/macOS we want default to 3 workers
-        if (osPlatform !== 'win32') {
+        // add info about slow first start on Windows and set workers to 3 on Linux/macOS (Windows has 1 as default due to issues with multiple workers on Cygwin)
+        if (isWindows) {
+            CRAWLER_IS_STARTING = 'Crawler is starting - it may take tens of seconds when first running on Windows...';
+        } else {
             formData.workers = 3;
         }
 
-        const fontSize: number = osPlatform ? (osPlatform === 'win32' ? 12 : 11) : 11;
+        const fontSize: number = isWindows ? 12 : 11;
         term = new Terminal({
             fontSize: fontSize,
             fontFamily: consoleFontFamily,
@@ -199,7 +209,7 @@
         networkStats.reset();
 
         const tmpDir = await window.api.getTmpDir();
-        const pathDelimiter = window.api.getPlatform() === 'win32' ? '\\' : '/';
+        const pathDelimiter = isWindows ? '\\' : '/';
 
         formData.consoleWidth = getTerminalCols();
         formData.cliParams = formData.generateCliParams(tmpDir, pathDelimiter);
