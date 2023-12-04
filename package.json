@@ -1,9 +1,8 @@
 {
   "name": "SiteOne-Crawler",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "SiteOne Crawler is a very useful and versatile tool that performs an in-depth crawl and analysis of the entire website, looks for errors, recommends improvements, creates a complete offline version of your website or sitemap. It also has a lot of other uses, check out https://crawler.siteone.io/introduction/key-features/.",
   "main": "./out/main/index.js",
-  "author": "jan.reges@siteone.cz",
   "homepage": "https://crawler.siteone.io/",
   "scripts": {
     "format": "prettier --plugin prettier-plugin-svelte --write .",
@@ -55,5 +54,15 @@
     "tslib": "^2.6.2",
     "typescript": "^5.1.6",
     "vite": "^4.4.9"
+  },
+  "license": "CC BY 4.0",
+  "author": {
+    "name": "Ján Regeš",
+    "email": "jan.reges@siteone.cz",
+    "url": "https://www.siteone.io/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/janreges/siteone-crawler-gui.git"
   }
 }
