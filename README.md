@@ -8,12 +8,19 @@ More info: https://crawler.siteone.io/
 
 ## Screenshots and video
 
+Animated GIF of the application in action - click to Play on the right when autoplay did not start.
+
 ![SiteOne Crawler Demo](docs/app-demo-2023-12-04.gif)
+
+Screenshot of the form with full settings. The Basic form contains only the basic settings, and the modifications in it are written in the background to this full form. Here you can also set parameters outside the ranges offered in the basic form.
+
 ![SiteOne Crawler Full Form](docs/screenshot-2-app-full-form.png)
 
 ### HTML report video
 
-[![SiteOne Crawler HTML report video](https://img.youtube.com/vi/vMy1umO9Prc/0.jpg)](https://www.youtube.com/watch?v=vMy1umO9Prc)
+Watch the [video](https://youtu.be/PHIFSOmk0gk) that describes the HTML report - one of the main outputs of SiteOne Crawler.
+
+[![SiteOne Crawler HTML report video](https://img.youtube.com/vi/PHIFSOmk0gk/0.jpg)](https://youtu.be/PHIFSOmk0gk)
 
 ## Step 1 - Installation
 
