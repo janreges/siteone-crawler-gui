@@ -1,6 +1,6 @@
-# SiteOne Crawler GUI
+# SiteOne Crawler GUI (desktop application)
 
-This is a desktop application to very useful command-line tool [SiteOne Crawler](https://github.com/janreges/siteone-crawler) and is ready for all major platforms - **Windows (x64)**, **macOS (x64, arm64)** and **Linux (x64, arm64)**.
+This is a desktop application to very useful command-line tool [SiteOne Crawler](https://github.com/janreges/siteone-crawler) (watch [video](https://www.youtube.com/watch?v=25T_yx13naA&list=PL9mElgTe-s1Csfg0jXWmDS0MHFN7Cpjwp&index=2)) and is ready for all major platforms - **Windows (x64)**, **macOS (x64, arm64)** and **Linux (x64, arm64)**.
 
 The goal of this desktop application is to **enable comfortable use** of SiteOne Crawler even for users without the need to work with the command line.
 
@@ -8,7 +8,7 @@ More info: https://crawler.siteone.io/
 
 ## Screenshots and video
 
-Animated GIF of the application in action - click to Play on the right when autoplay did not start.
+Animated GIF of the application in action - click to Play on the right when autoplay did not start or watch the [commented video](https://www.youtube.com/watch?v=rFW8LNEVNdw&list=PL9mElgTe-s1Csfg0jXWmDS0MHFN7Cpjwp&index=1).
 
 ![SiteOne Crawler Demo](docs/app-demo-2023-12-04.gif)
 
@@ -35,8 +35,9 @@ Watch the [video](https://youtu.be/PHIFSOmk0gk) that describes the HTML report -
 4. **Start** crawling.
 5. **Wait** for the crawling to finish.
 6. On the `Result` tab, you can **open** a detailed **HTML report** or download the report as **JSON** or **TXT**. If you have set, you can view the **generated offline version** of your website or download the **sitemap** xml/txt files.
-7. **Take a look** at the website [crawler.siteone.io](https://crawler.siteone.io/?utm_source=github-gui-readme) and study [all the possibilities of use](https://crawler.siteone.io/introduction/key-features/#list-of-features).
-8. **Enjoy the tool** and [send us feedback](https://crawler.siteone.io/introduction/contact-and-community/) if you have suggestions for improvement.
+7. All generated content (reports, offline websites, cache, etc.) is **stored in the folder `SiteOne-Crawler`** on your desktop.
+8. **Take a look** at the website [crawler.siteone.io](https://crawler.siteone.io/?utm_source=github-gui-readme) and study [all the possibilities of use](https://crawler.siteone.io/introduction/key-features/#list-of-features).
+9. **Enjoy the tool** and [send us feedback](https://crawler.siteone.io/introduction/contact-and-community/) if you have suggestions for improvement.
 
 
 ## For Developers
