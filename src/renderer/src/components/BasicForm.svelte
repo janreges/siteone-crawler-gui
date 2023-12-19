@@ -329,5 +329,65 @@
       </div>
     </fieldset>
 
+    <fieldset class="w-full md:w-1/2 p-2">
+      <legend class="font-bold text-gray-300">Online HTML report</legend>
+      <div class="form-control form-control-checkbox">
+        <label for="chUploadReport" class="label" style="width: 180px; padding-left: 4px;">
+          <span class="label-text">
+            Upload report
+            <InfoIcon tip="If enabled, HTML report will be securely uploaded to the crawler.siteone.io server, kept for the set retention period and accessible via a secure unique URL. Optionally, it can also be password protected." />
+          </span>
+        </label>
+        <input id="chUploadReport"
+               type="checkbox"
+               class="checkbox checkbox-info"
+               checked={data.upload}
+               on:change={(event) => data.upload = event.currentTarget.checked}
+        />
+      </div>
+      <div class="form-control">
+        <label for="uploadRetention" class="label" style="width: 184px">
+          <span class="label-text">
+            Retention period
+            <InfoIcon tip="How long should the HTML report be available online for everyone who will have a unique URL to it?" />
+          </span>
+        </label>
+        <div class="flex-grow">
+          <select id="uploadRetention" bind:value={data.uploadRetention} class="select select-bordered select-sm">
+            <option value="1h" selected={data.uploadRetention === '1h'}>1 hour</option>
+            <option value="4h" selected={data.uploadRetention === '4h'}>4 hours</option>
+            <option value="12h" selected={data.uploadRetention === '12h'}>12 hours</option>
+            <option value="24h" selected={data.uploadRetention === '24h'}>24 hours</option>
+            <option value="3d" selected={data.uploadRetention === '3d'}>3 days</option>
+            <option value="7d" selected={data.uploadRetention === '7d'}>7 days</option>
+            <option value="30d" selected={data.uploadRetention === '30d'}>30 days</option>
+            <option value="365d" selected={data.uploadRetention === '365d'}>365 days</option>
+            <option value="forever" selected={data.uploadRetention === 'forever'}>forever</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-control">
+        <label for="uploadPassword" class="label" style="width: 184px;">
+          <span class="label-text">
+            Password
+            <InfoIcon tip="An optional password. If specified, must be filled in (with username 'crawler') when attempting to view the HTML report. Passwords are stored on the server in a secure format (Bcrypt or Argon2id)" />
+          </span>
+        </label>
+        <input
+          id="uploadPassword"
+          type="text"
+          class="input input-bordered input-sm"
+          style="margin-top: 0.25rem;"
+          bind:value={data.uploadPassword}
+        />
+      </div>
+    </fieldset>
+
   </div>
 </form>
+
+<style>
+  input, select {
+    cursor: default;
+  }
+</style>

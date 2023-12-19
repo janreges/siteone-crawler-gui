@@ -97,6 +97,13 @@ class CrawlerFormContent {
     slowestUrlsMinTime: string | null = null;
     slowestUrlsMaxTime: string | null = null;
 
+    // Upload to server
+    upload: boolean = true;
+    uploadTo: string = 'https://crawler.siteone.io/up';
+    uploadRetention: string = '30d';
+    uploadPassword: string | null = null;
+    uploadTimeout: number = 3600;
+
     // URL params
     cliParams: string[] = [];
 
