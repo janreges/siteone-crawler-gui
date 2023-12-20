@@ -120,16 +120,16 @@ class CrawlerFormContent {
         // Basic settings
         if (this.url !== null) params.push(`--url=${this.url}`);
         if (this.device !== null) params.push(`--device=${this.device}`);
-        if (this.userAgent !== null) params.push(`--user-agent=${this.userAgent}`);
+        if (this.userAgent !== null) params.push(`--user-agent='${this.userAgent}'`);
         if (this.timeout !== null) params.push(`--timeout=${this.timeout}`);
-        if (this.proxy !== null) params.push(`--proxy=${this.proxy}`);
-        if (this.httpAuth !== null) params.push(`--http-auth=${this.httpAuth}`);
+        if (this.proxy !== null) params.push(`--proxy='${this.proxy}'`);
+        if (this.httpAuth !== null) params.push(`--http-auth='${this.httpAuth}'`);
         if (this.help) params.push(`--help`);
         if (this.version) params.push(`--version`);
 
         // Output settings
         if (this.output !== null) params.push(`--output=${this.output}`);
-        if (this.extraColumns !== null && this.extraColumns.trim() !== '') params.push(`--extra-columns=${this.extraColumns}`);
+        if (this.extraColumns !== null && this.extraColumns.trim() !== '') params.push(`--extra-columns='${this.extraColumns}'`);
         if (this.urlColumnSize !== null) params.push(`--url-column-size=${this.urlColumnSize}`);
         if (this.showInlineCriticals) params.push(`--show-inline-criticals`);
         if (this.showInlineWarnings) params.push(`--show-inline-warnings`);
@@ -154,21 +154,21 @@ class CrawlerFormContent {
         if (this.allowedDomainForExternalFiles !== null) {
             this.allowedDomainForExternalFiles.forEach((domain) => {
                 if (domain !== null && domain.trim() !== '') {
-                    params.push(`--allowed-domain-for-external-files=${domain}`);
+                    params.push(`--allowed-domain-for-external-files='${domain}'`);
                 }
             });
         }
         if (this.allowedDomainForCrawling !== null) {
             this.allowedDomainForCrawling.forEach((domain) => {
                 if (domain !== null && domain.trim() !== '') {
-                    params.push(`--allowed-domain-for-crawling=${domain}`);
+                    params.push(`--allowed-domain-for-crawling='${domain}'`);
                 }
             });
         }
-        if (this.includeRegex !== null) params.push(`--include-regex=${this.includeRegex}`);
-        if (this.ignoreRegex !== null) params.push(`--ignore-regex=${this.ignoreRegex}`);
-        if (this.analyzerFilterRegex !== null) params.push(`--analyzer-filter-regex=${this.analyzerFilterRegex}`);
-        if (this.acceptEncoding !== null) params.push(`--accept-encoding=${this.acceptEncoding}`);
+        if (this.includeRegex !== null) params.push(`--include-regex='${this.includeRegex}'`);
+        if (this.ignoreRegex !== null) params.push(`--ignore-regex='${this.ignoreRegex}'`);
+        if (this.analyzerFilterRegex !== null) params.push(`--analyzer-filter-regex='${this.analyzerFilterRegex}'`);
+        if (this.acceptEncoding !== null) params.push(`--accept-encoding='${this.acceptEncoding}'`);
         if (this.removeQueryParams) params.push(`--remove-query-params`);
         if (this.addRandomQueryParams) params.push(`--add-random-query-params`);
         if (this.maxQueueLength !== null) params.push(`--max-queue-length=${this.maxQueueLength}`);
