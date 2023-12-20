@@ -68,6 +68,8 @@
     let offlineWebsiteDir: string | null = null;
     let sitemapXmlFile: string | null = null;
     let sitemapTxtFile: string | null = null;
+    let htmlReportUrl: string | null = null;
+    let htmlReportUrlCopyText: string | null = null;
 
     let basicFormPartHeight: number = 0;
     $: terminalWidth = windowWidth - 20;
@@ -158,7 +160,10 @@
                         sitemapXmlFile = getSitemapXmlPath(line);
                     } else if (line && line.includes('TXT sitemap generated to')) {
                         sitemapTxtFile = getSitemapTxtPath(line);
-                    } else {
+                    } else if (line && line.includes('HTML report uploaded to')) {
+                        htmlReportUrl = getUploadedReportUrl(line);
+                    }
+                    else {
                         var match = line.match(/^(\d+)\/(\d+)\s*\|\s*([\d%]*)/);
                         if (match) {
                             const compactMode = match[3] && match[3].includes('%') ? false : true;
@@ -308,8 +313,21 @@
         return null;
     }
 
+    function getUploadedReportUrl(text: string): string | null {
+      const regex = /HTML report uploaded to '([^']+)'/;
+      const match = text.match(regex);
+      if (match && match[1]) {
+        return match[1];
+      }
+      return null;
+    }
+
     function openReportInBrowser(extension:string): void {
         window.api.openExternal('file://' + getReportFilePath(extension));
+    }
+
+    function openOnlineHtmlReport(): void {
+      window.api.openExternal(htmlReportUrl);
     }
 
     function openHtmlReport(): void {
@@ -334,6 +352,14 @@
 
     function openDocsBasicUsage():void {
         window.api.openExternal('https://crawler.siteone.io/getting-started/basic-usage/?utm_source=app-result-page&utm_medium='+osPlatform+'&utm_campaign='+osArchitecture+'&utm_content='+VERSION);
+    }
+
+    function copyOnlineReportUrl() {
+      navigator.clipboard.writeText(htmlReportUrl).then(() => {
+        htmlReportUrlCopyText = 'Copied!';
+      }).catch(err => {
+        htmlReportUrlCopyText = 'Error copying! ' + err.message;
+      });
     }
 
     async function openTmpDir(): Promise<void> {
@@ -612,6 +638,23 @@
                     <ValInput bind:value={formData.slowestUrlsMaxTime} label="Max Time for Slowest URLs"
                               tooltip="The maximum response time for an URL address to be evaluated as very slow."/>
                 </fieldset>
+
+                <!-- Online HTML report -->
+                <fieldset>
+                  <legend>Online HTML report</legend>
+                  <CheckboxInput bind:checked={formData.upload} label="Upload report"
+                            tooltip="If enabled, HTML report will be securely uploaded to the crawler.siteone.io server, kept for the set retention period and accessible via a secure unique URL. Optionally, it can also be password protected."/>
+                  <ValInput bind:value={formData.uploadTo} label="Upload to URL"
+                            tooltip="URL of the endpoint where to send the HTML report."/>
+                  <SelectInput bind:value={formData.uploadRetention} label="Retention period"
+                            tooltip="How long should the HTML report be available online for everyone who will have a unique URL to it?"
+                            options={['1h', '4h', '12h', '24h', '3d', '7d', '30d', '365d', 'forever']}
+                            />
+                  <ValInput bind:value={formData.uploadPassword} label="Password"
+                            tooltip="An optional password. If specified, must be filled in (with username 'crawler') when attempting to view the HTML report. Passwords are stored on the server in a secure format (Bcrypt or Argon2id)"/>
+                  <IntInput bind:value={formData.uploadTimeout} label="Timeout"
+                            tooltip="Timeout for uploading the HTML report (in seconds)."/>
+                </fieldset>
             </div>
         </div>
 
@@ -633,12 +676,26 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="stroke-success shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     <span class="text-success">Crawling has been finished and your reports are generated.</span>
                     <div class="alert-buttons">
-                        <a class="btn btn-active btn-primary" title="Open HTML report" aria-label="Open HTML label" on:click={() => openReportInBrowser('html')} target="_blank">HTML report</a>
-                        <a class="btn btn-active btn-info" title="Open JSON report" aria-label="Open JSON label" on:click={() => openReportInBrowser('json')} target="_blank">JSON report</a>
-                        <a class="btn btn-active btn-warning" title="Open TXT report" aria-label="Open TXT label" on:click={() => openReportInBrowser('txt')} target="_blank">TXT report</a>
+                        <a class="btn btn-active btn-primary" title="Open HTML report" aria-label="Open HTML report" on:click={() => openReportInBrowser('html')} target="_blank">HTML report</a>
+                        <a class="btn btn-active btn-info" title="Open JSON report" aria-label="Open JSON report" on:click={() => openReportInBrowser('json')} target="_blank">JSON report</a>
+                        <a class="btn btn-active btn-warning" title="Open TXT report" aria-label="Open TXT report" on:click={() => openReportInBrowser('txt')} target="_blank">TXT report</a>
                     </div>
                 </div>
             {/if}
+
+          {#if htmlReportUrl}
+            <div role="alert" class="alert" style="margin-top: 14px;">
+              <svg xmlns="http://www.w3.org/2000/svg" class="stroke-success shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              <span class="text-success">
+                The HTML report has been uploaded to the server.<br />
+                <a class="link-to-online-report" href={htmlReportUrl} target="_blank" on:click={() => openOnlineHtmlReport()}>{htmlReportUrl}</a> &nbsp;
+                <button class="btn btn-outline btn-xs" on:click|preventDefault={copyOnlineReportUrl}>Copy</button> {#if htmlReportUrlCopyText}<span class={htmlReportUrlCopyText === 'Copied!' ? 'text-success' : 'text-warning'} style="font-size: 0.8em;">{htmlReportUrlCopyText}</span>{/if}
+              </span>
+              <div class="alert-buttons">
+                <a class="btn btn-active btn-success" title="Open online HTML report" aria-label="Open online HTML report" on:click={() => openOnlineHtmlReport()} target="_blank">Online HTML report</a>
+              </div>
+            </div>
+          {/if}
 
             {#if offlineWebsiteDir}
                 <div role="alert" class="alert" style="margin-top: 14px; margin-bottom: 20px;">
@@ -800,6 +857,11 @@
 
     :global(.checkbox) {
         border-radius: 2px !important;
+    }
+
+    :global(.link-to-online-report) {
+      font-size: 0.8em;
+      color: #666666;
     }
 
 </style>

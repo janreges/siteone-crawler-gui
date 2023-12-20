@@ -175,6 +175,13 @@ class CrawlerFormContent {
         if (this.maxVisitedUrls !== null) params.push(`--max-visited-urls=${this.maxVisitedUrls}`);
         if (this.maxUrlLength !== null) params.push(`--max-url-length=${this.maxUrlLength}`);
 
+        // Upload options
+        if (this.upload) params.push(`--upload`);
+        if (this.uploadTo !== null && this.uploadTo !== '') params.push(`--upload-to='${this.uploadTo}'`);
+        if (this.uploadRetention !== null) params.push(`--upload-retention='${this.uploadRetention}'`);
+        if (this.uploadPassword !== null && this.uploadPassword !== '') params.push(`--upload-password='${this.uploadPassword}'`);
+        if (this.uploadTimeout !== null) params.push(`--upload-timeout=${this.uploadTimeout}`);
+
         // Expert settings
         if (this.debug) params.push(`--debug`);
         if (this.debugLogFile !== null) params.push(`--debug-log-file='${this.debugLogFile}'`);
