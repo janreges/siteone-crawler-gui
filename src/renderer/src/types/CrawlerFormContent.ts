@@ -1,5 +1,7 @@
 class CrawlerFormContent {
 
+    private static DEFAULT_UPLOAD_TO: string = 'https://crawler.siteone.io/up';
+
     // Basic settings
     url: string | null = 'https://';
     device: 'desktop' | 'tablet' | 'mobile' | null = null;
@@ -99,7 +101,7 @@ class CrawlerFormContent {
 
     // Upload to server
     upload: boolean = true;
-    uploadTo: string = 'https://crawler.siteone.io/up';
+    uploadTo: string = CrawlerFormContent.DEFAULT_UPLOAD_TO;
     uploadRetention: string = '30d';
     uploadPassword: string | null = null;
     uploadTimeout: number = 3600;
@@ -177,7 +179,7 @@ class CrawlerFormContent {
 
         // Upload options
         if (this.upload) params.push(`--upload`);
-        if (this.uploadTo !== null && this.uploadTo !== '') params.push(`--upload-to='${this.uploadTo}'`);
+        if (this.uploadTo !== null && this.uploadTo !== '' && this.uploadTo !== CrawlerFormContent.DEFAULT_UPLOAD_TO) params.push(`--upload-to='${this.uploadTo}'`);
         if (this.uploadRetention !== null) params.push(`--upload-retention='${this.uploadRetention}'`);
         if (this.uploadPassword !== null && this.uploadPassword !== '') params.push(`--upload-password='${this.uploadPassword}'`);
         if (this.uploadTimeout !== null) params.push(`--upload-timeout=${this.uploadTimeout}`);
