@@ -25,7 +25,7 @@ Watch the [video](https://youtu.be/PHIFSOmk0gk) that describes the HTML report -
 ## Step 1 - Installation
 
 1. **Go** to the [releases](https://github.com/janreges/siteone-crawler-gui/releases) section.
-2. **Download** the latest ready version of the installer for your platform (Windows, macOS, Linux).
+2. **Download** the latest ready version of the installer for your platform (Windows, macOS, Linux) and architecture (x64, arm64).
 3. **Install** the application.
 
 ## Step 2 - Usage
