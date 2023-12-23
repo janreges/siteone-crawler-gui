@@ -370,7 +370,7 @@
         <label for="uploadPassword" class="label" style="width: 184px;">
           <span class="label-text">
             Password
-            <InfoIcon tip="An optional password. If specified, must be filled in (with username 'crawler') when attempting to view the HTML report. Passwords are stored on the server in a secure format (Bcrypt or Argon2id)" />
+            <InfoIcon tip="An optional password. If specified, must be filled in (with username 'crawler') when attempting to view the HTML report. Passwords are stored on the server in a secure format (Bcrypt or Argon2id)" position="top" />
           </span>
         </label>
         <input
