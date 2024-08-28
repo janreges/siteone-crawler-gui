@@ -55,7 +55,7 @@
     "typescript": "^5.1.6",
     "vite": "^4.4.9"
   },
-  "license": "CC BY 4.0",
+  "license": "MIT",
   "author": {
     "name": "Ján Regeš",
     "email": "jan.reges@siteone.cz",

@@ -105,4 +105,7 @@ $ npm run build:linux-x64
 $ npm run build:linux-arm64
 ```
 
-SiteOne Crawler website: https://crawler.siteone.io/
+## License
+
+This work is licensed under a [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
