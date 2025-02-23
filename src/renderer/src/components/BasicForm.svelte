@@ -383,6 +383,56 @@
       </div>
     </fieldset>
 
+    <div class="form-control">
+      <label for="device" class="label" style="width: 184px;">
+        <span class="label-text">
+          Device Type
+          <InfoIcon tip="Device type for User-Agent selection. Values: desktop, tablet, mobile. Ignored with User-Agent." position="top" />
+        </span>
+      </label>
+      <select
+        id="device"
+        class="select select-bordered select-sm"
+        style="margin-top: 0.25rem;"
+        bind:value={data.device}
+      >
+        <option value="desktop">Desktop</option>
+        <option value="tablet">Tablet</option>
+        <option value="mobile">Mobile</option>
+      </select>
+    </div>
+
+    <div class="form-control">
+      <label class="label" style="width: 184px;">
+        <span class="label-text">
+          Single Page
+          <InfoIcon tip="Load only one page to which the URL is given (and its assets), but do not follow other pages." position="top" />
+        </span>
+      </label>
+      <input
+        type="checkbox"
+        class="checkbox checkbox-sm"
+        style="margin-top: 0.25rem;"
+        bind:checked={data.singlePage}
+      />
+    </div>
+
+    <div class="form-control">
+      <label for="maxDepth" class="label" style="width: 184px;">
+        <span class="label-text">
+          Max Depth
+          <InfoIcon tip="Maximum crawling depth (for pages, not assets). Default is 0 (no limit). 1 means /about or /about/, 2 means /about/contacts etc." position="top" />
+        </span>
+      </label>
+      <input
+        id="maxDepth"
+        type="number"
+        class="input input-bordered input-sm"
+        style="margin-top: 0.25rem;"
+        bind:value={data.maxDepth}
+      />
+    </div>
+
   </div>
 </form>
 

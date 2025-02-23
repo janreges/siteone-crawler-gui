@@ -4,6 +4,8 @@ class CrawlerFormContent {
 
     // Basic settings
     url: string | null = 'https://';
+    singlePage: boolean | null = null;
+    maxDepth: number | null = null;
     device: 'desktop' | 'tablet' | 'mobile' | null = null;
     userAgent: string | null = null;
     timeout: number | null = 5;
@@ -25,6 +27,7 @@ class CrawlerFormContent {
     forceColor: boolean | null = true;
 
     // Resource filtering
+    disableAllAssets: boolean | null = null;
     disableJavascript: boolean | null = null;
     disableStyles: boolean | null = null;
     disableFonts: boolean | null = null;
@@ -77,9 +80,31 @@ class CrawlerFormContent {
     mailSmtpUser: string | null = null;
     mailSmtpPass: string | null = null;
 
+    // Crawling scope
+    singleForeignPage: boolean | null = null;
+    rowsLimit: number | null = 200;
+    maxSkippedUrls: number | null = 10000;
+    maxNon200ResponsesPerBasename: number | null = 5;
+    resolve: string | null = null;
+
+    // Markdown export options
+    markdownExportDir: string | null = null;
+    markdownExportStoreOnlyUrlRegex: string | null = null;
+    markdownDisableImages: boolean | null = null;
+    markdownDisableFiles: boolean | null = null;
+    markdownExcludeSelector: string | null = null;
+    markdownReplaceContent: string | null = null;
+    markdownReplaceQueryString: string | null = null;
+    markdownIgnoreStoreFileError: boolean | null = null;
+
     // Offline exporter options
     offlineExportDir: string | null = null;
     offlineExportStoreOnlyUrlRegex: string | null = null;
+    offlineExportRemoveUnwantedCode: boolean | null = true;
+    offlineExportNoAutoRedirectHtml: boolean | null = null;
+    replaceContent: string | null = null;
+    replaceQueryString: string | null = null;
+    ignoreStoreFileError: boolean | null = null;
 
     // Sitemap options
     sitemapXmlFile: string | null = null;
@@ -121,6 +146,8 @@ class CrawlerFormContent {
 
         // Basic settings
         if (this.url !== null) params.push(`--url=${this.url}`);
+        if (this.singlePage) params.push(`--single-page`);
+        if (this.maxDepth !== null) params.push(`--max-depth=${this.maxDepth}`);
         if (this.device !== null) params.push(`--device=${this.device}`);
         if (this.userAgent !== null) params.push(`--user-agent='${this.userAgent}'`);
         if (this.timeout !== null) params.push(`--timeout=${this.timeout}`);
@@ -142,6 +169,7 @@ class CrawlerFormContent {
         if (this.forceColor) params.push(`--force-color`);
 
         // Resource filtering
+        if (this.disableAllAssets) params.push(`--disable-all-assets`);
         if (this.disableJavascript) params.push(`--disable-javascript`);
         if (this.disableStyles) params.push(`--disable-styles`);
         if (this.disableFonts) params.push(`--disable-fonts`);
@@ -247,15 +275,43 @@ class CrawlerFormContent {
         if (this.mailSmtpUser !== null) params.push(`--mail-smtp-user='${this.mailSmtpUser}'`);
         if (this.mailSmtpPass !== null) params.push(`--mail-smtp-pass='${this.mailSmtpPass}'`);
 
+        // Crawling scope
+        if (this.singleForeignPage) params.push(`--single-foreign-page`);
+        if (this.rowsLimit !== null) params.push(`--rows-limit=${this.rowsLimit}`);
+        if (this.maxSkippedUrls !== null) params.push(`--max-skipped-urls=${this.maxSkippedUrls}`);
+        if (this.maxNon200ResponsesPerBasename !== null) params.push(`--max-non200-responses-per-basename=${this.maxNon200ResponsesPerBasename}`);
+        if (this.resolve !== null) params.push(`--resolve='${this.resolve}'`);
+
+        // Markdown export options
+        if (this.markdownExportDir !== null) {
+            let prefix = '';
+            if (this.markdownExportDir.substring(0, 1) != '/') {
+                prefix = tmpDir + pathDelimiter;
+            }
+            params.push(`--markdown-export-dir='${prefix}${this.markdownExportDir}'`);
+        }
+        if (this.markdownExportStoreOnlyUrlRegex !== null) params.push(`--markdown-export-store-only-url-regex='${this.markdownExportStoreOnlyUrlRegex}'`);
+        if (this.markdownDisableImages) params.push(`--markdown-disable-images`);
+        if (this.markdownDisableFiles) params.push(`--markdown-disable-files`);
+        if (this.markdownExcludeSelector !== null) params.push(`--markdown-exclude-selector='${this.markdownExcludeSelector}'`);
+        if (this.markdownReplaceContent !== null) params.push(`--markdown-replace-content='${this.markdownReplaceContent}'`);
+        if (this.markdownReplaceQueryString !== null) params.push(`--markdown-replace-query-string='${this.markdownReplaceQueryString}'`);
+        if (this.markdownIgnoreStoreFileError) params.push(`--markdown-ignore-store-file-error`);
+
         // Offline exporter options
-        if (this.offlineExportDir !== null && this.offlineExportDir !== '') {
-          let prefix = '';
-          if (this.offlineExportDir.substring(0, 1) != '/') {
-            prefix = tmpDir + pathDelimiter;
-          }
-          params.push(`--offline-export-dir='${prefix}${this.offlineExportDir}'`);
+        if (this.offlineExportDir !== null) {
+            let prefix = '';
+            if (this.offlineExportDir.substring(0, 1) != '/') {
+                prefix = tmpDir + pathDelimiter;
+            }
+            params.push(`--offline-export-dir='${prefix}${this.offlineExportDir}'`);
         }
         if (this.offlineExportStoreOnlyUrlRegex !== null) params.push(`--offline-export-store-only-url-regex='${this.offlineExportStoreOnlyUrlRegex}'`);
+        if (this.offlineExportRemoveUnwantedCode) params.push(`--offline-export-remove-unwanted-code`);
+        if (this.offlineExportNoAutoRedirectHtml) params.push(`--offline-export-no-auto-redirect-html`);
+        if (this.replaceContent !== null) params.push(`--replace-content='${this.replaceContent}'`);
+        if (this.replaceQueryString !== null) params.push(`--replace-query-string='${this.replaceQueryString}'`);
+        if (this.ignoreStoreFileError) params.push(`--ignore-store-file-error`);
 
         // Sitemap options
         if (this.sitemapXmlFile !== null && this.sitemapXmlFile !== '') {
