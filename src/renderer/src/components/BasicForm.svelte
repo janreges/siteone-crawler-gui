@@ -201,6 +201,21 @@
         </div>
         <div class="form-control form-control-checkbox">
           <input
+            id="chkMarkdown"
+            type="checkbox"
+            class="checkbox checkbox-info"
+            checked={data.markdownExportDir !== null}
+            on:change={(event) => data.markdownExportDir = event.currentTarget.checked ? '%domain%-markdown' : null}
+          />
+          <label for="chkMarkdown" class="label">
+            <span class="label-text">
+              Generate markdown version
+              <InfoIcon tip="If enabled, the crawler will generate a markdown version of the entire website. This is useful for creating a text-based, easily navigable version of the site or documentation that contains all content without styling." position="left" />
+            </span>
+          </label>
+        </div>
+        <div class="form-control form-control-checkbox">
+          <input
             id="chkSitemap"
             type="checkbox"
             class="checkbox checkbox-info"
@@ -213,21 +228,6 @@
             <span class="label-text">
               Generate sitemap
               <InfoIcon tip="If enabled, the crawler will generate a sitemap.xml and sitemap.txt file that can be submitted to search engines or hosted on your website." position="left" />
-            </span>
-          </label>
-        </div>
-        <div class="form-control form-control-checkbox">
-          <input
-            id="chkMarkdown"
-            type="checkbox"
-            class="checkbox checkbox-info"
-            checked={data.markdownExportDir !== null}
-            on:change={(event) => data.markdownExportDir = event.currentTarget.checked ? '%domain%-markdown' : null}
-          />
-          <label for="chkMarkdown" class="label">
-            <span class="label-text">
-              Generate markdown clone
-              <InfoIcon tip="If enabled, the crawler will generate a markdown version of the entire website. This is useful for creating a text-based, easily navigable version of the site or documentation that contains all content without styling." position="left" />
             </span>
           </label>
         </div>
