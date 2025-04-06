@@ -1,6 +1,10 @@
-node_modules
+bin/*.bat
+bin/*.dll
+bin/*.exe
 dist
+node_modules
 out
+tmp/*
 *.log*
 .idea
 .vscode
