@@ -216,6 +216,21 @@
             </span>
           </label>
         </div>
+        <div class="form-control form-control-checkbox">
+          <input
+            id="chkMarkdown"
+            type="checkbox"
+            class="checkbox checkbox-info"
+            checked={data.markdownExportDir !== null}
+            on:change={(event) => data.markdownExportDir = event.currentTarget.checked ? '%domain%-markdown' : null}
+          />
+          <label for="chkMarkdown" class="label">
+            <span class="label-text">
+              Generate markdown clone
+              <InfoIcon tip="If enabled, the crawler will generate a markdown version of the entire website. This is useful for creating a text-based, easily navigable version of the site or documentation that contains all content without styling." position="left" />
+            </span>
+          </label>
+        </div>
       </fieldset>
     </div>
 
@@ -297,6 +312,20 @@
 
     <fieldset class="w-full md:w-1/2 p-2">
       <legend class="font-bold text-gray-300">Scope and Restrictions</legend>
+      <div class="form-control">
+        <label class="label" style="width: 184px;">
+          <span class="label-text">
+            Single page
+            <InfoIcon tip="Load only one page to which the URL is given (and its assets), but do not follow other pages." />
+          </span>
+        </label>
+        <input
+          type="checkbox"
+          class="checkbox checkbox-info"
+          style="margin-top: 0.25rem;"
+          bind:checked={data.singlePage}
+        />
+      </div>
       <div class="form-control form-control-checkbox">
         <label for="chDomainStaticFiles" class="label" style="width: 180px; padding-left: 4px;">
           <span class="label-text">
@@ -315,7 +344,7 @@
         <label for="chDomainsForCrawling" class="label" style="width: 184px;">
           <span class="label-text">
             Extra crawled domains
-            <InfoIcon tip="A comma-delimited list of domains that the crawler is allowed to crawl. You can use '*', e.g. *.mydomain.tld." />
+            <InfoIcon tip="A comma-delimited list of domains that the crawler is allowed to crawl. You can use '*' or '*.mydomain.tld'." />
           </span>
         </label>
         <input
@@ -382,57 +411,6 @@
         />
       </div>
     </fieldset>
-
-    <div class="form-control">
-      <label for="device" class="label" style="width: 184px;">
-        <span class="label-text">
-          Device Type
-          <InfoIcon tip="Device type for User-Agent selection. Values: desktop, tablet, mobile. Ignored with User-Agent." position="top" />
-        </span>
-      </label>
-      <select
-        id="device"
-        class="select select-bordered select-sm"
-        style="margin-top: 0.25rem;"
-        bind:value={data.device}
-      >
-        <option value="desktop">Desktop</option>
-        <option value="tablet">Tablet</option>
-        <option value="mobile">Mobile</option>
-      </select>
-    </div>
-
-    <div class="form-control">
-      <label class="label" style="width: 184px;">
-        <span class="label-text">
-          Single Page
-          <InfoIcon tip="Load only one page to which the URL is given (and its assets), but do not follow other pages." position="top" />
-        </span>
-      </label>
-      <input
-        type="checkbox"
-        class="checkbox checkbox-sm"
-        style="margin-top: 0.25rem;"
-        bind:checked={data.singlePage}
-      />
-    </div>
-
-    <div class="form-control">
-      <label for="maxDepth" class="label" style="width: 184px;">
-        <span class="label-text">
-          Max Depth
-          <InfoIcon tip="Maximum crawling depth (for pages, not assets). Default is 0 (no limit). 1 means /about or /about/, 2 means /about/contacts etc." position="top" />
-        </span>
-      </label>
-      <input
-        id="maxDepth"
-        type="number"
-        class="input input-bordered input-sm"
-        style="margin-top: 0.25rem;"
-        bind:value={data.maxDepth}
-      />
-    </div>
-
   </div>
 </form>
 

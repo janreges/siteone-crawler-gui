@@ -446,8 +446,6 @@
                 <!-- Basic settings -->
                 <fieldset>
                     <legend>Basic Settings</legend>
-                    <CheckboxInput bind:checked={formData.singlePage} label="Single Page"
-                                   tooltip="Load only one page to which the URL is given (and its assets), but do not follow other pages."/>
                     <IntInput bind:value={formData.maxDepth} label="Max Depth"
                               tooltip="Maximum crawling depth (for pages, not assets). Default is 0 (no limit). 1 means /about or /about/, 2 means /about/contacts etc."/>
                     <SelectInput bind:value={formData.device} label="Device Type"
@@ -468,12 +466,11 @@
                 <!-- Output settings -->
                 <fieldset>
                     <legend>Output Settings</legend>
-                    <SelectInput bind:value={formData.output} label="Output Type"
-                                 tooltip="Output type `text` or `json`."
-                                 options={['text', 'json']}/>
                     <ValInput bind:value={formData.extraColumns} label="Extra Columns"
                               tooltip="Extra table headers for output table, e.g., `DOM,X-Cache(10),Title(40>)`."/>
                     <IntInput bind:value={formData.urlColumnSize} label="URL Column Size" tooltip="URL column width in the console output."/>
+                    <IntInput bind:value={formData.rowsLimit} label="Rows Limit"
+                              tooltip="Max. number of rows to display in tables with analysis results (protection against very long and slow report)."/>
                     <CheckboxInput bind:checked={formData.showInlineCriticals} label="Show Inline Criticals"
                                    tooltip="Show criticals from the analyzer directly in the URL table."/>
                     <CheckboxInput bind:checked={formData.showInlineWarnings} label="Show Inline Warnings"
@@ -486,19 +483,18 @@
                                    tooltip="Suppress progress bar in output."/>
                     <CheckboxInput bind:checked={formData.noColor} label="Disable Colored Output"
                                    tooltip="Disable colored output."/>
+                    
                 </fieldset>
 
                 <!-- Resource filtering -->
                 <fieldset>
                     <legend>Resource Filtering</legend>
+                    <CheckboxInput bind:checked={formData.singlePage} label="Single Page"
+                                   tooltip="Load only one page to which the URL is given (and its assets), but do not follow other pages."/>
+                    <CheckboxInput bind:checked={formData.singleForeignPage} label="Single Foreign Page"
+                                   tooltip="If crawling of other domains is allowed (using --allowed-domain-for-crawling), it ensures that when another domain is not on same second-level domain, only that linked page and its assets are crawled from that foreign domain."/>
                     <CheckboxInput bind:checked={formData.disableAllAssets} label="Disable All Assets"
                                    tooltip="Disables crawling of all assets and files and only crawls pages in href attributes. Shortcut for calling all other --disable-* flags."/>
-                    <ValInput value={allowedDomainForExternalString} label="Allowed Domains for Ext. Files"
-                              on:input={handleAllowedDomainForExternalFilesChange}
-                              tooltip="Allows loading of file content (typically assets) from another domains as well. Comma delimited. You can use wildcards '*'."/>
-                    <ValInput value={allowedDomainForCrawlingString} label="Allowed Domains for Crawling"
-                              on:input={handleAllowedDomainForCrawlingChange}
-                              tooltip="Allows crawling of all content (including pages) from other listed domains. Comma delimited. You can use wildcards '*'."/>
                     <CheckboxInput bind:checked={formData.disableJavascript} label="Disable JavaScript"
                                    tooltip="Disables JavaScript downloading and removes all JavaScript code from HTML."/>
                     <CheckboxInput bind:checked={formData.disableStyles} label="Disable Styles"
@@ -509,44 +505,12 @@
                                    tooltip="Disables downloading of all images and replaces found images in HTML with placeholder image only."/>
                     <CheckboxInput bind:checked={formData.disableFiles} label="Disable Files"
                                    tooltip="Disables downloading of any files (typically downloadable documents) to which various links point."/>
-                    <CheckboxInput bind:checked={formData.removeAllAnchorListeners} label="Remove All Anchor Listeners"
-                                   tooltip="On all links on the page remove any event listeners."/>
-                </fieldset>
-
-                <!-- Crawling Scope -->
-                <fieldset>
-                    <legend>Crawling Scope</legend>
-                    <CheckboxInput bind:checked={formData.singleForeignPage} label="Single Foreign Page"
-                                   tooltip="If crawling of other domains is allowed (using --allowed-domain-for-crawling), it ensures that when another domain is not on same second-level domain, only that linked page and its assets are crawled from that foreign domain."/>
-                    <IntInput bind:value={formData.rowsLimit} label="Rows Limit"
-                              tooltip="Max. number of rows to display in tables with analysis results (protection against very long and slow report)."/>
-                    <IntInput bind:value={formData.maxSkippedUrls} label="Max Skipped URLs"
-                              tooltip="Max skipped URLs. It affects memory requirements."/>
-                    <IntInput bind:value={formData.maxNon200ResponsesPerBasename} label="Max Non-200 Responses Per Basename"
-                              tooltip="Protection against looping with dynamic non-200 URLs. If a basename (the last part of the URL after the last slash) has more non-200 responses than this limit, other URLs with same basename will be ignored/skipped."/>
-                    <ValInput bind:value={formData.resolve} label="Resolve"
-                              tooltip="The ability to force the domain+port to resolve to its own IP address, just like CURL --resolve does. Example: www.mydomain.tld:80:127.0.0.1"/>
-                </fieldset>
-
-                <!-- Markdown Export Options -->
-                <fieldset>
-                    <legend>Markdown Export Options</legend>
-                    <DirInput bind:value={formData.markdownExportDir} label="Markdown Export Directory"
-                              tooltip="Path to directory where to save the markdown version of the website."/>
-                    <RegexInput bind:value={formData.markdownExportStoreOnlyUrlRegex} label="Store Only URL Regex"
-                                tooltip="For debug - when filled it will activate debug mode and store only URLs which match one of these PCRE regexes."/>
-                    <CheckboxInput bind:checked={formData.markdownDisableImages} label="Disable Images"
-                                   tooltip="Do not export and show images in markdown files. Images are enabled by default."/>
-                    <CheckboxInput bind:checked={formData.markdownDisableFiles} label="Disable Files"
-                                   tooltip="Do not export and link files other than HTML/CSS/JS/fonts/images - eg. PDF, ZIP, etc. These files are enabled by default."/>
-                    <ValInput bind:value={formData.markdownExcludeSelector} label="Exclude Selector"
-                              tooltip="Exclude some page content (DOM elements) from markdown export defined by CSS selectors like 'header', '.header', '#header', etc."/>
-                    <ValInput bind:value={formData.markdownReplaceContent} label="Replace Content"
-                              tooltip="Replace text content with 'foo -> bar' or regexp in PREG format: '/card[0-9]/i -> card'."/>
-                    <ValInput bind:value={formData.markdownReplaceQueryString} label="Replace Query String"
-                              tooltip="Instead of using a short hash instead of a query string in the filename, just replace some characters. You can use simple format 'foo -> bar' or regexp in PREG format, e.g. '/([a-z]+)=([^&]*)(&|$)/i -> $1__$2'."/>
-                    <CheckboxInput bind:checked={formData.markdownIgnoreStoreFileError} label="Ignore Store File Error"
-                                   tooltip="Ignores any file storing errors. The export process will continue."/>
+                    <ValInput value={allowedDomainForExternalString} label="Allowed Domains for Ext. Files"
+                            on:input={handleAllowedDomainForExternalFilesChange}
+                            tooltip="Allows loading of file content (typically assets) from another domains as well. Comma delimited. You can use wildcards '*'."/>
+                    <ValInput value={allowedDomainForCrawlingString} label="Allowed Domains for Crawling"
+                            on:input={handleAllowedDomainForCrawlingChange}
+                            tooltip="Allows crawling of all content (including pages) from other listed domains. Comma delimited. You can use wildcards '*'."/>
                 </fieldset>
 
                 <!-- Advanced crawler settings -->
@@ -554,48 +518,46 @@
                     <legend>Advanced Crawler Settings</legend>
                     <SizeInput bind:value={formData.memoryLimit} label="Memory Limit"
                                tooltip="Memory limit in units M (Megabytes) or G (Gigabytes)."/>
+                    <ValInput bind:value={formData.resolve} label="Extra Domain Resolve"
+                               tooltip="The ability to force the domain+port to resolve to its own IP address, just like CURL --resolve does. Example: www.mydomain.tld:80:127.0.0.1"/>
                     <RegexInput bind:value={formData.includeRegex} label="Include Regex"
                                 tooltip="Include only URLs matching at least one PCRE regex."/>
                     <RegexInput bind:value={formData.ignoreRegex} label="Ignore Regex"
                                 tooltip="Ignore URLs matching any PCRE regex."/>
                     <RegexInput bind:value={formData.analyzerFilterRegex} label="Analyzer Filter Regex"
                                 tooltip="Use only analyzers that match the specified regexp."/>
-                    <ValInput bind:value={formData.acceptEncoding} label="Accept Encoding"
-                              tooltip="Set `Accept-Encoding` request header."/>
-                    <IntInput bind:value={formData.maxQueueLength} label="Max Queue Length"
-                              tooltip="Max URL queue length."/>
-                    <IntInput bind:value={formData.maxVisitedUrls} label="Max Visited URLs"
-                              tooltip="Max visited URLs."/>
-                    <IntInput bind:value={formData.maxUrlLength} label="Max URL Length"
-                              tooltip="Max URL length in chars."/>
                     <CheckboxInput bind:checked={formData.removeQueryParams} label="Remove Query Parameters"
                                    tooltip="Remove URL query parameters from crawled URLs."/>
                     <CheckboxInput bind:checked={formData.addRandomQueryParams} label="Add Random Query Params"
                                    tooltip="Add random query parameters to each crawled URL."/>
+                    <CheckboxInput bind:checked={formData.httpCacheCompression} label="Enable HTTP Cache Compression"
+                                   tooltip="Enable compression for HTTP cache storage."/>
+                    <CheckboxInput bind:checked={formData.resultStorageCompression}
+                                   label="Enable Result Storage Compression"
+                                   tooltip="Enable compression for results storage."/>
                 </fieldset>
 
                 <!-- Expert settings -->
                 <fieldset>
                     <legend>Expert Settings</legend>
-                    <ValInput bind:value={formData.debugLogFile} label="Debug Log File"
-                              tooltip="Log file where to save debug messages."/>
-                    <RegexInput bind:value={formData.debugUrlRegex} label="Debug URL Regex"
-                                tooltip="Regex for URL(s) to debug."/>
                     <SelectInput bind:value={formData.resultStorage} label="Result Storage Type"
                                  tooltip="Result storage type for content and headers." options={['memory', 'file']}/>
                     <DirInput bind:value={formData.resultStorageDir} label="Result Storage Directory"
                               tooltip="Directory for --result-storage=file."/>
                     <DirInput bind:value={formData.httpCacheDir} label="HTTP Cache Directory"
                               tooltip="Cache dir for HTTP responses."/>
+                    <ValInput bind:value={formData.acceptEncoding} label="Accept Encoding"
+                              tooltip="Set `Accept-Encoding` request header."/>
+                    <IntInput bind:value={formData.maxQueueLength} label="Max Queue Length"
+                              tooltip="Max URL queue length."/>
+                    <IntInput bind:value={formData.maxVisitedUrls} label="Max Visited URLs"
+                              tooltip="Max visited URLs."/>
+                    <IntInput bind:value={formData.maxSkippedUrls} label="Max Skipped URLs"
+                              tooltip="Max skipped URLs. It affects memory requirements."/>
+                    <IntInput bind:value={formData.maxUrlLength} label="Max URL Length"
+                              tooltip="Max URL length in chars."/>
                     <!--          <HostPortInput bind:value={formData.websocketServer} label="Websocket Server"-->
                     <!--                         tooltip="Start crawler with websocket server on given host:port."/>-->
-                    <CheckboxInput bind:checked={formData.debug} label="Activate Debug Mode"
-                                   tooltip="Activate debug mode."/>
-                    <CheckboxInput bind:checked={formData.httpCacheCompression} label="Enable HTTP Cache Compression"
-                                   tooltip="Enable compression for HTTP cache storage."/>
-                    <CheckboxInput bind:checked={formData.resultStorageCompression}
-                                   label="Enable Result Storage Compression"
-                                   tooltip="Enable compression for results storage."/>
                 </fieldset>
 
                 <!-- File export settings -->
@@ -637,17 +599,38 @@
                     <DirInput bind:value={formData.offlineExportDir} label="Offline Export Directory"
                               tooltip="Name of directory in user-data folder where to save the offline version of the website. E.g. 'mydomain.tld'"/>
                     <RegexInput bind:value={formData.offlineExportStoreOnlyUrlRegex} label="Store Only URL Regex"
-                                tooltip="For debug - store only URLs which match one of these PCRE regexes."/>
-                    <CheckboxInput bind:checked={formData.offlineExportRemoveUnwantedCode} label="Remove Unwanted Code"
-                                   tooltip="Remove unwanted code for offline mode? Typically JS of the analytics, social networks, cookie consent, cross origins, etc."/>
-                    <CheckboxInput bind:checked={formData.offlineExportNoAutoRedirectHtml} label="No Auto Redirect HTML"
-                                   tooltip="Disable automatic creation of redirect HTML files for subfolders that contain an index.html file. This solves situations for URLs where sometimes the URL ends with a slash, sometimes it doesn't."/>
+                               tooltip="For debug - store only URLs which match one of these PCRE regexes."/>
                     <ValInput bind:value={formData.replaceContent} label="Replace Content"
                               tooltip="Replace HTML/JS/CSS content with 'foo -> bar' or regexp in PREG format: '/card[0-9]/i -> card'."/>
                     <ValInput bind:value={formData.replaceQueryString} label="Replace Query String"
                               tooltip="Instead of using a short hash instead of a query string in the filename, just replace some characters. You can use simple format 'foo -> bar' or regexp in PREG format, e.g. '/([a-z]+)=([^&]*)(&|$)/i -> $1__$2'."/>
+                    <CheckboxInput bind:checked={formData.offlineExportRemoveUnwantedCode} label="Remove Unwanted Code"
+                              tooltip="Remove unwanted code for offline mode? Typically JS of the analytics, social networks, cookie consent, cross origins, etc."/>
+                    <CheckboxInput bind:checked={formData.offlineExportNoAutoRedirectHtml} label="No Auto Redirect HTML"
+                              tooltip="Disable automatic creation of redirect HTML files for subfolders that contain an index.html file. This solves situations for URLs where sometimes the URL ends with a slash, sometimes it doesn't."/>
+                    <CheckboxInput bind:checked={formData.removeAllAnchorListeners} label="Remove All Anchor Listeners"
+                              tooltip="On all links on the page remove any event listeners."/>
                     <CheckboxInput bind:checked={formData.ignoreStoreFileError} label="Ignore Store File Error"
-                                   tooltip="Ignores any file storing errors. The export process will continue."/>
+                              tooltip="Ignores any file storing errors. The export process will continue."/>
+                </fieldset>
+
+                <!-- Markdown Export Options -->
+                <fieldset>
+                    <legend>Markdown Export Options</legend>
+                    <DirInput bind:value={formData.markdownExportDir} label="Markdown Export Directory"
+                              tooltip="Path to directory where to save the markdown version of the website."/>
+                    <ValInput bind:value={formData.markdownExcludeSelector} label="Exclude Selector"
+                              tooltip="Exclude some page content (DOM elements) from markdown export defined by CSS selectors like 'header', '.header', '#header', etc."/>
+                    <ValInput bind:value={formData.markdownReplaceContent} label="Replace Content"
+                              tooltip="Replace text content with 'foo -> bar' or regexp in PREG format: '/card[0-9]/i -> card'."/>
+                    <ValInput bind:value={formData.markdownReplaceQueryString} label="Replace Query String"
+                              tooltip="Instead of using a short hash instead of a query string in the filename, just replace some characters. You can use simple format 'foo -> bar' or regexp in PREG format, e.g. '/([a-z]+)=([^&]*)(&|$)/i -> $1__$2'."/>
+                    <CheckboxInput bind:checked={formData.markdownDisableImages} label="Disable Images"
+                              tooltip="Do not export and show images in markdown files. Images are enabled by default."/>
+                    <CheckboxInput bind:checked={formData.markdownDisableFiles} label="Disable Files"
+                              tooltip="Do not export and link files other than HTML/CSS/JS/fonts/images - eg. PDF, ZIP, etc. These files are enabled by default."/>
+                    <CheckboxInput bind:checked={formData.markdownIgnoreStoreFileError} label="Ignore Store File Error"
+                              tooltip="Ignores any file storing errors. The export process will continue."/>
                 </fieldset>
 
                 <!-- Sitemap options -->
@@ -668,26 +651,6 @@
                     <legend>SEO and OpenGraph Analyzer</legend>
                     <IntInput bind:value={formData.maxHeadingLevel} label="Maximal Heading Level"
                               tooltip="Maximal analyzer heading level from 1 to 6."/>
-                </fieldset>
-
-                <!-- Fastest URL analyzer -->
-                <fieldset>
-                    <legend>Fastest URL Analyzer</legend>
-                    <IntInput bind:value={formData.fastestUrlsTopLimit} label="Top Limit for Fastest URLs"
-                              tooltip="Number of URL addresses in TOP fastest URL addresses."/>
-                    <ValInput bind:value={formData.fastestUrlsMaxTime} label="Max Time for Fastest URLs"
-                              tooltip="The maximum response time for an URL address to be evaluated as fast."/>
-                </fieldset>
-
-                <!-- Slowest URL analyzer -->
-                <fieldset>
-                    <legend>Slowest URL Analyzer</legend>
-                    <IntInput bind:value={formData.slowestUrlsTopLimit} label="Top Limit for Slowest URLs"
-                              tooltip="Number of URL addresses in TOP slowest URL addresses."/>
-                    <ValInput bind:value={formData.slowestUrlsMinTime} label="Min Time for Slowest URLs"
-                              tooltip="The minimum response time for an URL address to be added to TOP slow selection."/>
-                    <ValInput bind:value={formData.slowestUrlsMaxTime} label="Max Time for Slowest URLs"
-                              tooltip="The maximum response time for an URL address to be evaluated as very slow."/>
                 </fieldset>
 
                 <!-- Online HTML report -->
