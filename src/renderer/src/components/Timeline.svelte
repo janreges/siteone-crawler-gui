@@ -81,9 +81,9 @@
             <div class="timeline-end timeline-box timeline-box-small" style="white-space: nowrap; text-align: center" class:text-black={state.offlineExport} class:bg-success={state.offlineExport}>
               {#if state.offlineExport}
                 <a class="timeline-link" on:click={() => dispatch('openOfflineExport')}>
-                  Offline export
+                  Website clone
                   <svg class="text-black" width="14px" height="14px" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display: inline-block;">
-                    <title>Open offline website version</title>
+                    <title>Open offline website clone</title>
                     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                       <g id="icon" fill="currentColor" transform="translate(85.333333, 64.000000)">
                         <path d="M128,63.999444 L128,106.666444 L42.6666667,106.666667 L42.6666667,320 L256,320 L256,234.666444 L298.666,234.666444 L298.666667,362.666667 L4.26325641e-14,362.666667 L4.26325641e-14,64 L128,63.999444 Z M362.666667,1.42108547e-14 L362.666667,170.666667 L320,170.666667 L320,72.835 L143.084945,249.751611 L112.915055,219.581722 L289.83,42.666 L192,42.6666667 L192,1.42108547e-14 L362.666667,1.42108547e-14 Z" id="Combined-Shape">
@@ -92,13 +92,40 @@
                     </g>
                   </svg>
                 </a>
-              {:else}Offline export{/if}
+              {:else}Website clone{/if}
             </div>
-            <hr class:bg-success={state.finished}>
+            <hr class:bg-success={state.offlineExport || state.finished}>
         </li>
         <li>
+          <hr class:bg-success={state.markdownExport || state.finished}>
+          <div class="timeline-middle">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5" class:text-success={state.markdownExport}>
+                  <path fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                        clip-rule="evenodd"/>
+              </svg>
+          </div>
+          <div class="timeline-start timeline-box timeline-box-small" style="white-space: nowrap; text-align: center" class:text-black={state.markdownExport} class:bg-success={state.markdownExport}>
+            {#if state.markdownExport}
+              <a class="timeline-link" on:click={() => dispatch('openMarkdownExport')}>
+                Markdown
+                <svg class="text-black" width="14px" height="14px" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display: inline-block;">
+                  <title>Open markdown version</title>
+                  <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                    <g id="icon" fill="currentColor" transform="translate(85.333333, 64.000000)">
+                      <path d="M128,63.999444 L128,106.666444 L42.6666667,106.666667 L42.6666667,320 L256,320 L256,234.666444 L298.666,234.666444 L298.666667,362.666667 L4.26325641e-14,362.666667 L4.26325641e-14,64 L128,63.999444 Z M362.666667,1.42108547e-14 L362.666667,170.666667 L320,170.666667 L320,72.835 L143.084945,249.751611 L112.915055,219.581722 L289.83,42.666 L192,42.6666667 L192,1.42108547e-14 L362.666667,1.42108547e-14 Z" id="Combined-Shape">
+                      </path>
+                    </g>
+                  </g>
+                </svg>
+              </a>
+            {:else}Markdown{/if}
+          </div>
+          <hr class:bg-success={state.finished}>
+      </li>
+        <li>
             <hr class:bg-success={state.finished}>
-            <div class="timeline-start timeline-box timeline-box-small" class:text-black={state.finished} class:bg-success={state.finished}><strong>Finish</strong></div>
+            <div class="timeline-end timeline-box timeline-box-small" class:text-black={state.finished} class:bg-success={state.finished}><strong>Finish</strong></div>
             <div class="timeline-middle">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5" class:text-success={state.finished}>
                     <path fill-rule="evenodd"

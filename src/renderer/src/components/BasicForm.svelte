@@ -147,7 +147,7 @@
           <label class="label" for="chkALlowJs">
             <span class="label-text">
               Allow JavaScript
-              <InfoIcon tip="If enabled, the crawler will download JavaScript files. If JavaScript is disabled, the generated offline version will also have JavaScript completely removed, including inline JavaScript." position="right" />
+              <InfoIcon tip="If enabled, the crawler will download JavaScript files. If JavaScript is disabled, the generated website clone will also have JavaScript completely removed, including inline JavaScript." position="right" />
             </span>
           </label>
         </div>
@@ -156,7 +156,7 @@
           <label class="label" for="chkAllowCss">
             <span class="label-text">
               Allow CSS
-              <InfoIcon tip="If enabled, the crawler will download CSS files and will extract the URLs of the static files (images, fonts) from the CSS files. If CSS is disabled, the generated offline version will also have CSS completely removed, inline styles included." position="right" />
+              <InfoIcon tip="If enabled, the crawler will download CSS files and will extract the URLs of the static files (images, fonts) from the CSS files. If CSS is disabled, the generated website clone will also have CSS completely removed, inline styles included." position="right" />
             </span>
           </label>
         </div>
@@ -174,7 +174,7 @@
           <label for="chkAllowImages" class="label">
             <span class="label-text">
               Allow Images
-              <InfoIcon tip="If enabled, the crawler will download image files, including images from all srcset attributes. If not, the generated offline version will only show placeholders instead of the original images." position="right" />
+              <InfoIcon tip="If enabled, the crawler will download image files, including images from all srcset attributes. If not, the generated offline website clone will only show placeholders instead of the original images." position="right" />
             </span>
           </label>
         </div>
@@ -183,7 +183,7 @@
           <label for="chkAllowFiles" class="label">
             <span class="label-text">
               Allow Files
-              <InfoIcon tip="If enabled, the crawler will download any other files (pdf, doc, etc.) that are linked from the HTML pages. All these files will be part of the offline version." position="right" />
+              <InfoIcon tip="If enabled, the crawler will download any other files (pdf, doc, etc.) that are linked from the HTML pages. All these files will be part of the offline website clone." position="right" />
             </span>
           </label>
         </div>
@@ -194,8 +194,8 @@
           <input id="chkOffline" type="checkbox" class="checkbox checkbox-info" checked={data.offlineExportDir !== null} on:change={(event) => (data.offlineExportDir = event.currentTarget.checked ? '%domain%' : null)} />
           <label for="chkOffline" class="label">
             <span class="label-text">
-              Generate offline website
-              <InfoIcon tip="If enabled, the crawler will generate a static website that can be opened in a browser without an internet connection." position="left" />
+              Generate website clone
+              <InfoIcon tip="If enabled, the crawler will generate a static website clone that can be opened in a browser without an internet connection." position="left" />
             </span>
           </label>
         </div>

@@ -5,6 +5,7 @@ export class TimelineState {
     progressTotal: number | null = null;
     htmlReport: boolean = false;
     offlineExport: boolean = false;
+    markdownExport: boolean = false;
     finished: boolean = false;
 
     public reset(): void
@@ -15,6 +16,7 @@ export class TimelineState {
         this.progressTotal = null;
         this.htmlReport = false;
         this.offlineExport = false;
+        this.markdownExport = false;
         this.finished = false;
     }
 

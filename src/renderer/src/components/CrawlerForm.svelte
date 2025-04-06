@@ -68,6 +68,7 @@
     export let windowHeight: number;
     let reportBaseFilePath: string | null = null;
     let offlineWebsiteDir: string | null = null;
+    let markdownWebsiteDir: string | null = null;
     let sitemapXmlFile: string | null = null;
     let sitemapTxtFile: string | null = null;
     let htmlReportUrl: string | null = null;
@@ -154,6 +155,13 @@
                     } else if (line && line.includes('Offline website generated to')) {
                         offlineWebsiteDir = getOfflineVersionBasePath(line);
                         timelineState.offlineExport = true;
+                        if (timeoutIdToResult) {
+                            clearTimeout(timeoutIdToResult)
+                        }
+                        timeoutIdToResult = setTimeout(() => activeTab = 'result', 1000);
+                    } else if (line && line.includes('Markdown content generated to')) {
+                        markdownWebsiteDir = getMarkdownVersionBasePath(line);
+                        timelineState.markdownExport = true;
                         if (timeoutIdToResult) {
                             clearTimeout(timeoutIdToResult)
                         }
@@ -297,6 +305,15 @@
         return null;
     }
 
+    function getMarkdownVersionBasePath(text: string): string | null {
+        const regex = /Markdown content generated to '([^']+)'/;
+        const match = text.match(regex);
+        if (match && match[1]) {
+            return match[1];
+        }
+        return null;
+    }
+
     function getSitemapXmlPath(text: string): string | null {
         const regex = /XML sitemap generated to '([^']+)'/;
         const match = text.match(regex);
@@ -338,6 +355,10 @@
 
     function openOfflineExport():void {
         window.api.openExternal('file://' + offlineWebsiteDir + '/index.html');
+    }
+
+    function openMarkdownExport():void {
+        window.api.openExternal('file://' + markdownWebsiteDir + '/');
     }
 
     function openCrawlerHomepage():void {
@@ -595,13 +616,11 @@
                                    tooltip="SMTP password for authentication."/>
                 </fieldset>
 
-                <!-- Offline exporter options -->
+                <!-- Website clone options -->
                 <fieldset>
-                    <legend>Offline Exporter Options</legend>
-                    <DirInput bind:value={formData.offlineExportDir} label="Offline Export Directory"
-                              tooltip="Name of directory in user-data folder where to save the offline version of the website. E.g. 'mydomain.tld'"/>
-                    <RegexInput bind:value={formData.offlineExportStoreOnlyUrlRegex} label="Store Only URL Regex"
-                               tooltip="For debug - store only URLs which match one of these PCRE regexes."/>
+                    <legend>Website Clone Options</legend>
+                    <DirInput bind:value={formData.offlineExportDir} label="Website Clone Directory"
+                              tooltip="Name of directory in user-data folder where to save the clone (offline version) of the website. E.g. 'mydomain.tld'"/>
                     <ValInput bind:value={formData.replaceContent} label="Replace Content"
                               tooltip="Replace HTML/JS/CSS content with 'foo -> bar' or regexp in PREG format: '/card[0-9]/i -> card'."/>
                     <ValInput bind:value={formData.replaceQueryString} label="Replace Query String"
@@ -716,9 +735,19 @@
             {#if offlineWebsiteDir}
                 <div role="alert" class="alert" style="margin-top: 14px; margin-bottom: 20px;">
                     <svg xmlns="http://www.w3.org/2000/svg" class="stroke-success shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    <span class="text-success">Offline website has been successfully generated.</span>
+                    <span class="text-success">Offline website clone has been successfully generated.</span>
                     <div>
-                        <a class="btn btn-active btn-secondary" title="Browse offline website" aria-label="Browse offline website" on:click={() => openOfflineExport()} target="_blank">Browse offline website</a>
+                        <a class="btn btn-active btn-secondary" title="Browse offline website clone" aria-label="Browse offline website clone" on:click={() => openOfflineExport()} target="_blank">Browse website clone</a>
+                    </div>
+                </div>
+            {/if}
+
+            {#if markdownWebsiteDir}
+                <div role="alert" class="alert" style="margin-top: 14px; margin-bottom: 20px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-success shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span class="text-success">Markdown version has been successfully generated.</span>
+                    <div>
+                        <a class="btn btn-active btn-primary" title="Open folder with exported markdown version" aria-label="Open folder with exported markdown version" on:click={() => openMarkdownExport()} target="_blank">Open markdown version</a>
                     </div>
                 </div>
             {/if}
