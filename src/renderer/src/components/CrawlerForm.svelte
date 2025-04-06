@@ -17,6 +17,7 @@
     import CheckboxInput from './form/CheckboxInput.svelte';
     import CrawlerFormContent from '../types/CrawlerFormContent';
     import PasswordInput from './form/PasswordInput.svelte';
+    import ResolveInput from './form/ResolveInput.svelte';
     import type {CrawlerMessage} from '../../../main/crawler/CrawlerMessage';
     import {CrawlerMessageType} from '../../../main/crawler/CrawlerMessage';
     import {HistoryStorage} from "../history/HistoryStorage";
@@ -518,8 +519,8 @@
                     <legend>Advanced Crawler Settings</legend>
                     <SizeInput bind:value={formData.memoryLimit} label="Memory Limit"
                                tooltip="Memory limit in units M (Megabytes) or G (Gigabytes)."/>
-                    <ValInput bind:value={formData.resolve} label="Extra Domain Resolve"
-                               tooltip="The ability to force the domain+port to resolve to its own IP address, just like CURL --resolve does. Example: www.mydomain.tld:80:127.0.0.1"/>
+                    <ResolveInput bind:value={formData.resolve} label="Extra Domain Resolve"
+                                  tooltip="Force domain:port to resolve to a specific IP. Format: domain:port:ip (e.g., www.example.com:80:127.0.0.1)"/>
                     <RegexInput bind:value={formData.includeRegex} label="Include Regex"
                                 tooltip="Include only URLs matching at least one PCRE regex."/>
                     <RegexInput bind:value={formData.ignoreRegex} label="Ignore Regex"
