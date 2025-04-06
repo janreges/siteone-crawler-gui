@@ -9,7 +9,7 @@
 
   $: {
     const regex = /^[a-z0-9\-.]+:[0-9]{1,8}$/;
-    error.set(!value || regex.test(value) ? "" : "Neplatný formát hosta a portu");
+    error.set(!value || regex.test(value) ? "" : "Invalid host:port format");
   }
 </script>
 

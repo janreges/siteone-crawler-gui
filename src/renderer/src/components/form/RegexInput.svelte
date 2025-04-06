@@ -12,7 +12,7 @@
       new RegExp(value);
       error.set("");
     } catch (e) {
-      error.set("Neplatný regulární výraz");
+      error.set("Invalid regular expression");
     }
   }
 </script>

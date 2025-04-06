@@ -9,7 +9,7 @@
 
   $: {
     const regex = /^\S+@\S+\.\S+$/;
-    error.set(!value || regex.test(value) ? "" : "Neplatná e-mailová adresa");
+    error.set(!value || regex.test(value) ? "" : "Invalid e-mail address");
   }
 </script>
 

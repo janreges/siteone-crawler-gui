@@ -9,7 +9,7 @@
 
   $: {
     const regex = /^[0-9]+[MG]$/;
-    error.set(!value || regex.test(value) ? "" : "Neplatný formát velikosti (pouze čísla následovaná M nebo G)");
+    error.set(!value || regex.test(value) ? "" : "Invalid size format (only numbers followed by M or G)");
   }
 </script>
 
