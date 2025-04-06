@@ -18,6 +18,7 @@
     import CrawlerFormContent from '../types/CrawlerFormContent';
     import PasswordInput from './form/PasswordInput.svelte';
     import ResolveInput from './form/ResolveInput.svelte';
+    import HttpAuthInput from './form/HttpAuthInput.svelte';
     import type {CrawlerMessage} from '../../../main/crawler/CrawlerMessage';
     import {CrawlerMessageType} from '../../../main/crawler/CrawlerMessage';
     import {HistoryStorage} from "../history/HistoryStorage";
@@ -456,8 +457,8 @@
                     <IntInput bind:value={formData.timeout} label="Timeout" tooltip="Request timeout (in sec)."/>
                     <HostPortInput bind:value={formData.proxy} label="Proxy"
                                    tooltip="HTTP proxy in `host:port` format."/>
-                    <ValInput bind:value={formData.httpAuth} label="HTTP Auth"
-                              tooltip="Basic HTTP authentication in `username:password` format."/>
+                    <HttpAuthInput bind:value={formData.httpAuth} label="HTTP Authentication"
+                                   tooltip="Basic HTTP authentication in `username:password` format."/>
                     <IntInput bind:value={formData.workers} label="Max Concurrent Workers"
                               tooltip="Max concurrent workers (threads)."/>
                     <IntInput bind:value={formData.maxReqsPerSec} label="Max Requests Per Second"
