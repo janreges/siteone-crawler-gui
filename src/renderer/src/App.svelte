@@ -50,7 +50,7 @@
     <CrawlerForm {windowWidth} {windowHeight} bind:this={form}/>
 </div>
 <div class="footer">
-    Made by <a href="mailto:jan.reges@siteone.cz?subject=SiteOne Crawler feedback" class="text-info">Ján Regeš</a> @ 2023, <a on:click={openCrawlerHomepage} target="_blank" class="text-info cursor-pointer">crawler.siteone.io</a>
+    Made by <a href="mailto:jan.reges@siteone.cz?subject=SiteOne Crawler feedback" class="text-info">Ján Regeš</a> @ 2023-2025 | v1.0.8 | <a on:click={openCrawlerHomepage} target="_blank" class="text-info cursor-pointer">crawler.siteone.io</a>
 </div>
 
 <style>
