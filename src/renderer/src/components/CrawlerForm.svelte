@@ -35,6 +35,7 @@
     import { MiniStatsData } from '../types/MiniStatsData';
     import NetworkStats from './NetworkStats.svelte';
     import ResultPage from './ResultPage.svelte';
+    import { timezones } from '../data/timezones';
 
     let terminal;
     var term;
@@ -83,6 +84,21 @@
     let osArchitecture: string | null = null;
     let consoleFontFamily: string | null = null;
     let isWindows: boolean = false;
+    
+    // Helper function to shorten long timezone names
+    function shortenTimezone(tz: string, maxLength: number = 20): string {
+        if (!tz || tz.length <= maxLength) return tz;
+        
+        const halfLength = Math.floor((maxLength - 2) / 2);
+        const start = tz.substring(0, halfLength);
+        const end = tz.substring(tz.length - halfLength);
+        
+        return `${start}..${end}`;
+    }
+    
+    // Create timezone options with empty default
+    const timezoneOptions = ['', ...timezones];
+    const timezoneLabels = timezoneOptions.map(tz => shortenTimezone(tz));
 
     if (formData === null) {
         formData = new CrawlerFormContent({});
@@ -556,8 +572,10 @@
                                tooltip="Save report as JSON."/>
                     <FileInput bind:value={formData.outputTextFile} label="Output Text File"
                                tooltip="Save output as TXT."/>
-                    <ValInput bind:value={formData.timezone} label="Timezone"
-                               tooltip="Timezone for date/time operations (e.g., 'America/New_York', 'Europe/London')."/>
+                    <SelectInput bind:value={formData.timezone} label="Timezone"
+                                 tooltip="Timezone for date/time operations (e.g., 'America/New_York', 'Europe/London')."
+                                 options={timezoneOptions}
+                                 optionLabels={timezoneLabels}/>
                     <CheckboxInput bind:checked={formData.addHostToOutputFile} label="Add Host to Output File"
                                    tooltip="Append initial URL host to filename except sitemaps."/>
                     <CheckboxInput bind:checked={formData.addTimestampToOutputFile} label="Add Timestamp to Output File"
