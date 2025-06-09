@@ -40,8 +40,11 @@ nsis:
   uninstallDisplayName: ${productName}
   createDesktopShortcut: always
 mac:
+  entitlements: build/entitlements.mac.plist
   entitlementsInherit: build/entitlements.mac.plist
   artifactName: ${name}-${os}-${arch}-${version}.${ext}
+  hardenedRuntime: true
+  gatekeeperAssess: false
   category: 'public.app-category.developer-tools'
   extendInfo:
     - NSDesktopFolderUsageDescription: The crawler asks for permission to access the Desktop - it creates a SiteOne-Crawler folder there, where it will store its data, including the generated report or the offline version of the website.
@@ -59,6 +62,8 @@ mac:
       to: 'crawler'
 dmg:
   artifactName: ${name}-${os}-${arch}-${version}.${ext}
+  sign: true
+afterSign: "scripts/notarize.js"
 linux:
   artifactName: ${name}-${os}-${arch}-${version}.${ext}
   target:
