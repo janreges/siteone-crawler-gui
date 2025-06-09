@@ -224,8 +224,8 @@
           />
           <label for="chkSingleFileMarkdown" class="label">
             <span class="label-text">
-              Generate single-file markdown
-              <InfoIcon tip="If enabled, the crawler will generate a single markdown file containing all crawled content from the entire website. This is useful for creating comprehensive documentation or knowledge bases." position="left" />
+              Generate single-file mark…
+              <InfoIcon tip="If enabled, the crawler will generate a single markdown file containing all crawled content from the entire website. This is useful for creating comprehensive documentation, knowledge bases or content for AI context." position="left" />
             </span>
           </label>
         </div>

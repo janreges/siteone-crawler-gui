@@ -244,7 +244,7 @@
           />
           <button 
             type="button"
-            class="btn btn-xs btn-primary"
+            class="btn btn-xs btn-info"
             on:click={addNewValue}
             disabled={!newValue.trim() || !!newValueError}
           >
@@ -265,7 +265,7 @@
       <button type="button" class="btn btn-xs" on:click={closeModal}>Cancel</button>
       <button 
         type="button" 
-        class="btn btn-xs btn-primary" 
+        class="btn btn-xs btn-info" 
         on:click={saveChanges}
         disabled={Object.keys(validationErrors).length > 0}
       >
