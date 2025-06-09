@@ -98,25 +98,25 @@
               Generated Reports
             </h3>
             <div class="flex flex-wrap gap-2 mt-2">
-              <button class="btn btn-sm btn-info" on:click={() => openReportInBrowser('html')}>
+              <button type="button" class="btn btn-sm btn-info" on:click={() => openReportInBrowser('html')}>
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
                 </svg>
                 HTML Report
               </button>
-              <button class="btn btn-sm bg-base-300 hover:bg-base-content/20 border-0" on:click={() => openReportInBrowser('json')}>
+              <button type="button" class="btn btn-sm bg-base-300 hover:bg-base-content/20 border-0" on:click={() => openReportInBrowser('json')}>
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
                 </svg>
                 JSON Data
               </button>
-              <button class="btn btn-sm bg-base-300 hover:bg-base-content/20 border-0" on:click={() => openReportInBrowser('txt')}>
+              <button type="button" class="btn btn-sm bg-base-300 hover:bg-base-content/20 border-0" on:click={() => openReportInBrowser('txt')}>
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
                 Text Output
               </button>
-              <button class="btn btn-sm btn-ghost btn-nowrap" on:click={openTmpDir}>
+              <button type="button" class="btn btn-sm btn-ghost btn-nowrap" on:click={openTmpDir}>
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
                 </svg>
@@ -140,10 +140,10 @@
             </h3>
             <div class="flex gap-2 mt-2">
               <input type="text" value={htmlReportUrl} readonly class="input input-sm input-bordered flex-1 text-xs" />
-              <button class="btn btn-sm btn-ghost" on:click={copyOnlineReportUrl}>
+              <button type="button" class="btn btn-sm btn-ghost" on:click={copyOnlineReportUrl}>
                 {htmlReportUrlCopyText || 'Copy'}
               </button>
-              <button class="btn btn-sm btn-info" on:click={openOnlineHtmlReport}>
+              <button type="button" class="btn btn-sm btn-info" on:click={openOnlineHtmlReport}>
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                 </svg>
@@ -161,7 +161,7 @@
             <h3 class="text-sm font-semibold mb-1">Sitemaps</h3>
             <div class="flex gap-2">
               {#if sitemapXmlFile}
-              <button class="btn btn-xs bg-warning/20 hover:bg-warning text-warning hover:text-warning-content border-0" on:click={openSitemapXml}>
+              <button type="button" class="btn btn-xs bg-warning/20 hover:bg-warning text-warning hover:text-warning-content border-0" on:click={openSitemapXml}>
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 mr-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
                 </svg>
@@ -169,7 +169,7 @@
               </button>
               {/if}
               {#if sitemapTxtFile}
-              <button class="btn btn-xs bg-warning/20 hover:bg-warning text-warning hover:text-warning-content border-0" on:click={openSitemapTxt}>
+              <button type="button" class="btn btn-xs bg-warning/20 hover:bg-warning text-warning hover:text-warning-content border-0" on:click={openSitemapTxt}>
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 mr-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
@@ -199,7 +199,7 @@
               {#if offlineWebsiteDir}
               <div class="flex items-center justify-between bg-base-300 rounded p-2">
                 <span class="text-sm">Offline Website Clone</span>
-                <button class="btn btn-xs bg-warning/20 hover:bg-warning text-warning hover:text-warning-content border-0" on:click={openOfflineExport}>
+                <button type="button" class="btn btn-xs bg-warning/20 hover:bg-warning text-warning hover:text-warning-content border-0" on:click={openOfflineExport}>
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 mr-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
                   </svg>
@@ -210,7 +210,7 @@
               {#if markdownWebsiteDir}
               <div class="flex items-center justify-between bg-base-300 rounded p-2">
                 <span class="text-sm">Markdown Export</span>
-                <button class="btn btn-xs bg-warning/20 hover:bg-warning text-warning hover:text-warning-content border-0" on:click={openMarkdownExport}>
+                <button type="button" class="btn btn-xs bg-warning/20 hover:bg-warning text-warning hover:text-warning-content border-0" on:click={openMarkdownExport}>
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 mr-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                   </svg>
@@ -221,7 +221,7 @@
               {#if markdownSingleFile}
               <div class="flex items-center justify-between bg-base-300 rounded p-2">
                 <span class="text-sm">Single-file Markdown</span>
-                <button class="btn btn-xs bg-warning/20 hover:bg-warning text-warning hover:text-warning-content border-0" on:click={openMarkdownSingleFile}>
+                <button type="button" class="btn btn-xs bg-warning/20 hover:bg-warning text-warning hover:text-warning-content border-0" on:click={openMarkdownSingleFile}>
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 mr-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
@@ -260,7 +260,7 @@
             </svg>
             Executed CLI Command
           </h3>
-          <button class="btn btn-xs btn-ghost" on:click={copyCommand}>
+          <button type="button" class="btn btn-xs btn-ghost" on:click={copyCommand}>
             <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 mr-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v4m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
             </svg>
