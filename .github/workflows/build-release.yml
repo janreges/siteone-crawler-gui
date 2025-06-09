@@ -1,0 +1,249 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to build (e.g., 1.0.9)'
+        required: true
+        type: string
+
+jobs:
+  prepare-binaries:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Download SiteOne Crawler binaries
+        run: |
+          VERSION="${{ github.event.inputs.version || github.ref_name }}"
+          VERSION="${VERSION#v}"  # Remove 'v' prefix if present
+          
+          # Create temporary directory for downloads
+          mkdir -p temp-downloads
+          cd temp-downloads
+          
+          # Download all platform-specific archives
+          wget -q "https://github.com/janreges/siteone-crawler/releases/download/v${VERSION}/siteone-crawler-v${VERSION}-linux-x64.tar.gz"
+          wget -q "https://github.com/janreges/siteone-crawler/releases/download/v${VERSION}/siteone-crawler-v${VERSION}-linux-arm64.tar.gz"
+          wget -q "https://github.com/janreges/siteone-crawler/releases/download/v${VERSION}/siteone-crawler-v${VERSION}-macos-x64.tar.gz"
+          wget -q "https://github.com/janreges/siteone-crawler/releases/download/v${VERSION}/siteone-crawler-v${VERSION}-macos-arm64.tar.gz"
+          wget -q "https://github.com/janreges/siteone-crawler/releases/download/v${VERSION}/siteone-crawler-v${VERSION}-win-x64.zip"
+          
+          # Extract and copy binaries to correct locations
+          cd ..
+          
+          # Linux x64
+          tar -xzf temp-downloads/siteone-crawler-v${VERSION}-linux-x64.tar.gz -C temp-downloads/
+          cp -r temp-downloads/siteone-crawler-v${VERSION}-linux-x64/bin/* bin/linux-x64/
+          
+          # Linux ARM64
+          tar -xzf temp-downloads/siteone-crawler-v${VERSION}-linux-arm64.tar.gz -C temp-downloads/
+          cp -r temp-downloads/siteone-crawler-v${VERSION}-linux-arm64/bin/* bin/linux-arm64/
+          
+          # macOS x64
+          tar -xzf temp-downloads/siteone-crawler-v${VERSION}-macos-x64.tar.gz -C temp-downloads/
+          cp -r temp-downloads/siteone-crawler-v${VERSION}-macos-x64/bin/* bin/mac-x64/
+          
+          # macOS ARM64
+          tar -xzf temp-downloads/siteone-crawler-v${VERSION}-macos-arm64.tar.gz -C temp-downloads/
+          cp -r temp-downloads/siteone-crawler-v${VERSION}-macos-arm64/bin/* bin/mac-arm64/
+          
+          # Windows x64
+          unzip -q temp-downloads/siteone-crawler-v${VERSION}-win-x64.zip -d temp-downloads/
+          cp -r temp-downloads/siteone-crawler-v${VERSION}-win-x64/bin/* bin/win-x64/
+          
+          # Clean up
+          rm -rf temp-downloads
+
+      - name: Upload binaries artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: platform-binaries
+          path: bin/
+          retention-days: 1
+
+  build-linux:
+    needs: prepare-binaries
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            arch: x64
+          - os: ubuntu-latest
+            arch: arm64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Download binaries
+        uses: actions/download-artifact@v4
+        with:
+          name: platform-binaries
+          path: bin/
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build for Linux ${{ matrix.arch }}
+        run: |
+          if [ "${{ matrix.arch }}" = "arm64" ]; then
+            npm run build:linux-arm64
+          else
+            npm run build:linux-x64
+          fi
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-${{ matrix.arch }}-artifacts
+          path: |
+            dist/*.AppImage
+            dist/*.deb
+            dist/*.snap
+            dist/*.tar.gz
+
+  build-windows:
+    needs: prepare-binaries
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Download binaries
+        uses: actions/download-artifact@v4
+        with:
+          name: platform-binaries
+          path: bin/
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build for Windows
+        run: npm run build:win-x64
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-x64-artifacts
+          path: |
+            dist/*.exe
+            dist/*.msi
+
+  build-macos:
+    needs: prepare-binaries
+    strategy:
+      matrix:
+        include:
+          - os: macos-latest
+            arch: x64
+          - os: macos-latest
+            arch: arm64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Download binaries
+        uses: actions/download-artifact@v4
+        with:
+          name: platform-binaries
+          path: bin/
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Prepare for signing
+        env:
+          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_ID_PASS: ${{ secrets.APPLE_ID_PASS }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          # Create .env file for notarization
+          echo "APPLE_ID=$APPLE_ID" > .env
+          echo "APPLE_ID_PASS=$APPLE_ID_PASS" >> .env
+          echo "APPLE_TEAM_ID=$APPLE_TEAM_ID" >> .env
+          
+          # Import certificate
+          echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
+          security create-keychain -p actions build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p actions build.keychain
+          security import certificate.p12 -k build.keychain -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple: -s -k actions build.keychain
+
+      - name: Build for macOS ${{ matrix.arch }}
+        run: |
+          if [ "${{ matrix.arch }}" = "arm64" ]; then
+            npm run build:mac-arm64
+          else
+            npm run build:mac-x64
+          fi
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-${{ matrix.arch }}-artifacts
+          path: |
+            dist/*.dmg
+            dist/*.zip
+
+  create-release:
+    needs: [build-linux, build-windows, build-macos]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name || format('v{0}', github.event.inputs.version) }}
+          name: Release ${{ github.ref_name || format('v{0}', github.event.inputs.version) }}
+          draft: true
+          prerelease: false
+          files: |
+            artifacts/**/*.AppImage
+            artifacts/**/*.deb
+            artifacts/**/*.snap
+            artifacts/**/*.dmg
+            artifacts/**/*.zip
+            artifacts/**/*.exe
+            artifacts/**/*.msi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

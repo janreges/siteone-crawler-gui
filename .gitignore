@@ -8,5 +8,7 @@ tmp/*
 *.log*
 .DS_Store
 .env
+.secrets
 .idea
 .vscode
+scripts/temp-binaries-*
