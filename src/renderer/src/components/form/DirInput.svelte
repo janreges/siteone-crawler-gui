@@ -9,8 +9,9 @@
   const error = writable("");
 
   $: {
-    const regex = /^[a-zA-Z0-9\-_%.]+$/;
-    error.set(!value || regex.test(value) ? "" : "Invalid characters - only letters, numbers, dashes, underscores and dots are allowed.");
+    // Allow both Unix and Windows paths, including drive letters and path separators
+    const regex = /^[a-zA-Z0-9\-_%.\/\\: ]+$/;
+    error.set(!value || regex.test(value) ? "" : "Invalid characters - only letters, numbers, dashes, underscores, dots, slashes and spaces are allowed.");
   }
 </script>
 

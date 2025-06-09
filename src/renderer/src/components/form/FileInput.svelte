@@ -8,7 +8,8 @@
   const error = writable("");
 
   $: {
-    const regex = /^[a-zA-Z0-9%\-_\/.]+\.[a-zA-Z0-9]+$/;
+    // Allow both Unix and Windows paths, including drive letters and backslashes
+    const regex = /^[a-zA-Z0-9%\-_\/\\:. ]+\.[a-zA-Z0-9]+$/;
     error.set(!value || regex.test(value) ? "" : "Invalid file name or extension");
   }
 </script>
