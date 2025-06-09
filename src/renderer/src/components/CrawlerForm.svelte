@@ -7,6 +7,7 @@
     import ValInput from './form/ValInput.svelte';
     import FileInput from './form/FileInput.svelte';
     import IntInput from './form/IntInput.svelte';
+    import FloatInput from './form/FloatInput.svelte';
     import BasicFormPart from './form/BasicFormPart.svelte';
     import HostPortInput from './form/HostPortInput.svelte';
     import SizeInput from './form/SizeInput.svelte';
@@ -19,6 +20,7 @@
     import PasswordInput from './form/PasswordInput.svelte';
     import ResolveInput from './form/ResolveInput.svelte';
     import HttpAuthInput from './form/HttpAuthInput.svelte';
+    import MultiValInput from './form/MultiValInput.svelte';
     import type {CrawlerMessage} from '../../../main/crawler/CrawlerMessage';
     import {CrawlerMessageType} from '../../../main/crawler/CrawlerMessage';
     import {HistoryStorage} from "../history/HistoryStorage";
@@ -104,8 +106,6 @@
         formData = new CrawlerFormContent({});
     }
 
-    $: allowedDomainForCrawlingString = domainsToString(formData.allowedDomainForCrawling);
-    $: allowedDomainForExternalString = domainsToString(formData.allowedDomainForExternalFiles);
 
     onMount(async () => {
         osPlatform = window.api.getPlatform();
@@ -387,21 +387,6 @@
       window.api.openExternal('https://crawler.siteone.io/?utm_source=app&utm_medium='+osPlatform+'&utm_campaign='+osArchitecture+'&utm_content='+VERSION);
     }
 
-    function domainsToString(domainsArray:string[]): string {
-        return domainsArray ? domainsArray.join(',') : '';
-    }
-
-    function stringToDomains(domainsString:string): string[] {
-        return domainsString.split(',').map(domain => domain.trim());
-    }
-
-    function handleAllowedDomainForCrawlingChange(event): void {
-        formData.allowedDomainForCrawling = stringToDomains(event.detail.currentTarget.value);
-    }
-
-    function handleAllowedDomainForExternalFilesChange(event): void {
-        formData.allowedDomainForExternalFiles = stringToDomains(event.detail.currentTarget.value);
-    }
 
     function handleUrlChange(): void {
         if (formData.url.match(/^https?:\/\/[a-z0-9]/)) {
@@ -519,12 +504,14 @@
                                    tooltip="Disables downloading of all images and replaces found images in HTML with placeholder image only."/>
                     <CheckboxInput bind:checked={formData.disableFiles} label="Disable Files"
                                    tooltip="Disables downloading of any files (typically downloadable documents) to which various links point."/>
-                    <ValInput value={allowedDomainForExternalString} label="Allowed Domains for Ext. Files"
-                            on:input={handleAllowedDomainForExternalFilesChange}
-                            tooltip="Allows loading of file content (typically assets) from another domains as well. Comma delimited. You can use wildcards '*'."/>
-                    <ValInput value={allowedDomainForCrawlingString} label="Allowed Domains for Crawling"
-                            on:input={handleAllowedDomainForCrawlingChange}
-                            tooltip="Allows crawling of all content (including pages) from other listed domains. Comma delimited. You can use wildcards '*'."/>
+                    <MultiValInput bind:value={formData.allowedDomainForExternalFiles} label="Allowed Domains for Ext. Files"
+                                 tooltip="Allows loading of file content (typically assets) from another domains as well. You can use wildcards '*'."
+                                 placeholder="Add domain (e.g., cdn.example.com)"
+                                 validationType="domain"/>
+                    <MultiValInput bind:value={formData.allowedDomainForCrawling} label="Allowed Domains for Crawling"
+                                 tooltip="Allows crawling of all content (including pages) from other listed domains. You can use wildcards '*'."
+                                 placeholder="Add domain (e.g., subdomain.example.com)"
+                                 validationType="domain"/>
                 </fieldset>
 
                 <!-- Advanced crawler settings -->
@@ -534,10 +521,14 @@
                                tooltip="Memory limit in units M (Megabytes) or G (Gigabytes)."/>
                     <ResolveInput bind:value={formData.resolve} label="Extra Domain Resolve"
                                   tooltip="Force domain:port to resolve to a specific IP. Format: domain:port:ip (e.g., www.example.com:80:127.0.0.1)"/>
-                    <RegexInput bind:value={formData.includeRegex} label="Include Regex"
-                                tooltip="Include only URLs matching at least one PCRE regex."/>
-                    <RegexInput bind:value={formData.ignoreRegex} label="Ignore Regex"
-                                tooltip="Ignore URLs matching any PCRE regex."/>
+                    <MultiValInput bind:value={formData.includeRegex} label="Include Regex"
+                                 tooltip="Include only URLs matching at least one PCRE regex. Can be specified multiple times."
+                                 placeholder="Add PCRE regex (e.g., /\.pdf$/i)"
+                                 validationType="regex"/>
+                    <MultiValInput bind:value={formData.ignoreRegex} label="Ignore Regex"
+                                 tooltip="Ignore URLs matching any PCRE regex. Can be specified multiple times."
+                                 placeholder="Add PCRE regex (e.g., /admin/)"
+                                 validationType="regex"/>
                     <RegexInput bind:value={formData.analyzerFilterRegex} label="Analyzer Filter Regex"
                                 tooltip="Use only analyzers that match the specified regexp."/>
                     <CheckboxInput bind:checked={formData.removeQueryParams} label="Remove Query Parameters"
@@ -567,8 +558,10 @@
                               tooltip="Cache dir for HTTP responses."/>
                     <ValInput bind:value={formData.acceptEncoding} label="Accept Encoding"
                               tooltip="Set `Accept-Encoding` request header."/>
-                    <ValInput bind:value={formData.transformUrl} label="Transform URL"
-                              tooltip="Transform URLs using pattern 'search -> replace' or regex '/pattern/flags -> replacement'."/>
+                    <MultiValInput bind:value={formData.transformUrl} label="Transform URL"
+                                 tooltip="Transform URLs using pattern 'search -> replace' or regex '/pattern/flags -> replacement'. Can be specified multiple times."
+                                 placeholder="Add transform rule (e.g., old.com -> new.com)"
+                                 validationType="transform"/>
                     <IntInput bind:value={formData.maxQueueLength} label="Max Queue Length"
                               tooltip="Max URL queue length."/>
                     <IntInput bind:value={formData.maxVisitedUrls} label="Max Visited URLs"
@@ -603,8 +596,10 @@
                 <!-- Mailer options -->
                 <fieldset>
                     <legend>Mailer Options</legend>
-                    <EmailInput bind:value={formData.mailTo} label="E-mail To"
-                                tooltip="E-mail report recipient address(es)."/>
+                    <MultiValInput bind:value={formData.mailTo} label="E-mail To"
+                                   tooltip="E-mail report recipient address(es). Can be specified multiple times."
+                                   placeholder="Add email address..."
+                                   validationType="email"/>
                     <EmailInput bind:value={formData.mailFrom} label="E-mail From" tooltip="E-mail sender address."/>
                     <ValInput bind:value={formData.mailFromName} label="E-mail From Name"
                               tooltip="E-mail sender name."/>

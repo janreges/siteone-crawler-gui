@@ -43,8 +43,8 @@ class CrawlerFormContent {
   memoryLimit: string | null = null;
   allowedDomainForExternalFiles: string[] | null = ['*'];
   allowedDomainForCrawling: string[] | null = [];
-  includeRegex: string | null = null;
-  ignoreRegex: string | null = null;
+  includeRegex: string[] | null = null;
+  ignoreRegex: string[] | null = null;
   analyzerFilterRegex: string | null = null;
   acceptEncoding: string | null = null;
   removeQueryParams: boolean | null = null;
@@ -52,13 +52,13 @@ class CrawlerFormContent {
   maxQueueLength: number | null = null;
   maxVisitedUrls: number | null = 10100;
   maxUrlLength: number | null = null;
-  transformUrl: string | null = null;
+  transformUrl: string[] | null = null;
   ignoreRobotsTxt: boolean | null = null;
 
   // Expert settings
   debug: boolean | null = null;
   debugLogFile: string | null = null;
-  debugUrlRegex: string | null = null;
+  debugUrlRegex: string[] | null = null;
   resultStorage: 'memory' | 'file' | null = 'memory';
   resultStorageDir: string | null = 'result-storage';
   resultStorageCompression: boolean | null = null;
@@ -75,7 +75,7 @@ class CrawlerFormContent {
   addTimestampToOutputFile: boolean | null = null;
 
   // Mailer options
-  mailTo: string | null = null;
+  mailTo: string[] | null = null;
   mailFrom: string | null = null;
   mailFromName: string | null = null;
   mailSubjectTemplate: string | null = null;
@@ -93,7 +93,7 @@ class CrawlerFormContent {
 
   // Markdown export options
   markdownExportDir: string | null = null;
-  markdownExportStoreOnlyUrlRegex: string | null = null;
+  markdownExportStoreOnlyUrlRegex: string[] | null = null;
   markdownDisableImages: boolean | null = null;
   markdownDisableFiles: boolean | null = null;
   markdownExcludeSelector: string | null = null;
@@ -106,7 +106,7 @@ class CrawlerFormContent {
 
   // Offline exporter options
   offlineExportDir: string | null = null;
-  offlineExportStoreOnlyUrlRegex: string | null = null;
+  offlineExportStoreOnlyUrlRegex: string[] | null = null;
   offlineExportRemoveUnwantedCode: boolean | null = true;
   offlineExportNoAutoRedirectHtml: boolean | null = null;
   replaceContent: string | null = null;
@@ -207,8 +207,20 @@ class CrawlerFormContent {
         }
       });
     }
-    if (this.includeRegex !== null) params.push(`--include-regex='${this.includeRegex}'`);
-    if (this.ignoreRegex !== null) params.push(`--ignore-regex='${this.ignoreRegex}'`);
+    if (this.includeRegex !== null) {
+      this.includeRegex.forEach((regex) => {
+        if (regex !== null && regex.trim() !== '') {
+          params.push(`--include-regex='${regex}'`);
+        }
+      });
+    }
+    if (this.ignoreRegex !== null) {
+      this.ignoreRegex.forEach((regex) => {
+        if (regex !== null && regex.trim() !== '') {
+          params.push(`--ignore-regex='${regex}'`);
+        }
+      });
+    }
     if (this.analyzerFilterRegex !== null)
       params.push(`--analyzer-filter-regex='${this.analyzerFilterRegex}'`);
     if (this.acceptEncoding !== null) params.push(`--accept-encoding='${this.acceptEncoding}'`);
@@ -217,7 +229,13 @@ class CrawlerFormContent {
     if (this.maxQueueLength !== null) params.push(`--max-queue-length=${this.maxQueueLength}`);
     if (this.maxVisitedUrls !== null) params.push(`--max-visited-urls=${this.maxVisitedUrls}`);
     if (this.maxUrlLength !== null) params.push(`--max-url-length=${this.maxUrlLength}`);
-    if (this.transformUrl !== null) params.push(`--transform-url='${this.transformUrl}'`);
+    if (this.transformUrl !== null) {
+      this.transformUrl.forEach((transform) => {
+        if (transform !== null && transform.trim() !== '') {
+          params.push(`--transform-url='${transform}'`);
+        }
+      });
+    }
     if (this.ignoreRobotsTxt) params.push(`--ignore-robots-txt`);
 
     // Upload options
@@ -236,7 +254,13 @@ class CrawlerFormContent {
     // Expert settings
     if (this.debug) params.push(`--debug`);
     if (this.debugLogFile !== null) params.push(`--debug-log-file='${this.debugLogFile}'`);
-    if (this.debugUrlRegex !== null) params.push(`--debug-url-regex='${this.debugUrlRegex}'`);
+    if (this.debugUrlRegex !== null) {
+      this.debugUrlRegex.forEach((regex) => {
+        if (regex !== null && regex.trim() !== '') {
+          params.push(`--debug-url-regex='${regex}'`);
+        }
+      });
+    }
     if (this.resultStorage !== null) params.push(`--result-storage=${this.resultStorage}`);
     if (this.resultStorageDir !== null) {
       let prefix = '';
@@ -287,7 +311,13 @@ class CrawlerFormContent {
     if (this.addTimestampToOutputFile) params.push(`--add-timestamp-to-output-file`);
 
     // Mailer options
-    if (this.mailTo !== null) params.push(`--mail-to='${this.mailTo}'`);
+    if (this.mailTo !== null) {
+      this.mailTo.forEach((email) => {
+        if (email !== null && email.trim() !== '') {
+          params.push(`--mail-to='${email}'`);
+        }
+      });
+    }
     if (this.mailFrom !== null) params.push(`--mail-from='${this.mailFrom}'`);
     if (this.mailFromName !== null) params.push(`--mail-from-name='${this.mailFromName}'`);
     if (this.mailSubjectTemplate !== null)
@@ -313,10 +343,13 @@ class CrawlerFormContent {
       }
       params.push(`--markdown-export-dir='${prefix}${this.markdownExportDir}'`);
     }
-    if (this.markdownExportStoreOnlyUrlRegex !== null)
-      params.push(
-        `--markdown-export-store-only-url-regex='${this.markdownExportStoreOnlyUrlRegex}'`
-      );
+    if (this.markdownExportStoreOnlyUrlRegex !== null) {
+      this.markdownExportStoreOnlyUrlRegex.forEach((regex) => {
+        if (regex !== null && regex.trim() !== '') {
+          params.push(`--markdown-export-store-only-url-regex='${regex}'`);
+        }
+      });
+    }
     if (this.markdownDisableImages) params.push(`--markdown-disable-images`);
     if (this.markdownDisableFiles) params.push(`--markdown-disable-files`);
     if (this.markdownExcludeSelector !== null)
@@ -346,8 +379,13 @@ class CrawlerFormContent {
       }
       params.push(`--offline-export-dir='${prefix}${this.offlineExportDir}'`);
     }
-    if (this.offlineExportStoreOnlyUrlRegex !== null)
-      params.push(`--offline-export-store-only-url-regex='${this.offlineExportStoreOnlyUrlRegex}'`);
+    if (this.offlineExportStoreOnlyUrlRegex !== null) {
+      this.offlineExportStoreOnlyUrlRegex.forEach((regex) => {
+        if (regex !== null && regex.trim() !== '') {
+          params.push(`--offline-export-store-only-url-regex='${regex}'`);
+        }
+      });
+    }
     if (this.offlineExportRemoveUnwantedCode) params.push(`--offline-export-remove-unwanted-code`);
     if (this.offlineExportNoAutoRedirectHtml) params.push(`--offline-export-no-auto-redirect-html`);
     if (this.replaceContent !== null) params.push(`--replace-content='${this.replaceContent}'`);
