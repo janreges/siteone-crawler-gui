@@ -34,6 +34,7 @@
     import CrawlerMiniStats from "./MiniStats.svelte";
     import { MiniStatsData } from '../types/MiniStatsData';
     import NetworkStats from './NetworkStats.svelte';
+    import ResultPage from './ResultPage.svelte';
 
     let terminal;
     var term;
@@ -72,7 +73,6 @@
     let sitemapXmlFile: string | null = null;
     let sitemapTxtFile: string | null = null;
     let htmlReportUrl: string | null = null;
-    let htmlReportUrlCopyText: string | null = null;
 
     let basicFormPartHeight: number = 0;
     $: terminalWidth = windowWidth - 20;
@@ -341,60 +341,16 @@
       return null;
     }
 
-    function openReportInBrowser(extension:string): void {
-        window.api.openExternal('file://' + getReportFilePath(extension));
-    }
-
-    function openOnlineHtmlReport(): void {
-      window.api.openExternal(htmlReportUrl);
-    }
-
     function openHtmlReport(): void {
-      window.api.openExternal('file://' + getReportFilePath('html'));
+      window.api.openExternal('file://' + reportBaseFilePath + '.html');
     }
 
     function openOfflineExport():void {
         window.api.openExternal('file://' + offlineWebsiteDir + '/index.html');
     }
 
-    function openMarkdownExport():void {
-        window.api.openExternal('file://' + markdownWebsiteDir + '/');
-    }
-
     function openCrawlerHomepage():void {
       window.api.openExternal('https://crawler.siteone.io/?utm_source=app&utm_medium='+osPlatform+'&utm_campaign='+osArchitecture+'&utm_content='+VERSION);
-    }
-
-    function openSitemapXml():void {
-        window.api.openExternal('file://' + sitemapXmlFile);
-    }
-
-    function openSitemapTxt():void {
-        window.api.openExternal('file://' + sitemapTxtFile);
-    }
-
-    function openDocsBasicUsage():void {
-        window.api.openExternal('https://crawler.siteone.io/getting-started/basic-usage/?utm_source=app-result-page&utm_medium='+osPlatform+'&utm_campaign='+osArchitecture+'&utm_content='+VERSION);
-    }
-
-    function copyOnlineReportUrl() {
-      navigator.clipboard.writeText(htmlReportUrl).then(() => {
-        htmlReportUrlCopyText = 'Copied!';
-      }).catch(err => {
-        htmlReportUrlCopyText = 'Error copying! ' + err.message;
-      });
-    }
-
-    async function openTmpDir(): Promise<void> {
-        window.api.openExternal('file://' + await window.api.getTmpDir());
-    }
-
-    function getReportFilePath(extension:string): string {
-        let result = reportBaseFilePath + '.' + extension;
-        if (extension === 'json' || extension === 'txt') {
-            result = result.replace('report.', 'output.');
-        }
-        return result;
     }
 
     function domainsToString(domainsArray:string[]): string {
@@ -720,91 +676,16 @@
             </div>
         </div>
 
-        <div role="tabpanel" class="tab-content bg-base-100 pt-4 max-h-full h-full w-full gap-12" class:tab-content-active={activeTab === 'result'}>
-
-            {#if reportBaseFilePath}
-                <div role="alert" class="alert">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-success shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    <span class="text-success">Crawling has been finished and your reports are generated.</span>
-                    <div class="alert-buttons">
-                        <a class="btn btn-active btn-primary" title="Open HTML report" aria-label="Open HTML report" on:click={() => openReportInBrowser('html')} target="_blank">HTML report</a>
-                        <a class="btn btn-active btn-info" title="Open JSON report" aria-label="Open JSON report" on:click={() => openReportInBrowser('json')} target="_blank">JSON report</a>
-                        <a class="btn btn-active btn-warning" title="Open TXT report" aria-label="Open TXT report" on:click={() => openReportInBrowser('txt')} target="_blank">TXT report</a>
-                    </div>
-                </div>
-            {/if}
-
-          {#if htmlReportUrl}
-            <div role="alert" class="alert" style="margin-top: 14px;">
-              <svg xmlns="http://www.w3.org/2000/svg" class="stroke-success shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-              <span class="text-success">
-                The HTML report has been uploaded to the server.<br />
-                <a class="link-to-online-report" href={htmlReportUrl} target="_blank" on:click={() => openOnlineHtmlReport()}>{htmlReportUrl}</a> &nbsp;
-                <button class="btn btn-outline btn-xs" on:click|preventDefault={copyOnlineReportUrl}>Copy</button> {#if htmlReportUrlCopyText}<span class={htmlReportUrlCopyText === 'Copied!' ? 'text-success' : 'text-warning'} style="font-size: 0.8em;">{htmlReportUrlCopyText}</span>{/if}
-              </span>
-              <div class="alert-buttons">
-                <a class="btn btn-active btn-success" title="Open online HTML report" aria-label="Open online HTML report" on:click={() => openOnlineHtmlReport()} target="_blank">Online HTML report</a>
-              </div>
-            </div>
-          {/if}
-
-            {#if offlineWebsiteDir}
-                <div role="alert" class="alert" style="margin-top: 14px; margin-bottom: 20px;">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-success shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    <span class="text-success">Offline website clone has been successfully generated.</span>
-                    <div>
-                        <a class="btn btn-active btn-secondary" title="Browse offline website clone" aria-label="Browse offline website clone" on:click={() => openOfflineExport()} target="_blank">Browse website clone</a>
-                    </div>
-                </div>
-            {/if}
-
-            {#if markdownWebsiteDir}
-                <div role="alert" class="alert" style="margin-top: 14px; margin-bottom: 20px;">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-success shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    <span class="text-success">Markdown version has been successfully generated.</span>
-                    <div>
-                        <a class="btn btn-active btn-primary" title="Open folder with exported markdown version" aria-label="Open folder with exported markdown version" on:click={() => openMarkdownExport()} target="_blank">Open markdown version</a>
-                    </div>
-                </div>
-            {/if}
-
-            {#if sitemapXmlFile || sitemapTxtFile}
-                <div role="alert" class="alert" style="margin-top: 14px; margin-bottom: 20px;">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-success shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    <span class="text-success">Sitemap has been successfully generated.</span>
-                    <div>
-                        {#if sitemapXmlFile}<a class="btn btn-active btn-neutral" title="Open Sitemap XML" aria-label="Open Sitemap XML" on:click={() => openSitemapXml()} target="_blank">Open sitemap.xml</a>{/if}
-                        {#if sitemapTxtFile}<a class="btn btn-active btn-neutral" title="Open Sitemap TXT" aria-label="Open Sitemap TXT" on:click={() => openSitemapTxt()} target="_blank">Open sitemap.txt</a>{/if}
-                    </div>
-                </div>
-            {/if}
-
-            {#if reportBaseFilePath}
-                <div style="margin-top: 12px; margin-left: 6px">
-                  <h2 style="margin-top: 12px; font-size: 1.4em;">Manually browsing the output</h2>
-                    <h3 style="font-size: 1em; margin: 24px 0;">All types of output are generated in the <a class="text-blue-500 cursor-pointer" on:click={() => openTmpDir()}>output folder 'SiteOne-Crawler'</a> on your desktop. You can use the command below to move to this folder and view older reports, exports or delete the cache manually.</h3>
-                </div>
-                <div class="mockup-code" style="font-size: 0.8em;">
-                    <pre><code class="text-warning" style="width: 100%; word-wrap: break-word">cd {reportBaseFilePath.replace(/[\/\\][^\/\\]+$/, '')}</code></pre>
-                </div>
-
-                <div style="margin-top: 20px; margin-left: 6px">
-                  <h2 style="margin-top: 16px; margin-bottom: 12px; font-size: 1.4em;">Executed command</h2>
-                  <h3 style="font-size: 1em; margin: 24px 0;">This graphical interface launched the command below of the <a on:click={openDocsBasicUsage} class="text-blue-500 cursor-pointer" target="_blank">command-line part of the Crawler</a>.</h3>
-                  <div class="mockup-code" style="font-size: 0.8em;">
-                    <pre><code class="text-warning" style="width: 100%; word-wrap: break-word">./crawler
-    {lastCliParams.join(" \\\n    ")}</code></pre>
-                  </div>
-                </div>
-            {/if}
-
-            {#if !reportBaseFilePath}
-                <div role="alert" class="alert">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-info shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    <span>Enter the URL above and start crawling to generate reports.</span>
-                </div>
-            {/if}
-
+        <div role="tabpanel" class="tab-content bg-base-100 pt-4 max-h-full h-full w-full" class:tab-content-active={activeTab === 'result'}>
+            <ResultPage 
+                {reportBaseFilePath}
+                {offlineWebsiteDir}
+                {markdownWebsiteDir}
+                {sitemapXmlFile}
+                {sitemapTxtFile}
+                {htmlReportUrl}
+                {lastCliParams}
+            />
         </div>
 
 </form>
