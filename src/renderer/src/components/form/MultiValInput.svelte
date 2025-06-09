@@ -18,7 +18,9 @@
   // Update display text
   $: displayText = internalValue.length === 0 
     ? "Click to add values..." 
-    : `${internalValue.length} value${internalValue.length === 1 ? '' : 's'} configured`;
+    : internalValue.length === 1 
+      ? internalValue[0]
+      : `${internalValue.length} values configured`;
   
   function validateValue(val: string, index: number | 'new' = 'new'): boolean {
     const trimmed = val.trim();
@@ -78,8 +80,11 @@
         break;
         
       case 'domain':
-        if (!/^(\*\.)?([a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})?$/.test(trimmed)) {
-          error = "Invalid domain (use *.example.com for wildcards)";
+        // Allow just '*' or proper domain format
+        if (trimmed === '*') {
+          // Valid wildcard
+        } else if (!/^(\*\.)?([a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})?$/.test(trimmed)) {
+          error = "Invalid domain (use *, *.example.com or example.com)";
         }
         break;
         
