@@ -506,11 +506,11 @@
                                    tooltip="Disables downloading of any files (typically downloadable documents) to which various links point."/>
                     <MultiValInput bind:value={formData.allowedDomainForExternalFiles} label="Allowed Domains for Ext. Files"
                                  tooltip="Allows loading of file content (typically assets) from another domains as well. You can use wildcards '*'."
-                                 placeholder="Add domain (e.g., cdn.example.com)"
+                                 placeholder="Add domain (e.g., *.example.com, cdn.example.com)"
                                  validationType="domain"/>
                     <MultiValInput bind:value={formData.allowedDomainForCrawling} label="Allowed Domains for Crawling"
                                  tooltip="Allows crawling of all content (including pages) from other listed domains. You can use wildcards '*'."
-                                 placeholder="Add domain (e.g., subdomain.example.com)"
+                                 placeholder="Add domain (e.g., *.example.com, subdomain.example.com)"
                                  validationType="domain"/>
                 </fieldset>
 
@@ -785,11 +785,18 @@
         flex-grow: 1;
         color: oklch(var(--in)) !important;
         cursor: help;
+        outline: none !important;
     }
 
     :global(input[type="number"]) {
         max-width: 70px;
         flex-grow: 0;
+    }
+
+    :global(button),
+    :global(.btn),
+    :global(textarea) {
+        outline: none !important;
     }
 
     :global(.form-group .error) {

@@ -132,7 +132,7 @@ class CrawlerFormContent {
   slowestUrlsMaxTime: string | null = null;
 
   // Upload to server
-  upload: boolean = true;
+  upload: boolean = false;
   uploadTo: string = CrawlerFormContent.DEFAULT_UPLOAD_TO;
   uploadRetention: string = '30d';
   uploadPassword: string | null = null;

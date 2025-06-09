@@ -290,4 +290,11 @@
     background-color: rgba(0, 0, 0, 0.3);
     z-index: -1;
   }
+  
+  /* Remove focus outline */
+  :global(input),
+  :global(button),
+  :global(.btn) {
+    outline: none !important;
+  }
 </style>
