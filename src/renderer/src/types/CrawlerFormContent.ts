@@ -148,6 +148,21 @@ class CrawlerFormContent {
   generateCliParams(tmpDir: string, pathDelimiter: string): string[] {
     const params: string[] = [];
 
+    // Helper function to transform Windows paths to Cygwin format on Windows
+    const transformPathForWindows = (path: string): string => {
+      if (pathDelimiter === '\\') { // Windows platform
+        // Check if it's a Windows absolute path (e.g., C:/path or C:\path)
+        const windowsAbsolutePathRegex = /^[A-Za-z]:[\/\\]/;
+        if (windowsAbsolutePathRegex.test(path)) {
+          // Transform C:/path to /cygdrive/c/path
+          const driveLetter = path.charAt(0).toLowerCase();
+          const restOfPath = path.substring(2).replace(/\\/g, '/');
+          return `/cygdrive/${driveLetter}${restOfPath}`;
+        }
+      }
+      return path;
+    };
+
     // make corrections for specific params/cases
     this.makeCorrections();
 
@@ -263,20 +278,28 @@ class CrawlerFormContent {
     }
     if (this.resultStorage !== null) params.push(`--result-storage=${this.resultStorage}`);
     if (this.resultStorageDir !== null) {
-      let prefix = '';
-      if (this.resultStorageDir.substring(0, 1) != '/') {
-        prefix = tmpDir + pathDelimiter;
+      let fullPath = this.resultStorageDir;
+      const transformedPath = transformPathForWindows(fullPath);
+      
+      if (transformedPath.substring(0, 1) != '/') {
+        fullPath = tmpDir + pathDelimiter + fullPath;
+      } else {
+        fullPath = transformedPath;
       }
-      params.push(`--result-storage-dir='${prefix}${this.resultStorageDir}'`);
+      params.push(`--result-storage-dir='${fullPath}'`);
     }
     if (this.resultStorageCompression) params.push(`--result-storage-compression`);
     if (this.httpCacheDir !== null && this.httpCacheDir !== '') {
       if (this.httpCacheDir !== 'off') {
-        let prefix = '';
-        if (this.httpCacheDir.substring(0, 1) != '/') {
-          prefix = tmpDir + pathDelimiter;
+        let fullPath = this.httpCacheDir;
+        const transformedPath = transformPathForWindows(fullPath);
+        
+        if (transformedPath.substring(0, 1) != '/') {
+          fullPath = tmpDir + pathDelimiter + fullPath;
+        } else {
+          fullPath = transformedPath;
         }
-        params.push(`--http-cache-dir='${prefix}${this.httpCacheDir}'`);
+        params.push(`--http-cache-dir='${fullPath}'`);
       } else {
         params.push(`--http-cache-dir='off'`);
       }
@@ -287,25 +310,37 @@ class CrawlerFormContent {
 
     // File export settings
     if (this.outputHtmlReport !== null && this.outputHtmlReport !== '') {
-      let prefix = '';
-      if (this.outputHtmlReport.substring(0, 1) != '/') {
-        prefix = tmpDir + pathDelimiter;
+      let fullPath = this.outputHtmlReport;
+      const transformedPath = transformPathForWindows(fullPath);
+      
+      if (transformedPath.substring(0, 1) != '/') {
+        fullPath = tmpDir + pathDelimiter + fullPath;
+      } else {
+        fullPath = transformedPath;
       }
-      params.push(`--output-html-report='${prefix}${this.outputHtmlReport}'`);
+      params.push(`--output-html-report='${fullPath}'`);
     }
     if (this.outputJsonFile !== null && this.outputJsonFile !== '') {
-      let prefix = '';
-      if (this.outputJsonFile.substring(0, 1) != '/') {
-        prefix = tmpDir + pathDelimiter;
+      let fullPath = this.outputJsonFile;
+      const transformedPath = transformPathForWindows(fullPath);
+      
+      if (transformedPath.substring(0, 1) != '/') {
+        fullPath = tmpDir + pathDelimiter + fullPath;
+      } else {
+        fullPath = transformedPath;
       }
-      params.push(`--output-json-file='${prefix}${this.outputJsonFile}'`);
+      params.push(`--output-json-file='${fullPath}'`);
     }
     if (this.outputTextFile !== null && this.outputTextFile !== '') {
-      let prefix = '';
-      if (this.outputTextFile.substring(0, 1) != '/') {
-        prefix = tmpDir + pathDelimiter;
+      let fullPath = this.outputTextFile;
+      const transformedPath = transformPathForWindows(fullPath);
+      
+      if (transformedPath.substring(0, 1) != '/') {
+        fullPath = tmpDir + pathDelimiter + fullPath;
+      } else {
+        fullPath = transformedPath;
       }
-      params.push(`--output-text-file='${prefix}${this.outputTextFile}'`);
+      params.push(`--output-text-file='${fullPath}'`);
     }
     if (this.addHostToOutputFile) params.push(`--add-host-to-output-file`);
     if (this.addTimestampToOutputFile) params.push(`--add-timestamp-to-output-file`);
@@ -337,11 +372,15 @@ class CrawlerFormContent {
 
     // Markdown export options
     if (this.markdownExportDir !== null) {
-      let prefix = '';
-      if (this.markdownExportDir.substring(0, 1) != '/') {
-        prefix = tmpDir + pathDelimiter;
+      let fullPath = this.markdownExportDir;
+      const transformedPath = transformPathForWindows(fullPath);
+      
+      if (transformedPath.substring(0, 1) != '/') {
+        fullPath = tmpDir + pathDelimiter + fullPath;
+      } else {
+        fullPath = transformedPath;
       }
-      params.push(`--markdown-export-dir='${prefix}${this.markdownExportDir}'`);
+      params.push(`--markdown-export-dir='${fullPath}'`);
     }
     if (this.markdownExportStoreOnlyUrlRegex !== null) {
       this.markdownExportStoreOnlyUrlRegex.forEach((regex) => {
@@ -360,11 +399,15 @@ class CrawlerFormContent {
       params.push(`--markdown-replace-query-string='${this.markdownReplaceQueryString}'`);
     if (this.markdownIgnoreStoreFileError) params.push(`--markdown-ignore-store-file-error`);
     if (this.markdownExportSingleFile !== null) {
-      let prefix = '';
-      if (this.markdownExportSingleFile.substring(0, 1) != '/') {
-        prefix = tmpDir + pathDelimiter;
+      let fullPath = this.markdownExportSingleFile;
+      const transformedPath = transformPathForWindows(fullPath);
+      
+      if (transformedPath.substring(0, 1) != '/') {
+        fullPath = tmpDir + pathDelimiter + fullPath;
+      } else {
+        fullPath = transformedPath;
       }
-      params.push(`--markdown-export-single-file='${prefix}${this.markdownExportSingleFile}'`);
+      params.push(`--markdown-export-single-file='${fullPath}'`);
     }
     if (this.markdownMoveContentBeforeH1ToEnd)
       params.push(`--markdown-move-content-before-h1-to-end`);
@@ -373,11 +416,15 @@ class CrawlerFormContent {
 
     // Offline exporter options
     if (this.offlineExportDir !== null) {
-      let prefix = '';
-      if (this.offlineExportDir.substring(0, 1) != '/') {
-        prefix = tmpDir + pathDelimiter;
+      let fullPath = this.offlineExportDir;
+      const transformedPath = transformPathForWindows(fullPath);
+      
+      if (transformedPath.substring(0, 1) != '/') {
+        fullPath = tmpDir + pathDelimiter + fullPath;
+      } else {
+        fullPath = transformedPath;
       }
-      params.push(`--offline-export-dir='${prefix}${this.offlineExportDir}'`);
+      params.push(`--offline-export-dir='${fullPath}'`);
     }
     if (this.offlineExportStoreOnlyUrlRegex !== null) {
       this.offlineExportStoreOnlyUrlRegex.forEach((regex) => {
@@ -395,18 +442,26 @@ class CrawlerFormContent {
 
     // Sitemap options
     if (this.sitemapXmlFile !== null && this.sitemapXmlFile !== '') {
-      let prefix = '';
-      if (this.sitemapXmlFile.substring(0, 1) != '/') {
-        prefix = tmpDir + pathDelimiter;
+      let fullPath = this.sitemapXmlFile;
+      const transformedPath = transformPathForWindows(fullPath);
+      
+      if (transformedPath.substring(0, 1) != '/') {
+        fullPath = tmpDir + pathDelimiter + fullPath;
+      } else {
+        fullPath = transformedPath;
       }
-      params.push(`--sitemap-xml-file='${prefix}${this.sitemapXmlFile}'`);
+      params.push(`--sitemap-xml-file='${fullPath}'`);
     }
     if (this.sitemapTxtFile !== null) {
-      let prefix = '';
-      if (this.sitemapTxtFile.substring(0, 1) != '/') {
-        prefix = tmpDir + pathDelimiter;
+      let fullPath = this.sitemapTxtFile;
+      const transformedPath = transformPathForWindows(fullPath);
+      
+      if (transformedPath.substring(0, 1) != '/') {
+        fullPath = tmpDir + pathDelimiter + fullPath;
+      } else {
+        fullPath = transformedPath;
       }
-      params.push(`--sitemap-txt-file='${prefix}${this.sitemapTxtFile}'`);
+      params.push(`--sitemap-txt-file='${fullPath}'`);
     }
     if (this.sitemapBasePriority !== null)
       params.push(`--sitemap-base-priority=${this.sitemapBasePriority}`);
