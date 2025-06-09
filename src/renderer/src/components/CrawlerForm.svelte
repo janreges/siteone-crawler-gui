@@ -238,8 +238,10 @@
         formState = STATE_RUNNING;
         reportBaseFilePath = null;
         offlineWebsiteDir = null;
+        markdownWebsiteDir = null;
         sitemapXmlFile = null;
         sitemapTxtFile = null;
+        htmlReportUrl = null;
 
         miniStatsData.reset();
         miniStatsData = miniStatsData;
