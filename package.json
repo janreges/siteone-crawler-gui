@@ -1,6 +1,6 @@
 {
   "name": "SiteOne-Crawler",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "SiteOne Crawler is a very useful and versatile tool that performs an in-depth crawl and analysis of the entire website, looks for errors, recommends improvements, creates a complete offline version of your website or sitemap. It also has a lot of other uses, check out https://crawler.siteone.io/introduction/key-features/.",
   "main": "./out/main/index.js",
   "homepage": "https://crawler.siteone.io/",

@@ -13,6 +13,7 @@ class CrawlerFormContent {
     httpAuth: string | null = null;
     help: boolean | null = null;
     version: boolean | null = null;
+    timezone: string | null = null;
 
     // Output settings
     output: 'text' | 'json' | null = null;
@@ -25,6 +26,7 @@ class CrawlerFormContent {
     hideProgressBar: boolean | null = null;
     noColor: boolean | null = null;
     forceColor: boolean | null = true;
+    htmlReportOptions: string | null = null;
 
     // Resource filtering
     disableAllAssets: boolean | null = null;
@@ -34,6 +36,7 @@ class CrawlerFormContent {
     disableImages: boolean | null = null;
     disableFiles: boolean | null = null;
     removeAllAnchorListeners: boolean | null = null;
+    regexFilteringOnlyForPages: boolean | null = null;
 
     // Advanced crawler settings
     workers: number | null = 1;
@@ -50,6 +53,8 @@ class CrawlerFormContent {
     maxQueueLength: number | null = null;
     maxVisitedUrls: number | null = 10100;
     maxUrlLength: number | null = null;
+    transformUrl: string | null = null;
+    ignoreRobotsTxt: boolean | null = null;
 
     // Expert settings
     debug: boolean | null = null;
@@ -96,6 +101,9 @@ class CrawlerFormContent {
     markdownReplaceContent: string | null = null;
     markdownReplaceQueryString: string | null = null;
     markdownIgnoreStoreFileError: boolean | null = null;
+    markdownExportSingleFile: string | null = null;
+    markdownMoveContentBeforeH1ToEnd: boolean | null = null;
+    markdownRemoveLinksAndImagesFromSingleFile: boolean | null = null;
 
     // Offline exporter options
     offlineExportDir: string | null = null;
@@ -155,6 +163,7 @@ class CrawlerFormContent {
         if (this.httpAuth !== null) params.push(`--http-auth='${this.httpAuth}'`);
         if (this.help) params.push(`--help`);
         if (this.version) params.push(`--version`);
+        if (this.timezone !== null) params.push(`--timezone='${this.timezone}'`);
 
         // Output settings
         if (this.output !== null) params.push(`--output=${this.output}`);
@@ -167,6 +176,7 @@ class CrawlerFormContent {
         if (this.hideProgressBar) params.push(`--hide-progress-bar`);
         if (this.noColor) params.push(`--no-color`);
         if (this.forceColor) params.push(`--force-color`);
+        if (this.htmlReportOptions !== null) params.push(`--html-report-options='${this.htmlReportOptions}'`);
 
         // Resource filtering
         if (this.disableAllAssets) params.push(`--disable-all-assets`);
@@ -176,6 +186,7 @@ class CrawlerFormContent {
         if (this.disableImages) params.push(`--disable-images`);
         if (this.disableFiles) params.push(`--disable-files`);
         if (this.removeAllAnchorListeners) params.push(`--remove-all-anchor-listeners`);
+        if (this.regexFilteringOnlyForPages) params.push(`--regex-filtering-only-for-pages`);
 
         // Advanced crawler settings
         if (this.workers !== null) params.push(`--workers=${this.workers}`);
@@ -204,6 +215,8 @@ class CrawlerFormContent {
         if (this.maxQueueLength !== null) params.push(`--max-queue-length=${this.maxQueueLength}`);
         if (this.maxVisitedUrls !== null) params.push(`--max-visited-urls=${this.maxVisitedUrls}`);
         if (this.maxUrlLength !== null) params.push(`--max-url-length=${this.maxUrlLength}`);
+        if (this.transformUrl !== null) params.push(`--transform-url='${this.transformUrl}'`);
+        if (this.ignoreRobotsTxt) params.push(`--ignore-robots-txt`);
 
         // Upload options
         if (this.upload) params.push(`--upload`);
@@ -297,6 +310,15 @@ class CrawlerFormContent {
         if (this.markdownReplaceContent !== null) params.push(`--markdown-replace-content='${this.markdownReplaceContent}'`);
         if (this.markdownReplaceQueryString !== null) params.push(`--markdown-replace-query-string='${this.markdownReplaceQueryString}'`);
         if (this.markdownIgnoreStoreFileError) params.push(`--markdown-ignore-store-file-error`);
+        if (this.markdownExportSingleFile !== null) {
+            let prefix = '';
+            if (this.markdownExportSingleFile.substring(0, 1) != '/') {
+                prefix = tmpDir + pathDelimiter;
+            }
+            params.push(`--markdown-export-single-file='${prefix}${this.markdownExportSingleFile}'`);
+        }
+        if (this.markdownMoveContentBeforeH1ToEnd) params.push(`--markdown-move-content-before-h1-to-end`);
+        if (this.markdownRemoveLinksAndImagesFromSingleFile) params.push(`--markdown-remove-links-and-images-from-single-file`);
 
         // Offline exporter options
         if (this.offlineExportDir !== null) {

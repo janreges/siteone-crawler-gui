@@ -494,6 +494,8 @@
                     <IntInput bind:value={formData.urlColumnSize} label="URL Column Size" tooltip="URL column width in the console output."/>
                     <IntInput bind:value={formData.rowsLimit} label="Rows Limit"
                               tooltip="Max. number of rows to display in tables with analysis results (protection against very long and slow report)."/>
+                    <ValInput bind:value={formData.htmlReportOptions} label="HTML Report Options"
+                              tooltip="Additional options for HTML report generation."/>
                     <CheckboxInput bind:checked={formData.showInlineCriticals} label="Show Inline Criticals"
                                    tooltip="Show criticals from the analyzer directly in the URL table."/>
                     <CheckboxInput bind:checked={formData.showInlineWarnings} label="Show Inline Warnings"
@@ -506,7 +508,6 @@
                                    tooltip="Suppress progress bar in output."/>
                     <CheckboxInput bind:checked={formData.noColor} label="Disable Colored Output"
                                    tooltip="Disable colored output."/>
-                    
                 </fieldset>
 
                 <!-- Resource filtering -->
@@ -558,6 +559,11 @@
                     <CheckboxInput bind:checked={formData.resultStorageCompression}
                                    label="Enable Result Storage Compression"
                                    tooltip="Enable compression for results storage."/>
+                    <CheckboxInput bind:checked={formData.regexFilteringOnlyForPages} label="Regex Filtering Only For Pages"
+                                   tooltip="Apply regex filters only to pages, not to assets."/>
+                    <CheckboxInput bind:checked={formData.ignoreRobotsTxt} label="Ignore Robots.txt"
+                                   tooltip="Ignore robots.txt rules and crawl all URLs."/>
+
                 </fieldset>
 
                 <!-- Expert settings -->
@@ -571,6 +577,8 @@
                               tooltip="Cache dir for HTTP responses."/>
                     <ValInput bind:value={formData.acceptEncoding} label="Accept Encoding"
                               tooltip="Set `Accept-Encoding` request header."/>
+                    <ValInput bind:value={formData.transformUrl} label="Transform URL"
+                              tooltip="Transform URLs using pattern 'search -> replace' or regex '/pattern/flags -> replacement'."/>
                     <IntInput bind:value={formData.maxQueueLength} label="Max Queue Length"
                               tooltip="Max URL queue length."/>
                     <IntInput bind:value={formData.maxVisitedUrls} label="Max Visited URLs"
@@ -592,6 +600,8 @@
                                tooltip="Save report as JSON."/>
                     <FileInput bind:value={formData.outputTextFile} label="Output Text File"
                                tooltip="Save output as TXT."/>
+                    <ValInput bind:value={formData.timezone} label="Timezone"
+                               tooltip="Timezone for date/time operations (e.g., 'America/New_York', 'Europe/London')."/>
                     <CheckboxInput bind:checked={formData.addHostToOutputFile} label="Add Host to Output File"
                                    tooltip="Append initial URL host to filename except sitemaps."/>
                     <CheckboxInput bind:checked={formData.addTimestampToOutputFile} label="Add Timestamp to Output File"
@@ -646,12 +656,18 @@
                               tooltip="Replace text content with 'foo -> bar' or regexp in PREG format: '/card[0-9]/i -> card'."/>
                     <ValInput bind:value={formData.markdownReplaceQueryString} label="Replace Query String"
                               tooltip="Instead of using a short hash instead of a query string in the filename, just replace some characters. You can use simple format 'foo -> bar' or regexp in PREG format, e.g. '/([a-z]+)=([^&]*)(&|$)/i -> $1__$2'."/>
+                    <FileInput bind:value={formData.markdownExportSingleFile} label="Export Single File"
+                              tooltip="Export all markdown content into a single file instead of multiple files."/>
                     <CheckboxInput bind:checked={formData.markdownDisableImages} label="Disable Images"
                               tooltip="Do not export and show images in markdown files. Images are enabled by default."/>
                     <CheckboxInput bind:checked={formData.markdownDisableFiles} label="Disable Files"
                               tooltip="Do not export and link files other than HTML/CSS/JS/fonts/images - eg. PDF, ZIP, etc. These files are enabled by default."/>
                     <CheckboxInput bind:checked={formData.markdownIgnoreStoreFileError} label="Ignore Store File Error"
                               tooltip="Ignores any file storing errors. The export process will continue."/>
+                    <CheckboxInput bind:checked={formData.markdownMoveContentBeforeH1ToEnd} label="Move Content Before H1 to End"
+                                   tooltip="Move content that appears before the first H1 heading to the end of the document."/>
+                    <CheckboxInput bind:checked={formData.markdownRemoveLinksAndImagesFromSingleFile} label="Remove Links and Images from Single File"
+                                   tooltip="Remove all links and images when exporting to a single markdown file."/>
                 </fieldset>
 
                 <!-- Sitemap options -->
