@@ -2,6 +2,7 @@
   export let reportBaseFilePath: string | null = null;
   export let offlineWebsiteDir: string | null = null;
   export let markdownWebsiteDir: string | null = null;
+  export let markdownSingleFile: string | null = null;
   export let sitemapXmlFile: string | null = null;
   export let sitemapTxtFile: string | null = null;
   export let htmlReportUrl: string | null = null;
@@ -24,6 +25,10 @@
   
   function openMarkdownExport(): void {
     window.api.openExternal('file://' + markdownWebsiteDir + '/');
+  }
+  
+  function openMarkdownSingleFile(): void {
+    window.api.openExternal('file://' + markdownSingleFile);
   }
   
   function openSitemapXml(): void {
@@ -181,7 +186,7 @@
       <div class="lg:col-span-1 space-y-3">
         
         <!-- Website Exports -->
-        {#if offlineWebsiteDir || markdownWebsiteDir}
+        {#if offlineWebsiteDir || markdownWebsiteDir || markdownSingleFile}
         <div class="card card-compact bg-base-200">
           <div class="card-body">
             <h3 class="card-title text-base flex items-center gap-2">
@@ -208,6 +213,17 @@
                 <button class="btn btn-xs bg-warning/20 hover:bg-warning text-warning hover:text-warning-content border-0" on:click={openMarkdownExport}>
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 mr-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                  Open
+                </button>
+              </div>
+              {/if}
+              {#if markdownSingleFile}
+              <div class="flex items-center justify-between bg-base-300 rounded p-2">
+                <span class="text-sm">Single-file Markdown</span>
+                <button class="btn btn-xs bg-warning/20 hover:bg-warning text-warning hover:text-warning-content border-0" on:click={openMarkdownSingleFile}>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 mr-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
                   Open
                 </button>

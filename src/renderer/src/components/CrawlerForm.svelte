@@ -182,6 +182,15 @@
                             clearTimeout(timeoutIdToResult)
                         }
                         timeoutIdToResult = setTimeout(() => activeTab = 'result', 1000);
+                    } else if (line && line.includes('Markdown files combined into single file')) {
+                        const singleFilePath = getMarkdownSingleFilePath(line);
+                        if (singleFilePath && formData.markdownExportSingleFile) {
+                            formData.markdownExportSingleFile = singleFilePath;
+                        }
+                        if (timeoutIdToResult) {
+                            clearTimeout(timeoutIdToResult)
+                        }
+                        timeoutIdToResult = setTimeout(() => activeTab = 'result', 1000);
                     } else if (line && line.includes('XML sitemap generated to')) {
                         sitemapXmlFile = getSitemapXmlPath(line);
                     } else if (line && line.includes('TXT sitemap generated to')) {
@@ -341,6 +350,15 @@
 
     function getSitemapTxtPath(text: string): string | null {
         const regex = /TXT sitemap generated to '([^']+)'/;
+        const match = text.match(regex);
+        if (match && match[1]) {
+            return match[1];
+        }
+        return null;
+    }
+
+    function getMarkdownSingleFilePath(text: string): string | null {
+        const regex = /Markdown files combined into single file '([^']+)'/;
         const match = text.match(regex);
         if (match && match[1]) {
             return match[1];
@@ -699,6 +717,7 @@
                 {reportBaseFilePath}
                 {offlineWebsiteDir}
                 {markdownWebsiteDir}
+                markdownSingleFile={formData.markdownExportSingleFile}
                 {sitemapXmlFile}
                 {sitemapTxtFile}
                 {htmlReportUrl}

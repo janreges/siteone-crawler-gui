@@ -216,6 +216,21 @@
         </div>
         <div class="form-control form-control-checkbox">
           <input
+            id="chkSingleFileMarkdown"
+            type="checkbox"
+            class="checkbox checkbox-info"
+            checked={data.markdownExportSingleFile !== null}
+            on:change={(event) => data.markdownExportSingleFile = event.currentTarget.checked ? '%domain%.single-file.md' : null}
+          />
+          <label for="chkSingleFileMarkdown" class="label">
+            <span class="label-text">
+              Generate single-file markdown
+              <InfoIcon tip="If enabled, the crawler will generate a single markdown file containing all crawled content from the entire website. This is useful for creating comprehensive documentation or knowledge bases." position="left" />
+            </span>
+          </label>
+        </div>
+        <div class="form-control form-control-checkbox">
+          <input
             id="chkSitemap"
             type="checkbox"
             class="checkbox checkbox-info"
